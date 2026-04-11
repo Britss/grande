@@ -1,3 +1,12 @@
+<?php
+$adminPriorityPayments = array_slice($pendingPaymentOrders ?? [], 0, 2);
+$adminPriorityReservations = array_slice(array_values(array_filter($manageableReservations ?? [], static function (array $reservation): bool {
+    return ($reservation['status'] ?? '') === 'pending';
+})), 0, 2);
+$adminPriorityFeedback = array_slice(array_values(array_filter($manageableFeedback ?? [], static function (array $feedback): bool {
+    return ($feedback['status'] ?? '') === 'new';
+})), 0, 2);
+?>
 <section class="dashboard-workspace dashboard-workspace--staff">
     <div class="dashboard-shell">
         <aside class="dashboard-sidebar">
@@ -142,6 +151,60 @@
                                     <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--inline" aria-hidden="true">
                                     <span>Review Feedback</span>
                                 </button>
+                            </div>
+                        </article>
+
+                        <article class="content-card dashboard-card">
+                            <div class="dashboard-card__header">
+                                <h2>Needs Attention</h2>
+                            </div>
+                            <div class="activity-list">
+                                <?php foreach ($adminPriorityPayments as $queueOrder): ?>
+                                    <button
+                                        class="activity-item-compact activity-item-button"
+                                        type="button"
+                                        data-dashboard-target="payments"
+                                    >
+                                        <div class="activity-info">
+                                            <span class="order-number">Payment <?= e((string) ($queueOrder['order_number'] ?? '')) ?></span>
+                                            <span class="order-date"><?= e(date('M d, h:i A', strtotime((string) ($queueOrder['created_at'] ?? 'now')))) ?></span>
+                                        </div>
+                                        <span class="status-pill status-pill--pending">Pending</span>
+                                    </button>
+                                <?php endforeach; ?>
+                                <?php foreach ($adminPriorityReservations as $queueReservation): ?>
+                                    <button
+                                        class="activity-item-compact activity-item-button"
+                                        type="button"
+                                        data-dashboard-target="reservations"
+                                    >
+                                        <div class="activity-info">
+                                            <span class="order-number">Reservation #<?= e((string) ($queueReservation['id'] ?? 0)) ?></span>
+                                            <span class="order-date">
+                                                <?= e(date('M d', strtotime((string) ($queueReservation['date'] ?? 'now')))) ?>
+                                                at
+                                                <?= e(date('h:i A', strtotime((string) ($queueReservation['time'] ?? '00:00:00')))) ?>
+                                            </span>
+                                        </div>
+                                        <span class="status-pill status-pill--pending">Pending</span>
+                                    </button>
+                                <?php endforeach; ?>
+                                <?php foreach ($adminPriorityFeedback as $queueFeedback): ?>
+                                    <button
+                                        class="activity-item-compact activity-item-button"
+                                        type="button"
+                                        data-dashboard-target="feedback"
+                                    >
+                                        <div class="activity-info">
+                                            <span class="order-number">Feedback #<?= e((string) ($queueFeedback['id'] ?? 0)) ?></span>
+                                            <span class="order-date"><?= e(ucwords(str_replace('-', ' ', (string) ($queueFeedback['category'] ?? 'feedback')))) ?></span>
+                                        </div>
+                                        <span class="status-pill status-pill--new">New</span>
+                                    </button>
+                                <?php endforeach; ?>
+                                <?php if ($adminPriorityPayments === [] && $adminPriorityReservations === [] && $adminPriorityFeedback === []): ?>
+                                    <p class="lead">No urgent payment, reservation, or feedback items are waiting.</p>
+                                <?php endif; ?>
                             </div>
                         </article>
                     </div>

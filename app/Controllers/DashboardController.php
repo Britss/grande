@@ -29,6 +29,7 @@ final class DashboardController extends Controller
 
         $orders = new OrderRepository();
         $reservations = new ReservationRepository();
+        $feedback = new FeedbackRepository();
 
         return $this->render('pages.dashboards.customer', [
             'pageTitle' => 'Customer Dashboard',
@@ -39,6 +40,7 @@ final class DashboardController extends Controller
             'recentOrders' => $orders->getCustomerOrders((int) ($user['id'] ?? 0)),
             'reservationStats' => $reservations->getCustomerReservationStats((int) ($user['id'] ?? 0)),
             'recentReservations' => $reservations->getCustomerReservations((int) ($user['id'] ?? 0)),
+            'recentFeedback' => $feedback->getRecentForUser((int) ($user['id'] ?? 0)),
         ]);
     }
 
@@ -67,6 +69,59 @@ final class DashboardController extends Controller
         }
 
         redirect('/dashboard/customer?section=profile');
+    }
+
+    public function cancelCustomerOrder(): never
+    {
+        $user = $this->requireRole('customer');
+
+        if (!Csrf::validate((string) request_input('_token'))) {
+            Session::flash('error', 'The form expired. Please try cancelling the order again.');
+            redirect('/dashboard/customer?section=orders');
+        }
+
+        $orderId = (int) request_input('order_id', 0);
+
+        try {
+            $cancelledOrder = (new OrderRepository())->cancelPendingDirectOrderForCustomer($orderId, (int) ($user['id'] ?? 0));
+            (new AuditLogRepository())->log((int) ($user['id'] ?? 0), 'customer_order_cancelled', 'order', (int) ($cancelledOrder['id'] ?? $orderId), [
+                'order_number' => $cancelledOrder['order_number'] ?? '',
+                'from_status' => $cancelledOrder['previous_status'] ?? '',
+                'to_status' => $cancelledOrder['status'] ?? '',
+                'payment_status' => $cancelledOrder['payment_status'] ?? '',
+            ]);
+            Session::flash('status', 'Order ' . ($cancelledOrder['order_number'] ?? '') . ' was cancelled.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+
+        redirect('/dashboard/customer?section=orders');
+    }
+
+    public function cancelCustomerReservation(): never
+    {
+        $user = $this->requireRole('customer');
+
+        if (!Csrf::validate((string) request_input('_token'))) {
+            Session::flash('error', 'The form expired. Please try cancelling the reservation again.');
+            redirect('/dashboard/customer?section=reservations');
+        }
+
+        $reservationId = (int) request_input('reservation_id', 0);
+
+        try {
+            $cancelledReservation = (new ReservationRepository())->cancelPendingForCustomer($reservationId, (int) ($user['id'] ?? 0));
+            (new AuditLogRepository())->log((int) ($user['id'] ?? 0), 'customer_reservation_cancelled', 'reservation', (int) ($cancelledReservation['id'] ?? $reservationId), [
+                'from_status' => $cancelledReservation['previous_status'] ?? '',
+                'to_status' => $cancelledReservation['status'] ?? '',
+                'cancelled_order_count' => (int) ($cancelledReservation['cancelled_order_count'] ?? 0),
+            ]);
+            Session::flash('status', 'Reservation #' . ($cancelledReservation['id'] ?? 0) . ' was cancelled.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+
+        redirect('/dashboard/customer?section=reservations');
     }
 
     public function admin(): string

@@ -45,6 +45,13 @@ $recentOrder = $recentOrders[0] ?? null;
                         <span class="dashboard-sidebar__badge"><?= e((string) ($orderStats['active_orders'] ?? 0)) ?></span>
                     <?php endif; ?>
                 </button>
+                <button class="dashboard-sidebar__link" type="button" data-dashboard-target="feedback">
+                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
+                    <span>Feedback</span>
+                    <?php if (!empty($recentFeedback)): ?>
+                        <span class="dashboard-sidebar__badge"><?= e((string) count($recentFeedback)) ?></span>
+                    <?php endif; ?>
+                </button>
             </nav>
 
             <div class="dashboard-sidebar__footer">
@@ -108,6 +115,13 @@ $recentOrder = $recentOrders[0] ?? null;
                             <div class="stat-info">
                                 <h3><?= e((string) ($orderStats['completed_orders'] ?? 0)) ?></h3>
                                 <p>Completed Orders</p>
+                            </div>
+                        </button>
+                        <button class="stat-card stat-card--action" type="button" data-dashboard-target="feedback">
+                            <div class="stat-icon"><img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true"></div>
+                            <div class="stat-info">
+                                <h3><?= e((string) count($recentFeedback ?? [])) ?></h3>
+                                <p>Feedback Sent</p>
                             </div>
                         </button>
                     </div>
@@ -222,6 +236,36 @@ $recentOrder = $recentOrders[0] ?? null;
                                 </div>
                             <?php endif; ?>
                         </article>
+
+                        <article class="content-card dashboard-card">
+                            <div class="dashboard-card__header">
+                                <h2>Feedback</h2>
+                            </div>
+                            <?php if (empty($recentFeedback)): ?>
+                                <p class="lead">No feedback sent yet.</p>
+                                <a href="<?= e(url('feedback')) ?>" class="button button-secondary button-small">Send Feedback</a>
+                            <?php else: ?>
+                                <?php $latestFeedback = $recentFeedback[0]; ?>
+                                <div class="dashboard-summary-list">
+                                    <div class="detail-row">
+                                        <span class="label">Latest Rating</span>
+                                        <span class="value"><?= e((string) ($latestFeedback['rating'] ?? 0)) ?>/5</span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="label">Status</span>
+                                        <span class="value"><?= e(ucwords(str_replace('_', ' ', (string) ($latestFeedback['status'] ?? 'new')))) ?></span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="label">Sent</span>
+                                        <span class="value"><?= e(date('M d, Y', strtotime((string) ($latestFeedback['created_at'] ?? 'now')))) ?></span>
+                                    </div>
+                                </div>
+                                <div class="action-row action-row--left">
+                                    <button class="button button-secondary button-small" type="button" data-dashboard-target="feedback">View Feedback</button>
+                                    <a href="<?= e(url('feedback')) ?>" class="button button-primary button-small">Send More</a>
+                                </div>
+                            <?php endif; ?>
+                        </article>
                     </div>
                 </div>
             </section>
@@ -254,13 +298,15 @@ $recentOrder = $recentOrders[0] ?? null;
                             </div>
                             <?php if ($recentOrders === []): ?>
                                 <div class="empty-state-small">
-                                    <p>You have not placed any orders yet.</p>
+                                    <p>You have not placed any orders yet. Start from the menu and your order history will appear here after checkout.</p>
+                                    <a href="<?= e(url('menu')) ?>" class="button button-primary button-small">Browse Menu</a>
                                 </div>
                             <?php else: ?>
                                 <div class="orders-list">
                                     <?php foreach ($recentOrders as $order): ?>
                                         <?php $status = (string) ($order['status'] ?? 'pending'); ?>
                                         <?php $paymentStatus = (string) ($order['payment_status'] ?? 'pending'); ?>
+                                        <?php $canCancelOrder = $status === 'pending' && empty($order['reservation_id']); ?>
                                         <article class="reservation-card">
                                             <div class="reservation-header">
                                                 <div class="reservation-date">
@@ -293,6 +339,13 @@ $recentOrder = $recentOrders[0] ?? null;
                                                     data-open-order-modal
                                                     data-order-details="<?= e((string) json_encode($order, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)) ?>"
                                                 >View Details</button>
+                                                <?php if ($canCancelOrder): ?>
+                                                    <form action="<?= e(url('dashboard/customer/orders/cancel')) ?>" method="post">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="order_id" value="<?= e((string) ($order['id'] ?? 0)) ?>">
+                                                        <button type="submit" class="button button-danger button-small">Cancel Order</button>
+                                                    </form>
+                                                <?php endif; ?>
                                             </div>
                                         </article>
                                     <?php endforeach; ?>
@@ -353,12 +406,26 @@ $recentOrder = $recentOrders[0] ?? null;
                             </div>
                             <?php if ($recentReservations === []): ?>
                                 <div class="empty-state-small">
-                                    <p>You have not created any reservations yet.</p>
+                                    <p>You have not created any reservations yet. Book a table when you want to plan a visit or attach an order to a reservation.</p>
+                                    <a href="<?= e(url('reserve')) ?>" class="button button-primary button-small">Make Reservation</a>
                                 </div>
                             <?php else: ?>
                                 <div class="reservations-list">
                                     <?php foreach ($recentReservations as $reservation): ?>
                                         <?php $reservationStatus = (string) ($reservation['status'] ?? 'pending'); ?>
+                                        <?php
+                                            $linkedOrders = is_array($reservation['orders'] ?? null) ? $reservation['orders'] : [];
+                                            $hasInProgressOrder = false;
+
+                                            foreach ($linkedOrders as $linkedOrder) {
+                                                if (($linkedOrder['status'] ?? 'pending') !== 'pending') {
+                                                    $hasInProgressOrder = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            $canCancelReservation = $reservationStatus === 'pending' && !$hasInProgressOrder;
+                                        ?>
                                         <article class="reservation-card">
                                             <div class="reservation-header">
                                                 <div class="reservation-date">
@@ -388,6 +455,13 @@ $recentOrder = $recentOrders[0] ?? null;
                                                     data-open-reservation-modal
                                                     data-reservation-details="<?= e((string) json_encode($reservation, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)) ?>"
                                                 >View Details</button>
+                                                <?php if ($canCancelReservation): ?>
+                                                    <form action="<?= e(url('dashboard/customer/reservations/cancel')) ?>" method="post">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="reservation_id" value="<?= e((string) ($reservation['id'] ?? 0)) ?>">
+                                                        <button type="submit" class="button button-danger button-small">Cancel Reservation</button>
+                                                    </form>
+                                                <?php endif; ?>
                                             </div>
                                         </article>
                                     <?php endforeach; ?>
@@ -436,6 +510,7 @@ $recentOrder = $recentOrders[0] ?? null;
                             <div class="records-panel-header">
                                 <h3>Profile Details</h3>
                             </div>
+                            <p class="lead">These details are used for checkout receipts, reservation follow-ups, and staff contact when an order needs attention.</p>
                             <form action="<?= e(url('dashboard/customer/profile')) ?>" method="post" class="form-grid">
                                 <?= csrf_field() ?>
                                 <div class="form-field">
@@ -448,6 +523,7 @@ $recentOrder = $recentOrders[0] ?? null;
                                         maxlength="50"
                                         required
                                     >
+                                    <p class="field-hint">Use the name staff should see on orders and reservations.</p>
                                 </div>
                                 <div class="form-field">
                                     <label for="customer_last_name">Last Name</label>
@@ -470,6 +546,7 @@ $recentOrder = $recentOrders[0] ?? null;
                                         maxlength="100"
                                         required
                                     >
+                                    <p class="field-hint">Changing your email updates your next login and dashboard contact address.</p>
                                 </div>
                                 <div class="form-field">
                                     <label for="customer_phone">Phone</label>
@@ -482,11 +559,22 @@ $recentOrder = $recentOrders[0] ?? null;
                                         maxlength="11"
                                         required
                                     >
+                                    <p class="field-hint">Use an 11-digit mobile number that starts with 09.</p>
                                 </div>
                                 <div class="form-field full-width">
                                     <button type="submit" class="button button-primary">Save Profile</button>
                                 </div>
                             </form>
+                        </article>
+
+                        <article class="records-panel">
+                            <div class="records-panel-header">
+                                <h3>Password Access</h3>
+                            </div>
+                            <p class="lead">Password changes use the reset-link flow so the account can be verified before a new password is accepted.</p>
+                            <div class="action-row action-row--left">
+                                <a href="<?= e(url('password/forgot')) ?>" class="button button-secondary button-small">Reset Password</a>
+                            </div>
                         </article>
                     </div>
 
@@ -513,6 +601,112 @@ $recentOrder = $recentOrders[0] ?? null;
                                     <span class="value"><?= e($memberSince) ?></span>
                                 </div>
                             </div>
+                        </article>
+
+                        <article class="records-panel records-summary-panel">
+                            <div class="records-panel-header">
+                                <h3>Account Tips</h3>
+                            </div>
+                            <div class="dashboard-summary-list">
+                                <div class="detail-row">
+                                    <span class="label">Email</span>
+                                    <span class="value">Use an address you can open for reset links.</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Phone</span>
+                                    <span class="value">Keep it reachable for order and reservation updates.</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Password</span>
+                                    <span class="value">Reset links expire after 30 minutes.</span>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="records-panel records-summary-panel">
+                            <div class="records-panel-header">
+                                <h3>Profile Checklist</h3>
+                            </div>
+                            <div class="dashboard-summary-list">
+                                <div class="detail-row">
+                                    <span class="label">Name</span>
+                                    <span class="value"><?= $fullName !== '' ? 'Ready' : 'Needs update' ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Email</span>
+                                    <span class="value"><?= !empty($user['email']) ? 'Ready' : 'Needs update' ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Phone</span>
+                                    <span class="value"><?= !empty($user['phone']) ? 'Ready' : 'Needs update' ?></span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-panel" data-dashboard-panel="feedback">
+                <div class="records-overview">
+                    <div class="records-hero">
+                        <div class="records-hero-copy">
+                            <span class="records-kicker">Feedback</span>
+                            <h3>Track the comments you have sent to the Grande team.</h3>
+                        </div>
+                        <div class="records-hero-stats">
+                            <div class="records-mini-stat">
+                                <span class="records-mini-label">Sent</span>
+                                <span class="records-mini-value"><?= e((string) count($recentFeedback ?? [])) ?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="records-layout">
+                    <div class="records-main-column">
+                        <article class="records-panel">
+                            <div class="records-panel-header">
+                                <h3>Recent Feedback</h3>
+                                <a href="<?= e(url('feedback')) ?>" class="button button-primary button-small">Send Feedback</a>
+                            </div>
+                            <?php if (empty($recentFeedback)): ?>
+                                <div class="empty-state-small">
+                                    <p>You have not sent feedback yet. Send a comment after an order, reservation, or visit so staff can review it from the dashboard.</p>
+                                    <a href="<?= e(url('feedback')) ?>" class="button button-primary button-small">Send Feedback</a>
+                                </div>
+                            <?php else: ?>
+                                <div class="reservations-list">
+                                    <?php foreach ($recentFeedback as $feedbackItem): ?>
+                                        <?php $feedbackStatus = (string) ($feedbackItem['status'] ?? 'new'); ?>
+                                        <article class="reservation-card">
+                                            <div class="reservation-header">
+                                                <div class="reservation-date">
+                                                    <span class="date-label"><?= e(date('M d, Y', strtotime((string) ($feedbackItem['created_at'] ?? 'now')))) ?></span>
+                                                    <span class="date-value"><?= e((string) ($feedbackItem['rating'] ?? 0)) ?>/5</span>
+                                                </div>
+                                                <span class="status-pill status-pill--<?= e($feedbackStatus) ?>"><?= e(ucwords(str_replace('_', ' ', $feedbackStatus))) ?></span>
+                                            </div>
+                                            <div class="reservation-details">
+                                                <div class="detail">
+                                                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--detail" aria-hidden="true">
+                                                    <span><?= e(ucwords(str_replace('-', ' ', (string) ($feedbackItem['category'] ?? 'feedback')))) ?></span>
+                                                </div>
+                                            </div>
+                                            <p class="lead"><?= e((string) ($feedbackItem['message'] ?? '')) ?></p>
+                                        </article>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </article>
+                    </div>
+
+                    <div class="records-side-column">
+                        <article class="records-panel records-summary-panel">
+                            <div class="records-panel-header">
+                                <h3>Need Help?</h3>
+                            </div>
+                            <p class="lead">Send comments about service, food, reservations, or online ordering from the feedback form.</p>
+                            <a href="<?= e(url('feedback')) ?>" class="button button-secondary button-small">Open Feedback Form</a>
                         </article>
                     </div>
                 </div>

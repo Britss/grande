@@ -39,10 +39,22 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   password reset is implemented with request/reset routes, `password_resets` migration, hashed reset tokens, XAMPP-friendly local mail preview links, password validation, consumed-token handling, and audit logging for reset request/completion.
 - Completed:
   fuller admin report drilldowns are implemented: report date-range controls, selected-range summary cards, daily sales/order/reservation series generated from repository-owned SQL, top-item range filtering, and export-friendly order/reservation detail tables.
+- Completed:
+  customer cancellation rules are implemented: customers can cancel only their own pending direct orders and pending reservations without in-progress linked orders, terminal/in-progress records are blocked, linked pending reservation orders are cancelled with the reservation, and each successful customer cancellation writes an audit log.
+- Completed:
+  deeper dashboard parity details are expanded: customer dashboards now include a feedback section, feedback sidebar/stat shortcuts, latest-feedback overview cards, and recent feedback history; employee dashboards now include a priority queue snapshot for pending payment review, pending reservations, and new feedback.
+- Completed:
+  admin overview micro-interactions now include a Needs Attention queue that jumps directly to pending payment review, pending reservations, and new feedback using the same compact dashboard pattern as the employee workspace.
+- Completed:
+  customer account-flow polish is implemented: profile editing now includes clearer dashboard-side guidance, password reset access is linked from the customer profile panel, and empty order/reservation/feedback states now point customers to the next useful action.
+- Completed:
+  follow-up dashboard parity polish is implemented: customer account panels now include a profile readiness checklist, and admin reports include print/save-as-PDF controls plus clearer export guidance beside the drilldown tables.
+- Completed:
+  dashboard density polish is implemented: shared dashboard spacing, hero height, statistic cards, records panels, operational cards, order line items, and filter bars are tightened to better match the older compact `grandego` dashboard rhythm without changing workflows.
 - Partially completed:
-  dashboard UI parity. The main operational flows, first visual parity pass, queue filters, and lightweight reporting graphs are implemented, but some deeper admin/customer interaction details can still be pushed closer to the old `grandego` dashboards.
+  dashboard UI parity. The main operational flows, first visual parity pass, queue filters, lightweight reporting graphs, customer feedback shortcuts, employee priority queue overview, admin attention queue, customer account-flow polish, customer cancellation controls, report export affordances, and shared dashboard density polish are implemented, but final browser-level visual QA against the old `grandego` dashboards can still tune any remaining per-module differences.
 - Suggested next task:
-  implement customer cancellation rules next: allow customers to cancel only eligible pending direct orders/reservations, block terminal or in-progress records, and write audit logs for each customer cancellation.
+  run browser-level dashboard visual QA next, comparing customer/admin/employee modules against the old `grandego` dashboards and tuning any remaining per-module spacing or density differences.
 
 ## Implementation Changes
 - Use a simple MVC-style structure:
@@ -65,13 +77,17 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   overview, order history, reservation history, and detail snapshots are implemented.
   profile editing is implemented with dashboard form submission, customer-only persistence, and audit logging.
   customer sidebar flow, work badges, compact cards, and mobile dashboard navigation now follow the old `grandego` dashboard more closely.
-  feedback shortcut parity can still be expanded.
+  feedback shortcut parity is expanded with a dedicated dashboard section, sidebar/stat entry points, latest-feedback summary, and recent feedback history.
+  account-flow polish now adds profile guidance, password reset access, and clearer action-oriented empty states for orders, reservations, and feedback.
+  shared dashboard density styles now make customer records, summary cards, and dashboard panels more compact and closer to the old dashboard rhythm.
 - Build admin dashboard:
   overview, orders, reservations, menu management, user management, feedback inbox, reports/graphs, audit trail.
   Remove duplicate widgets and keep one source of truth per metric.
 - Current status:
   payment review, order management, reservation management, menu management, user management, feedback inbox, report summaries, audit log browsing, and detail snapshots are implemented.
   menu image upload is implemented with files saved under `public/uploads/menu-items` so XAMPP can serve them directly; order/reservation/menu/user filters, lightweight report graph visualizations, date-range reporting, and order/reservation drilldown tables are implemented.
+  admin overview parity is expanded with a compact Needs Attention queue for pending payments, reservations, and feedback.
+  admin dashboard density is tightened through shared cards, filters, report tables, and operational list styling.
   `grandego` should remain the visual and flow reference for dashboard parity, especially for admin panel layout, customer account flow, familiar menu/reservation interactions, filter placement, and chart/report presentation.
 - Build employee dashboard:
   overview, orders queue, reservations queue.
@@ -79,7 +95,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Current status:
   payment review, order management, reservation management, feedback review, queue-oriented reports, and detail snapshots are implemented.
   employee sidebar styling, queue badges, compact cards, and mobile dashboard navigation now follow the old `grandego` staff dashboard more closely.
-  employee-specific filtering and queue refinements are still pending.
+  employee-specific filtering and queue refinements now include dashboard filters plus a priority queue overview for payment, reservation, and feedback work.
+  employee dashboard density is tightened through shared queue cards, filters, status blocks, and operational list styling.
 - Define strict role permissions:
   customer can manage own profile, orders, reservations, feedback;
   employee can process payments, orders, reservations, and feedback queues only;
@@ -139,13 +156,14 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   menu browse, add to cart, checkout submission, reservation submission, feedback submission.
 - Current status:
   menu browse, add to cart, checkout, reservation creation, reservation checkout, payment receipt upload, and payment review path are implemented.
-  feedback submission is still pending.
+  feedback submission and dashboard feedback history are implemented.
 - Customer:
-  can only see own orders/reservations/profile data; can cancel only eligible pending orders if that rule is implemented.
+  can only see own orders/reservations/profile data; can cancel only eligible pending direct orders and eligible pending reservations.
 - Current status:
   own orders/reservations are isolated correctly in the rebuilt dashboard.
   customers can update their own profile details with duplicate email/phone protection.
-  customer cancellation rules are not implemented yet.
+  customer profile guidance, dashboard password reset access, and actionable empty states are implemented.
+  customer cancellation rules are implemented with ownership checks, pending-only guards, in-progress/terminal blocking, linked pending reservation-order cancellation, CSRF protection, and audit logging.
 - Admin:
   can manage users/menu/orders/reservations/feedback; every mutation writes an audit log row.
 - Current status:

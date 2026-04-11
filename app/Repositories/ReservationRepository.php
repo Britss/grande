@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Support\Database;
+use RuntimeException;
 
 final class ReservationRepository
 {
@@ -216,6 +217,85 @@ final class ReservationRepository
             'id' => (int) $reservation['id'],
             'status' => $status,
         ];
+    }
+
+    public function cancelPendingForCustomer(int $reservationId, int $userId): array
+    {
+        $connection = Database::connection();
+        $connection->beginTransaction();
+
+        try {
+            $statement = $connection->prepare(
+                'SELECT id, status
+                 FROM reservations
+                 WHERE id = :id AND user_id = :user_id
+                 LIMIT 1'
+            );
+            $statement->execute([
+                'id' => $reservationId,
+                'user_id' => $userId,
+            ]);
+            $reservation = $statement->fetch();
+
+            if (!is_array($reservation)) {
+                throw new RuntimeException('Reservation not found.');
+            }
+
+            if (($reservation['status'] ?? 'pending') !== 'pending') {
+                throw new RuntimeException('Only pending reservations can be cancelled.');
+            }
+
+            $orderCheck = $connection->prepare(
+                "SELECT
+                    COUNT(*) AS order_count,
+                    SUM(CASE WHEN status <> 'pending' THEN 1 ELSE 0 END) AS in_progress_count
+                 FROM orders
+                 WHERE reservation_id = :reservation_id"
+            );
+            $orderCheck->execute(['reservation_id' => $reservationId]);
+            $counts = $orderCheck->fetch() ?: [];
+
+            if ((int) ($counts['in_progress_count'] ?? 0) > 0) {
+                throw new RuntimeException('This reservation has an in-progress order and can no longer be cancelled.');
+            }
+
+            $reservationUpdate = $connection->prepare(
+                "UPDATE reservations
+                 SET status = 'cancelled'
+                 WHERE id = :id AND user_id = :user_id AND status = 'pending'"
+            );
+            $reservationUpdate->execute([
+                'id' => $reservationId,
+                'user_id' => $userId,
+            ]);
+
+            if ($reservationUpdate->rowCount() !== 1) {
+                throw new RuntimeException('This reservation can no longer be cancelled.');
+            }
+
+            $orderUpdate = $connection->prepare(
+                "UPDATE orders
+                 SET status = 'cancelled'
+                 WHERE reservation_id = :reservation_id AND status = 'pending'"
+            );
+            $orderUpdate->execute(['reservation_id' => $reservationId]);
+
+            $connection->commit();
+
+            return [
+                'id' => (int) $reservation['id'],
+                'previous_status' => (string) ($reservation['status'] ?? 'pending'),
+                'status' => 'cancelled',
+                'cancelled_order_count' => $orderUpdate->rowCount(),
+                'order_count' => (int) ($counts['order_count'] ?? 0),
+            ];
+        } catch (\Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        }
     }
 
     private function attachReservationOrders(array $reservations): array

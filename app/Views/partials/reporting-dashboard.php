@@ -44,7 +44,8 @@ $maxTopQuantity = max(1, ...array_map(static fn (array $row): float => (float) (
                 To
                 <input type="date" name="report_end" value="<?= e((string) ($reportRange['end'] ?? '')) ?>">
             </label>
-            <button class="btn btn-primary" type="submit">Apply</button>
+            <button class="button button-primary button-small" type="submit">Apply</button>
+            <button class="button button-secondary button-small" type="button" onclick="window.print()">Print</button>
         </form>
     </div>
 
@@ -219,6 +220,7 @@ $maxTopQuantity = max(1, ...array_map(static fn (array $row): float => (float) (
             <div class="dashboard-card__header">
                 <h3>Order Drilldown</h3>
             </div>
+            <p class="inline-note">Use browser print or save as PDF after selecting a date range.</p>
             <?php if (($orderDrilldown ?? []) === []): ?>
                 <p class="lead">No orders were created in this range.</p>
             <?php else: ?>
@@ -253,6 +255,7 @@ $maxTopQuantity = max(1, ...array_map(static fn (array $row): float => (float) (
             <div class="dashboard-card__header">
                 <h3>Reservation Drilldown</h3>
             </div>
+            <p class="inline-note">This table follows the same selected date range as the report cards.</p>
             <?php if (($reservationDrilldown ?? []) === []): ?>
                 <p class="lead">No reservations are scheduled in this range.</p>
             <?php else: ?>

@@ -371,6 +371,56 @@ final class OrderRepository
         ];
     }
 
+    public function cancelPendingDirectOrderForCustomer(int $orderId, int $userId): array
+    {
+        $connection = Database::connection();
+        $statement = $connection->prepare(
+            'SELECT id, order_number, status, payment_status, reservation_id
+             FROM orders
+             WHERE id = :id AND user_id = :user_id
+             LIMIT 1'
+        );
+        $statement->execute([
+            'id' => $orderId,
+            'user_id' => $userId,
+        ]);
+        $order = $statement->fetch();
+
+        if (!is_array($order)) {
+            throw new RuntimeException('Order not found.');
+        }
+
+        if ((int) ($order['reservation_id'] ?? 0) > 0) {
+            throw new RuntimeException('Reservation-linked orders must be managed from the reservation record.');
+        }
+
+        if (($order['status'] ?? 'pending') !== 'pending') {
+            throw new RuntimeException('Only pending direct orders can be cancelled.');
+        }
+
+        $update = $connection->prepare(
+            "UPDATE orders
+             SET status = 'cancelled'
+             WHERE id = :id AND user_id = :user_id AND status = 'pending' AND reservation_id IS NULL"
+        );
+        $update->execute([
+            'id' => $orderId,
+            'user_id' => $userId,
+        ]);
+
+        if ($update->rowCount() !== 1) {
+            throw new RuntimeException('This order can no longer be cancelled.');
+        }
+
+        return [
+            'id' => (int) $order['id'],
+            'order_number' => (string) ($order['order_number'] ?? ''),
+            'previous_status' => (string) ($order['status'] ?? 'pending'),
+            'status' => 'cancelled',
+            'payment_status' => (string) ($order['payment_status'] ?? 'pending'),
+        ];
+    }
+
     private function fetchPaymentReviewOrders(string $whereClause, int $limit): array
     {
         $statement = Database::connection()->prepare(
