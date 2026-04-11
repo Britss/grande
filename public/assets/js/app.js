@@ -25,6 +25,69 @@ document.addEventListener("click", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    var header = document.querySelector(".site-header");
+    var toggle = document.querySelector("[data-nav-toggle]");
+    var menu = document.querySelector("[data-nav-menu]");
+    var mobileQuery = window.matchMedia("(max-width: 900px)");
+
+    if (!header || !toggle || !menu) {
+        return;
+    }
+
+    var setMenuState = function (isOpen) {
+        header.classList.toggle("is-nav-open", isOpen);
+        menu.classList.toggle("is-open", isOpen);
+        menu.setAttribute("aria-hidden", mobileQuery.matches && !isOpen ? "true" : "false");
+        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        toggle.setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+    };
+
+    toggle.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setMenuState(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    menu.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            if (mobileQuery.matches) {
+                setMenuState(false);
+            }
+        });
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!mobileQuery.matches || header.contains(event.target)) {
+            return;
+        }
+
+        setMenuState(false);
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            setMenuState(false);
+        }
+    });
+
+    var syncMenuState = function (query) {
+        if (!query.matches) {
+            setMenuState(false);
+            return;
+        }
+
+        setMenuState(false);
+    };
+
+    setMenuState(false);
+
+    if (typeof mobileQuery.addEventListener === "function") {
+        mobileQuery.addEventListener("change", syncMenuState);
+    } else if (typeof mobileQuery.addListener === "function") {
+        mobileQuery.addListener(syncMenuState);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     var sidebarLinks = document.querySelectorAll("[data-dashboard-target]");
     var dashboardPanels = document.querySelectorAll("[data-dashboard-panel]");
 

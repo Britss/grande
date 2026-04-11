@@ -11,7 +11,29 @@
             <span class="brand-subtitle">Pandesal + Coffee</span>
         </a>
 
-        <nav class="site-nav" aria-label="Primary navigation">
+        <button
+            class="site-nav-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-nav-menu"
+            aria-label="Open navigation menu"
+            data-nav-toggle
+        >
+            <img
+                class="site-nav-toggle__icon site-nav-toggle__icon--menu"
+                src="<?= e(url('public/icons/hamburg.png')) ?>"
+                alt=""
+                aria-hidden="true"
+            >
+            <img
+                class="site-nav-toggle__icon site-nav-toggle__icon--close"
+                src="<?= e(url('public/icons/close.png')) ?>"
+                alt=""
+                aria-hidden="true"
+            >
+        </button>
+
+        <nav class="site-nav" id="site-nav-menu" aria-label="Primary navigation" data-nav-menu>
             <a class="<?= route_is('/') ? 'is-active' : '' ?>" href="<?= e(url()) ?>">Home</a>
             <a class="<?= route_is('/about') ? 'is-active' : '' ?>" href="<?= e(url('about')) ?>">About</a>
             <a class="<?= route_is('/menu') ? 'is-active' : '' ?>" href="<?= e(url('menu')) ?>">Menu</a>
