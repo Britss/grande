@@ -880,8 +880,11 @@ h2 {
 }
 
 .about-poster {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
     overflow: hidden;
-    padding: clamp(7rem, 10vw, 9.25rem) 0 clamp(3rem, 5vw, 4.5rem);
+    padding: clamp(7rem, 9vw, 9rem) 0 clamp(5rem, 7vw, 7rem);
 }
 
 .about-poster::before {
@@ -898,8 +901,8 @@ h2 {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(27rem, 0.95fr);
-    gap: clamp(1.8rem, 4vw, 3.5rem);
+    grid-template-columns: minmax(0, 0.92fr) minmax(32rem, 1.08fr);
+    gap: clamp(2.4rem, 5vw, 5.5rem);
     align-items: center;
 }
 
@@ -944,16 +947,16 @@ h2 {
 
 .about-poster__visual {
     position: relative;
-    min-height: 31rem;
-    padding: 3rem 0 0 2rem;
+    min-height: clamp(35rem, 40vw, 42rem);
+    padding: 3.4rem 0 0 1.6rem;
 }
 
 .about-poster__framing {
     position: relative;
     z-index: 1;
-    width: min(17rem, 52%);
+    width: min(19rem, 52%);
     margin: 1.25rem 0 0 auto;
-    padding: 0.9rem 1rem;
+    padding: 1.05rem 1.15rem;
     border: 1px solid rgba(255, 250, 244, 0.52);
     background: rgba(86, 56, 40, 0.72);
     backdrop-filter: blur(10px);
@@ -979,8 +982,8 @@ h2 {
 }
 
 .about-poster__image--primary {
-    inset: 0 0 auto 3.5rem;
-    height: 26.8rem;
+    inset: 0 0 auto 2.25rem;
+    height: clamp(31rem, 35vw, 37rem);
 }
 
 .about-poster__image--primary img {
@@ -991,8 +994,8 @@ h2 {
     right: auto;
     bottom: 0;
     left: 0;
-    width: clamp(11rem, 24vw, 15rem);
-    height: clamp(12rem, 26vw, 15.5rem);
+    width: clamp(14rem, 25vw, 18rem);
+    height: clamp(14.5rem, 25vw, 18.5rem);
     border: 8px solid rgba(251, 244, 235, 0.94);
 }
 

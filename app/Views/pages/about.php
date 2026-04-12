@@ -27,7 +27,9 @@
                 <img src="<?= e($page['hero']['secondary_image']['src']) ?>" alt="<?= e($page['hero']['secondary_image']['alt']) ?>">
             </figure>
 
-            <p class="about-poster__framing"><?= e($page['hero']['framing']) ?></p>
+            <?php if (!empty($page['hero']['framing'])): ?>
+                <p class="about-poster__framing"><?= e($page['hero']['framing']) ?></p>
+            <?php endif; ?>
         </div>
 
         <?php if (!empty($page['hero']['quick_facts'])): ?>

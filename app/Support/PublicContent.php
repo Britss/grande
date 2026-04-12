@@ -77,7 +77,7 @@ final class PublicContent
                 'eyebrow' => 'Grande. Pan De Sal + Coffee',
                 'title' => 'From morning bread to late-night coffee, Grande stays part of the neighborhood rhythm.',
                 'body' => 'Some visits are quick, some turn into a quiet pause, and some happen when most places are already closed. Grande is built for all of them: bakery warmth in the morning, coffee comfort through the day, and a familiar light still on when the night runs long.',
-                'framing' => 'A bakery-and-coffee stop that keeps pace with real local routines.',
+                'framing' => '',
                 'image' => [
                     'src' => url('public/images/2024-12-02.webp'),
                     'alt' => 'Grande storefront glowing in Sindalan',
