@@ -1,9 +1,9 @@
 <section class="home-hero">
     <div class="container home-hero__content">
-        <p class="home-hero__eyebrow">Grande. Pandesal + Coffee</p>
+        <p class="home-hero__eyebrow">Grande. Pan De Sal + Coffee</p>
         <h1>Freshly Baked, Freshly Brewed - EVERY. SINGLE. DAY.</h1>
         <p class="home-hero__lead">
-            Pan De Sal &amp; Premium Coffee - Open 24/7 in Sindalan
+            Pandesal, coffee, and a cozy stop in Sindalan.
         </p>
 
         <div class="home-hero__actions">
@@ -19,11 +19,11 @@
             </div>
             <div class="hero-highlights__item">
                 <img src="<?= e(url('public/icons/bread.png')) ?>" alt="" aria-hidden="true">
-                <span>Fresh Pan De Sal</span>
+                <span>Fresh Pandesal</span>
             </div>
             <div class="hero-highlights__item">
                 <img src="<?= e(url('public/icons/cup.png')) ?>" alt="" aria-hidden="true">
-                <span>Premium Coffee</span>
+                <span>Quality Coffee</span>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
     <div class="container home-band__row">
         <div class="home-band__item">
             <img src="<?= e(url('public/icons/pin.png')) ?>" alt="" aria-hidden="true">
-            <p>Beside Puregold, Sindalan</p>
+            <p>Beside Puregold Sindalan, Pampanga</p>
         </div>
         <div class="home-band__item">
             <img src="<?= e(url('public/icons/star1.png')) ?>" alt="" aria-hidden="true">
@@ -57,7 +57,7 @@
 
             <div class="home-middle__actions">
                 <a class="button button-primary" href="<?= e(url('menu')) ?>">View Menu</a>
-                <a class="button button-secondary" href="<?= e(url('reserve')) ?>">Reserve Table</a>
+                <a class="button button-secondary" href="<?= e(url('reserve')) ?>">Reserve a Table</a>
             </div>
         </div>
 

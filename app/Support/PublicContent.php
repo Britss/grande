@@ -60,7 +60,7 @@ final class PublicContent
                     'href' => url('menu'),
                 ],
                 [
-                    'label' => 'Reserve Table',
+                    'label' => 'Reserve a table',
                     'href' => url('reserve'),
                 ],
             ],
