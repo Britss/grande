@@ -25,6 +25,39 @@ document.addEventListener("click", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    var revealItems = document.querySelectorAll("[data-reveal]");
+
+    if (!revealItems.length) {
+        return;
+    }
+
+    if (!("IntersectionObserver" in window)) {
+        revealItems.forEach(function (item) {
+            item.classList.add("is-visible");
+        });
+        return;
+    }
+
+    var revealObserver = new IntersectionObserver(function (entries, observer) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+        });
+    }, {
+        threshold: 0.2,
+        rootMargin: "0px 0px -8% 0px"
+    });
+
+    revealItems.forEach(function (item) {
+        revealObserver.observe(item);
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     var header = document.querySelector(".site-header");
     var toggle = document.querySelector("[data-nav-toggle]");
     var menu = document.querySelector("[data-nav-menu]");

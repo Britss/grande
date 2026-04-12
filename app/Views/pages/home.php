@@ -57,7 +57,7 @@
 
             <div class="home-middle__actions">
                 <a class="button button-primary" href="<?= e(url('menu')) ?>">View Menu</a>
-                <a class="button button-secondary" href="<?= e(url('reserve')) ?>">Reserve a Table</a>
+                <a class="button button-secondary" href="<?= e(url('about')) ?>">About Us</a>
             </div>
         </div>
 

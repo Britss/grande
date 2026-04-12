@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Support;
@@ -71,59 +72,111 @@ final class PublicContent
     {
         return [
             'title' => 'About',
-            'description' => 'About Grande. Pandesal + Coffee - Learn our story, mission, and vision for premium coffee and pan de sal.',
+            'description' => 'Meet Grande. Pandesal + Coffee in Sindalan: fresh bread, premium coffee, and a warm stop that stays open all day and night.',
             'hero' => [
-                'eyebrow' => 'About',
-                'title' => 'About Grande.',
-                'subtitle' => 'Your 24/7 Neighborhood Bakery and Coffee Shop',
-            ],
-            'story' => [
-                'title' => 'Our Story',
-                'paragraphs' => [
-                    'Grande. Pandesal + Coffee is a neighborhood bakery and coffee shop in Sindalan, San Fernando, Pampanga, built around the idea that fresh pan de sal and quality coffee should be available whenever people need them.',
-                    'The current site emphasizes one clear promise: freshly baked bread, freshly brewed coffee, and a welcoming space at any hour of the day. That same promise is being preserved in this rewrite.',
-                    'This phase keeps the story content in a structured format so the final rebuilt page can match the existing site more closely without keeping the old implementation style.',
+                'eyebrow' => 'Grande. Pan De Sal + Coffee',
+                'title' => 'From morning bread to late-night coffee, Grande stays part of the neighborhood rhythm.',
+                'body' => 'Some visits are quick, some turn into a quiet pause, and some happen when most places are already closed. Grande is built for all of them: bakery warmth in the morning, coffee comfort through the day, and a familiar light still on when the night runs long.',
+                'framing' => 'A bakery-and-coffee stop that keeps pace with real local routines.',
+                'image' => [
+                    'src' => url('public/images/2024-12-02.webp'),
+                    'alt' => 'Grande storefront glowing in Sindalan',
+                ],
+                'secondary_image' => [
+                    'src' => url('public/images/menu-items/grande_coffee.jpg'),
+                    'alt' => 'Freshly served Grande coffee',
                 ],
             ],
-            'pillars' => [
+            'timeline_moments' => [
                 [
-                    'title' => 'Our Mission',
-                    'body' => 'Serve fresh pan de sal and premium coffee 24/7 at affordable prices while creating a warm space for the local community.',
+                    'time' => 'Early Bake',
+                    'title' => 'The day starts with bread still warm from the tray.',
+                    'body' => 'Grande opens the routine with soft pan de sal, easy takeaway bundles, and the kind of breakfast stop people can fit in before work, school, or errands.',
+                    'image' => [
+                        'src' => url('public/images/menu-items/classic_pan_de_sal.png'),
+                        'alt' => 'Fresh pan de sal ready for the morning crowd',
+                    ],
                 ],
                 [
-                    'title' => 'Our Vision',
-                    'body' => 'Be the most loved 24-hour bakery and coffee shop in San Fernando, Pampanga.',
+                    'time' => 'Midday Pause',
+                    'title' => 'Coffee and bakery comfort hold the middle of the day together.',
+                    'body' => 'By lunch and merienda, Grande turns into a practical reset: a coffee that is easy to order again, bread and pastries that travel well, and a familiar place to sit for a while.',
+                    'image' => [
+                        'src' => url('public/images/menu-items/grande_coffee.jpg'),
+                        'alt' => 'Grande coffee served for a midday break',
+                    ],
                 ],
                 [
-                    'title' => 'Our Values',
-                    'body' => 'Freshness, quality, affordability, community, and genuine Filipino hospitality.',
-                ],
-            ],
-            'features' => [
-                [
-                    'title' => 'Fresh Pan De Sal Daily',
-                    'body' => 'Traditional recipes, quality ingredients, and bread baked throughout the day.',
-                ],
-                [
-                    'title' => 'Premium Coffee 24/7',
-                    'body' => 'Coffee service stays central to the brand, from everyday cups to specialty drinks.',
-                ],
-                [
-                    'title' => 'Affordable Prices',
-                    'body' => 'The current site consistently positions Grande as accessible, not premium-only.',
-                ],
-                [
-                    'title' => 'Warm Atmosphere',
-                    'body' => 'The space is presented as a place to relax, connect, work, or unwind any time.',
+                    'time' => 'Late-Night Coffee',
+                    'title' => 'When the area quiets down, Grande still feels open and useful.',
+                    'body' => 'That 24/7 promise matters late. There is still coffee to order, fresh bread to bring home, and a reliable stop in Sindalan when most other lights are already off.',
+                    'image' => [
+                        'src' => url('public/images/2024-12-02.webp'),
+                        'alt' => 'Grande storefront at night in Sindalan',
+                    ],
                 ],
             ],
-            'team' => [
-                'title' => 'Meet Our Team',
-                'body' => 'A dedicated team works around the clock to prepare bread, brew coffee, and keep the space welcoming.',
+            'proof_points' => [
+                'intro' => [
+                    'eyebrow' => 'Why Grande Works',
+                    'title' => 'The atmosphere feels warm, but the reason people return is practical.',
+                    'body' => 'Grande stays easy to choose because the bakery and coffee quality are familiar, the location makes sense, and the shop is ready when the day starts early or ends late.',
+                ],
+                [
+                    'kicker' => 'Fresh bread',
+                    'title' => 'Warm pan de sal stays at the center of the visit.',
+                    'body' => 'The bakery side never feels secondary. Grande keeps the bread fresh, soft, and ready for the kind of quick stop that still needs to feel worth it.',
+                    'icon' => url('public/icons/bread.png'),
+                    'image' => [
+                        'src' => url('public/images/menu-items/pandesal_fest_bundle.jpg'),
+                        'alt' => 'Grande bread bundle ready for takeaway',
+                    ],
+                ],
+                [
+                    'kicker' => 'Coffee comfort',
+                    'title' => 'Premium coffee stays approachable enough for repeat visits.',
+                    'body' => 'From a straightforward cup to sweeter favorites, the coffee is made for ordinary days, long catch-ups, and late resets without feeling overcomplicated.',
+                    'icon' => url('public/icons/coffee.png'),
+                    'image' => [
+                        'src' => url('public/images/menu-items/spanish_latte.jpg'),
+                        'alt' => 'Grande premium coffee for a daytime pause',
+                    ],
+                ],
+                [
+                    'kicker' => '24/7 service',
+                    'title' => 'The always-open promise is part of the product, not a footnote.',
+                    'body' => 'Grande is there for early starts, in-between errands, and late-night coffee runs. Being open all day and night makes the place genuinely useful, not just atmospheric.',
+                    'icon' => url('public/icons/clock.png'),
+                    'image' => [
+                        'src' => url('public/images/2024-12-02.webp'),
+                        'alt' => 'Grande storefront open at all hours',
+                    ],
+                ],
+                [
+                    'kicker' => 'Sindalan stop',
+                    'title' => 'The location fits the way local routines actually move.',
+                    'body' => 'Beside Puregold Sindalan and in front of St. Anthony\'s Drug Store, Grande is simple to reach before heading out, while doing errands, or on the way home.',
+                    'icon' => url('public/icons/pin.png'),
+                    'image' => [
+                        'src' => url('public/images/menu-items/classic_ensaymada.jpg'),
+                        'alt' => 'Grande bakery counter and neighborhood cafe atmosphere',
+                    ],
+                ],
             ],
-            'cta' => [
-                'title' => 'Experience Grande Today',
-                'body' => 'Visit anytime and taste the difference that fresh pan de sal and premium coffee make.',
+            'closing_cta' => [
+                'eyebrow' => 'Visit Any Hour',
+                'title' => 'Drop by for bread, coffee, and a familiar seat whenever the day gives you time.',
+                'body' => 'Browse the menu first or reserve a table, then stop in whenever you are nearby in Sindalan.',
+                'actions' => [
+                    [
+                        'label' => 'View Menu',
+                        'href' => url('menu'),
+                    ],
+                    [
+                        'label' => 'Reserve a Table',
+                        'href' => url('reserve'),
+                    ],
+                ],
             ],
         ];
     }

@@ -107,10 +107,17 @@ final class PublicPageController extends Controller
 
     private function renderPublicPage(string $view, array $page): string
     {
+        $bodyClass = '';
+
+        if ($view === 'pages.about') {
+            $bodyClass = 'about-page';
+        }
+
         return $this->render($view, [
             'pageTitle' => $page['title'],
             'metaDescription' => $page['description'],
             'page' => $page,
+            'bodyClass' => $bodyClass,
         ]);
     }
 }
