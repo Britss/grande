@@ -227,6 +227,53 @@ a {
     padding: 3rem 0 1rem;
 }
 
+.feedback-page .page-shell {
+    padding-top: 0;
+}
+
+.feedback-page .page-hero {
+    padding-top: clamp(7rem, 9vw, 9rem);
+}
+
+.feedback-form-card {
+    max-width: 44rem;
+    padding: 1.1rem;
+    margin-top: 0;
+}
+
+.feedback-form-card h2 {
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    margin-bottom: 0.55rem;
+}
+
+.feedback-form-card p,
+.feedback-form-card label,
+.feedback-form-card .form-control {
+    font-size: 0.92rem;
+}
+
+.feedback-form-card .stack-form,
+.feedback-form-card .form-grid {
+    gap: 0.8rem;
+}
+
+.feedback-form-card .form-field {
+    gap: 0.35rem;
+}
+
+.feedback-form-card .form-control {
+    padding: 0.68rem 0.8rem;
+    border-radius: 10px;
+}
+
+.feedback-form-card textarea.form-control {
+    min-height: 7rem;
+    max-height: 16rem;
+    max-width: 100%;
+    min-width: 100%;
+    resize: vertical;
+}
+
 .page-section {
     padding: 2.5rem 0;
 }
@@ -337,7 +384,7 @@ h2 {
     z-index: 1;
     text-align: center;
     padding: 9rem 0 5rem;
-    max-width: 900px;
+    max-width: min(100%, 1400px);
     animation: heroFade 0.8s ease both;
 }
 
@@ -350,14 +397,26 @@ h2 {
 }
 
 .home-hero h1 {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 1rem;
-    font-size: clamp(2.5rem, 6vw, 4.6rem);
+    font-size: clamp(2.5rem, 5vw, 4.4rem);
     line-height: 1.08;
+    letter-spacing: 0;
     color: #fff;
     text-shadow:
         0 1px 0 rgba(0, 0, 0, 0.3),
         0 2px 4px rgba(0, 0, 0, 0.42),
         0 8px 18px rgba(0, 0, 0, 0.52);
+}
+
+.home-hero h1 span {
+    display: block;
+}
+
+.home-hero h1 span:first-child {
+    white-space: nowrap;
 }
 
 .home-hero__lead {
@@ -850,10 +909,8 @@ h2 {
 }
 
 .about-page .page-shell {
-    padding: 0 0 5rem;
-    background:
-        radial-gradient(circle at top left, rgba(177, 118, 76, 0.16), transparent 32%),
-        linear-gradient(180deg, #fbf4eb 0%, #f7efe3 48%, #fcf8f1 100%);
+    padding: 0;
+    background: #fbf4eb;
 }
 
 .about-page [data-reveal] {
@@ -885,15 +942,14 @@ h2 {
     min-height: 100vh;
     overflow: hidden;
     padding: clamp(7rem, 9vw, 9rem) 0 clamp(5rem, 7vw, 7rem);
+    background: #fbf4eb;
 }
 
 .about-poster::before {
     content: "";
     position: absolute;
     inset: 0;
-    background:
-        linear-gradient(180deg, rgba(255, 248, 240, 0.14) 0%, rgba(255, 248, 240, 0.8) 54%, rgba(255, 248, 240, 0.96) 100%),
-        linear-gradient(120deg, rgba(101, 69, 47, 0.14), transparent 45%);
+    background: rgba(255, 248, 240, 0.78);
     pointer-events: none;
 }
 
@@ -1037,6 +1093,7 @@ h2 {
 
 .about-timeline {
     padding: clamp(3.2rem, 6vw, 5.4rem) 0;
+    background: #f7efe3;
 }
 
 .about-timeline__intro {
@@ -1071,8 +1128,8 @@ h2 {
 
 .about-moment {
     display: grid;
-    grid-template-columns: 7rem minmax(0, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 1.85rem;
     align-items: start;
 }
 
@@ -1099,7 +1156,7 @@ h2 {
     grid-template-columns: minmax(0, 0.92fr) minmax(13rem, 0.68fr);
     gap: 1.5rem;
     align-items: center;
-    padding: 1rem 0 1rem 1.2rem;
+    padding: 1rem 0 1rem 1.65rem;
 }
 
 .about-moment__copy h3,
@@ -1137,11 +1194,10 @@ h2 {
 }
 
 .about-proofbook {
-    padding: clamp(3.2rem, 6vw, 5.8rem) 0;
+    padding: clamp(7rem, 9vw, 9rem) 0 clamp(3.2rem, 6vw, 5.8rem);
     border-top: 1px solid var(--about-soft-line);
     border-bottom: 1px solid var(--about-soft-line);
-    background:
-        linear-gradient(180deg, rgba(255, 251, 246, 0.65) 0%, rgba(248, 240, 229, 0.92) 100%);
+    background: #f8f0e5;
 }
 
 .about-proofbook__layout {
@@ -1153,7 +1209,7 @@ h2 {
 
 .about-proofbook__intro {
     position: sticky;
-    top: 7rem;
+    top: clamp(8rem, 11vw, 11.5rem);
     max-width: 30rem;
 }
 
@@ -1192,30 +1248,40 @@ h2 {
 }
 
 .about-invitation {
-    padding: clamp(3rem, 6vw, 5rem) 0 0;
+    padding: clamp(3.5rem, 6vw, 5rem) 0;
+    background: #fbf4eb;
 }
 
 .about-invitation__layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 2rem;
+    gap: clamp(1rem, 3vw, 2rem);
     align-items: center;
-    padding: clamp(1.8rem, 4vw, 2.8rem);
-    border: 1px solid rgba(125, 79, 53, 0.14);
-    border-radius: 1.8rem;
-    background:
-        linear-gradient(135deg, rgba(95, 61, 39, 0.92) 0%, rgba(125, 79, 53, 0.84) 45%, rgba(184, 130, 84, 0.7) 100%);
-    box-shadow: 0 24px 60px rgba(58, 37, 24, 0.12);
+    padding: clamp(1.5rem, 3vw, 2.25rem) 0;
+    border-top: 1px solid rgba(125, 79, 53, 0.2);
+    border-bottom: 1px solid rgba(125, 79, 53, 0.2);
 }
 
 .about-invitation .about-section-label,
 .about-invitation__copy h2,
 .about-invitation__copy p {
-    color: #fff7ee;
+    color: var(--about-ink);
 }
 
 .about-invitation__copy {
-    max-width: 40rem;
+    max-width: 34rem;
+}
+
+.about-invitation__copy h2 {
+    font-size: clamp(1.65rem, 3vw, 2.75rem);
+    line-height: 1.05;
+    margin-bottom: 0.55rem;
+}
+
+.about-invitation__copy p {
+    max-width: 35rem;
+    margin-bottom: 0;
+    color: #624d3f;
 }
 
 .home-detail-grid {
@@ -4096,6 +4162,10 @@ h2 {
 
     .home-hero h1 {
         font-size: clamp(2.15rem, 10vw, 3.4rem);
+    }
+
+    .home-hero h1 span:first-child {
+        white-space: normal;
     }
 
     .home-hero__lead {

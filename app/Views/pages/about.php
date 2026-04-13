@@ -45,35 +45,6 @@
     </div>
 </section>
 
-<section class="about-timeline" aria-labelledby="about-timeline-title">
-    <div class="container">
-        <div class="about-timeline__intro" data-reveal>
-            <h2 id="about-timeline-title">Grande feels different by the hour, but it stays familiar all through it.</h2>
-        </div>
-
-        <div class="about-timeline__track">
-            <?php foreach ($page['timeline_moments'] as $index => $moment): ?>
-                <article class="about-moment" data-reveal style="--about-delay: <?= e((string) ($index * 120)) ?>ms;">
-                    <div class="about-moment__meta">
-                        <p class="about-moment__time"><?= e($moment['time']) ?></p>
-                    </div>
-
-                    <div class="about-moment__content">
-                        <div class="about-moment__copy">
-                            <h3><?= e($moment['title']) ?></h3>
-                            <p><?= e($moment['body']) ?></p>
-                        </div>
-
-                        <figure class="about-moment__image">
-                            <img src="<?= e($moment['image']['src']) ?>" alt="<?= e($moment['image']['alt']) ?>">
-                        </figure>
-                    </div>
-                </article>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-
 <section class="about-proofbook" aria-labelledby="about-proofbook-title">
     <div class="container about-proofbook__layout">
         <div class="about-proofbook__intro" data-reveal>

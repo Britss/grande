@@ -1,7 +1,10 @@
 <section class="home-hero">
     <div class="container home-hero__content">
         <p class="home-hero__eyebrow">Grande. Pan De Sal + Coffee</p>
-        <h1>Freshly Baked, Freshly Brewed - EVERY. SINGLE. DAY.</h1>
+        <h1>
+            <span>Freshly Baked, Freshly Brewed -</span>
+            <span>EVERY. SINGLE. DAY.</span>
+        </h1>
         <p class="home-hero__lead">
             Pandesal, coffee, and a cozy stop in Sindalan.
         </p>

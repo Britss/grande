@@ -347,7 +347,7 @@ final class PublicContent
             'title' => 'Feedback',
             'description' => 'Share your Grande. Pandesal + Coffee experience.',
             'hero' => [
-                'eyebrow' => 'Feedback',
+                'eyebrow' => '',
                 'title' => 'Share Your Feedback',
                 'subtitle' => 'Help us serve you better with your comments and suggestions.',
             ],

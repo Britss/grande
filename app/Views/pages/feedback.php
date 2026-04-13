@@ -18,7 +18,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
     <?php endif; ?>
 
     <div class="split-layout">
-        <div class="content-card">
+        <div class="content-card feedback-form-card">
             <h2>Your Feedback Matters</h2>
             <p><?= e($page['form_intro']) ?></p>
 
@@ -74,7 +74,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
 
                 <div class="form-field">
                     <label for="feedback_body">Your Feedback</label>
-                    <textarea id="feedback_body" name="feedback_body" rows="6" class="form-control"><?= e((string) old('feedback_body')) ?></textarea>
+                    <textarea id="feedback_body" name="feedback_body" rows="4" class="form-control"><?= e((string) old('feedback_body')) ?></textarea>
                     <?php if ($message = field_error('feedback_body')): ?>
                         <p class="field-error"><?= e($message) ?></p>
                     <?php endif; ?>

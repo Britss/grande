@@ -50,6 +50,7 @@ final class PublicPageController extends Controller
             'metaDescription' => $page['description'],
             'page' => $page,
             'user' => Auth::user(),
+            'bodyClass' => 'feedback-page',
         ]);
     }
 
