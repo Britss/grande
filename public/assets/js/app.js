@@ -25,6 +25,336 @@ document.addEventListener("click", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    var widget = document.querySelector("[data-assistant-widget]");
+
+    if (!widget) {
+        return;
+    }
+
+    var config = window.GRANDE_ASSISTANT || {};
+    var names = config.names || {};
+    var websiteName = names.website || "GrandeGo";
+    var shopName = names.shop || "Grande";
+    var icons = config.icons || {};
+    var links = config.links || {};
+    var contact = config.contact || {};
+    var toggle = widget.querySelector("[data-assistant-toggle]");
+    var close = widget.querySelector("[data-assistant-close]");
+    var windowEl = widget.querySelector("[data-assistant-window]");
+    var body = widget.querySelector("[data-assistant-body]");
+    var quickReplies = widget.querySelector("[data-assistant-quick-replies]");
+    var form = widget.querySelector("[data-assistant-form]");
+    var input = widget.querySelector("[data-assistant-input]");
+    var badge = widget.querySelector("[data-assistant-badge]");
+    var firstOpen = true;
+    var typingTimer = null;
+
+    if (!toggle || !close || !windowEl || !body || !quickReplies || !form || !input) {
+        return;
+    }
+
+    var replyOptions = [
+        { label: "Menu", text: "What is on the menu?", icon: "menu" },
+        { label: "Hours", text: "What are your hours?", icon: "clock" },
+        { label: "Reserve", text: "How do I make a reservation?", icon: "reserve" },
+        { label: "Location", text: "Where are you located?", icon: "location" },
+        { label: "Contact", text: "How can I contact you?", icon: "contact" },
+        { label: "Order", text: "How do I place an order?", icon: "order" }
+    ];
+
+    var scrollToBottom = function () {
+        body.scrollTop = body.scrollHeight;
+    };
+
+    var timeText = function () {
+        return new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    };
+
+    var appendIcon = function (parent, src, className) {
+        if (!src) {
+            return;
+        }
+
+        var image = document.createElement("img");
+        image.src = src;
+        image.alt = "";
+        image.className = className;
+        image.setAttribute("aria-hidden", "true");
+        parent.appendChild(image);
+    };
+
+    var appendFormattedContent = function (parent, parts) {
+        parts.forEach(function (part) {
+            if (part.type === "text") {
+                parent.appendChild(document.createTextNode(part.value));
+                return;
+            }
+
+            if (part.type === "strong") {
+                var strong = document.createElement("strong");
+                strong.textContent = part.value;
+                parent.appendChild(strong);
+                return;
+            }
+
+            if (part.type === "link") {
+                var link = document.createElement("a");
+                link.href = part.href;
+                link.textContent = part.label;
+                parent.appendChild(link);
+            }
+        });
+    };
+
+    var addMessage = function (sender, parts) {
+        var message = document.createElement("div");
+        var bubbleWrap = document.createElement("div");
+        var bubble = document.createElement("p");
+        var timestamp = document.createElement("span");
+
+        message.className = "assistant-message assistant-message--" + sender;
+        bubbleWrap.className = "assistant-bubble-wrap";
+        timestamp.className = "assistant-time";
+        timestamp.textContent = timeText();
+
+        if (sender === "bot") {
+            var avatar = document.createElement("div");
+            avatar.className = "assistant-avatar";
+            appendIcon(avatar, icons.coffee, "assistant-avatar__icon");
+            message.appendChild(avatar);
+        }
+
+        appendFormattedContent(bubble, Array.isArray(parts) ? parts : [{ type: "text", value: String(parts || "") }]);
+        bubbleWrap.appendChild(bubble);
+        bubbleWrap.appendChild(timestamp);
+        message.appendChild(bubbleWrap);
+        body.appendChild(message);
+        scrollToBottom();
+    };
+
+    var showTyping = function () {
+        var message = document.createElement("div");
+        var avatar = document.createElement("div");
+        var indicator = document.createElement("div");
+
+        message.className = "assistant-message assistant-message--bot";
+        message.setAttribute("data-assistant-typing", "true");
+        avatar.className = "assistant-avatar";
+        indicator.className = "assistant-typing";
+        appendIcon(avatar, icons.coffee, "assistant-avatar__icon");
+
+        for (var index = 0; index < 3; index += 1) {
+            indicator.appendChild(document.createElement("span"));
+        }
+
+        message.appendChild(avatar);
+        message.appendChild(indicator);
+        body.appendChild(message);
+        scrollToBottom();
+    };
+
+    var hideTyping = function () {
+        var typing = body.querySelector("[data-assistant-typing]");
+
+        if (typing) {
+            typing.remove();
+        }
+    };
+
+    var showQuickReplies = function () {
+        quickReplies.innerHTML = "";
+
+        replyOptions.forEach(function (reply) {
+            var button = document.createElement("button");
+            var label = document.createElement("span");
+
+            button.type = "button";
+            button.className = "assistant-reply";
+            button.setAttribute("data-assistant-reply", reply.text);
+            appendIcon(button, icons[reply.icon], "assistant-reply__icon");
+            label.textContent = reply.label;
+            button.appendChild(label);
+            quickReplies.appendChild(button);
+        });
+
+        quickReplies.hidden = false;
+        scrollToBottom();
+    };
+
+    var hideQuickReplies = function () {
+        quickReplies.hidden = true;
+        quickReplies.innerHTML = "";
+    };
+
+    var text = function (value) {
+        return { type: "text", value: value };
+    };
+
+    var strong = function (value) {
+        return { type: "strong", value: value };
+    };
+
+    var link = function (label, href) {
+        return { type: "link", label: label, href: href || "#" };
+    };
+
+    var responseFor = function (message) {
+        var normalized = String(message || "").toLowerCase();
+        var phone = contact.phone || "+63 954 247 8073";
+        var email = contact.email || "grande.pandesalcoffee.main@gmail.com";
+        var address = contact.address || "Beside Puregold, in front of St. Anthony's Drug Store, Sindalan, San Fernando, Pampanga";
+
+        if (/grandego|grande|website|site|coffee shop|shop name|brand name/.test(normalized)) {
+            return [
+                strong(websiteName),
+                text(" is the website. "),
+                strong(shopName),
+                text(" is the coffee shop: Grande. Pan De Sal + Coffee.")
+            ];
+        }
+
+        if (/menu|food|coffee|pandesal|pastry|pastries|sandwich|price|eat|drink/.test(normalized)) {
+            return [
+                text(shopName + " serves freshly baked Pan De Sal, premium coffee, pastries, and sandwiches. Browse the full list on the "),
+                link("Menu page", links.menu),
+                text(".")
+            ];
+        }
+
+        if (/hour|open|close|time|247|24\/7|when/.test(normalized)) {
+            return [text(shopName + " is open "), strong("24/7"), text(". Pan De Sal and coffee are available any time of day.")];
+        }
+
+        if (/reserv|book|table|seat/.test(normalized)) {
+            return [
+                text("Use the "),
+                link("Reserve page", links.reserve),
+                text(" to choose your date, time, guest count, and contact details. Logged-in customers can track reservations from the dashboard.")
+            ];
+        }
+
+        if (/where|location|address|find|directions|sindalan|pampanga/.test(normalized)) {
+            return [text(shopName + " is located at "), strong(address), text(". Drop by anytime.")];
+        }
+
+        if (/contact|call|phone|number|email|reach|feedback/.test(normalized)) {
+            return [
+                text("Reach us at "),
+                strong(phone),
+                text(" or "),
+                strong(email),
+                text(". You can also use the "),
+                link("Feedback page", links.feedback),
+                text(".")
+            ];
+        }
+
+        if (/order|cart|checkout|buy|purchase|delivery|pick.?up|dine|gcash|cash/.test(normalized)) {
+            return [
+                text("Browse the "),
+                link("Menu page", links.menu),
+                text(", add items to your cart, then checkout through " + websiteName + " for dine-in or to-go orders from " + shopName + ". GCash receipt upload and cash payment options are supported.")
+            ];
+        }
+
+        if (/hi|hello|hey|good morning|good afternoon|good evening|kumusta|kamusta/.test(normalized)) {
+            return [text("Hello. I am the " + websiteName + " assistant for " + shopName + ". I can help with the menu, hours, reservations, ordering, location, and contact details.")];
+        }
+
+        if (/thank|thanks|salamat|ty/.test(normalized)) {
+            return [text("You're welcome. Is there anything else I can help with?")];
+        }
+
+        if (/bye|goodbye|paalam|see you/.test(normalized)) {
+            return [text("Goodbye. Visit " + websiteName + " anytime. " + shopName + " is open 24/7.")];
+        }
+
+        return [text("I am not sure about that yet. Try the quick buttons below, or contact " + shopName + " at "), strong(phone), text(".")];
+    };
+
+    var sendMessage = function (message) {
+        var value = String(message || input.value || "").trim();
+
+        if (!value) {
+            return;
+        }
+
+        hideQuickReplies();
+        addMessage("user", [text(value)]);
+        input.value = "";
+        showTyping();
+
+        window.clearTimeout(typingTimer);
+        typingTimer = window.setTimeout(function () {
+            hideTyping();
+            addMessage("bot", responseFor(value));
+            showQuickReplies();
+        }, 650);
+    };
+
+    var setOpen = function (isOpen) {
+        widget.classList.toggle("is-open", isOpen);
+        windowEl.hidden = !isOpen;
+        windowEl.setAttribute("aria-hidden", isOpen ? "false" : "true");
+        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        toggle.setAttribute("aria-label", isOpen ? "Close " + websiteName + " assistant" : "Open " + websiteName + " assistant");
+
+        if (isOpen) {
+            if (firstOpen) {
+                firstOpen = false;
+                if (badge) {
+                    badge.hidden = true;
+                }
+                window.setTimeout(function () {
+                    addMessage("bot", [text("Hi. Welcome to " + websiteName + ".")]);
+                }, 180);
+                window.setTimeout(function () {
+                    addMessage("bot", [text("I can help with " + shopName + " orders, reservations, hours, and contact details.")]);
+                    showQuickReplies();
+                }, 520);
+            }
+            window.setTimeout(function () {
+                input.focus();
+            }, 60);
+        }
+    };
+
+    toggle.addEventListener("click", function () {
+        setOpen(!widget.classList.contains("is-open"));
+    });
+
+    close.addEventListener("click", function () {
+        setOpen(false);
+        toggle.focus();
+    });
+
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        sendMessage();
+    });
+
+    quickReplies.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-assistant-reply]");
+
+        if (!button) {
+            return;
+        }
+
+        sendMessage(button.getAttribute("data-assistant-reply"));
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && widget.classList.contains("is-open")) {
+            setOpen(false);
+            toggle.focus();
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     var menuFilter = document.querySelector("[data-menu-filter]");
 
     if (!menuFilter) {

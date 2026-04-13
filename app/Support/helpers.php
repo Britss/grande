@@ -29,7 +29,15 @@ function url(string $path = ''): string
 
 function asset(string $path): string
 {
-    return url('public/assets/' . ltrim($path, '/'));
+    $assetPath = ltrim($path, '/');
+    $url = url('public/assets/' . $assetPath);
+    $filePath = dirname(__DIR__, 2) . '/public/assets/' . str_replace('/', DIRECTORY_SEPARATOR, $assetPath);
+
+    if (is_file($filePath)) {
+        return $url . '?v=' . filemtime($filePath);
+    }
+
+    return $url;
 }
 
 function e(string|null $value): string

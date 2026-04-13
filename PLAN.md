@@ -53,10 +53,12 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   follow-up dashboard parity polish is implemented: customer account panels now include a profile readiness checklist, and admin reports include print/save-as-PDF controls plus clearer export guidance beside the drilldown tables.
 - Completed:
   dashboard density polish is implemented: shared dashboard spacing, hero height, statistic cards, records panels, operational cards, order line items, and filter bars are tightened to better match the older compact `grandego` dashboard rhythm without changing workflows.
+- Completed:
+  public assistant widget parity is implemented on non-dashboard pages: floating coffee button, unread badge, first-open welcome sequence, timestamped bot/user bubbles, typing indicator, quick replies, rewrite route links, escaped typed messages, keyboard close behavior, and mobile-aware styling.
 - Partially completed:
   direct `grandego` feature/flow parity. The main transactional backend workflows are implemented, and the public menu search/filter gap has been closed, but the rewrite is not yet a function-for-function clone of old handler endpoints.
 - Suggested next task:
-  finish remaining `grandego` parity gaps before final visual QA: customer reorder, customer/staff notifications, new-order polling, profile-picture upload, authenticated change-password, menu item delete/archive parity, customer hard-delete decision, and compatibility decisions for old standalone JSON getter endpoints.
+  finish remaining `grandego` parity gaps before final visual QA: customer reorder, customer/staff notifications, order/reservation status email updates, new-order polling, profile-picture upload, authenticated change-password, menu item delete/archive parity, customer hard-delete decision, and compatibility decisions for old standalone JSON getter endpoints.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:
@@ -65,10 +67,14 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   core public routes, auth, cart, direct checkout, reservation checkout, receipt upload, payment review, order status management, reservation status management, feedback submission/review, menu item/size management, user activation/deactivation through `is_active`, reports, customer profile editing, customer cancellation rules, and dashboard filtering for staff/admin work queues.
 - Recently fixed parity:
   old public menu search/category filtering from `grandego/pages/menu.php` and `grandego/assets/js/pages/public/menu.js` is now implemented in the new `/menu` page.
+- Completed parity:
+  the public assistant widget from `includes/components/chatbot-widget.php`, `assets/css/components/assistant-widget.css`, and `assets/js/components/assistant-widget.js` has been ported into the rewrite as a non-dashboard partial with safer delegated JavaScript behavior and rewrite URLs.
 - Remaining parity gaps:
   customer reorder flows from `orders/reorder_order.php` and `orders/reorder_latest.php` are not implemented.
 - Remaining parity gaps:
   customer order/reservation notification tables and endpoints from the old helper functions and notification handlers are not implemented.
+- Remaining parity gaps:
+  customer email updates for staff/admin order and reservation status changes from `orders/update_order_status.php` and `reservations/update_reservation_status.php` are not implemented. Old `grandego` emails customers when orders move to `ready`, `completed`, `cancelled`, or `rejected`, and when reservations move to `confirmed`, `completed`, or `cancelled`. Completed order emails include a text receipt summary attachment, and completed reservation emails include a text reservation summary attachment.
 - Remaining parity gaps:
   staff new-order polling from `orders/check-new-orders.php` is not implemented.
 - Remaining parity gaps:
@@ -83,6 +89,45 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   standalone JSON getter endpoints such as old `get_orders.php`, `get_order_items.php`, `get_reservation_orders.php`, `get_customer_reservation_orders.php`, `get_menu_items.php`, `get_feedback.php`, `get_customers.php`, and report chart endpoints are mostly replaced by server-rendered dashboard data and AJAX panel refreshes. Decide whether compatibility endpoints are required.
 - Remaining visual QA:
   browser-level dashboard comparison against old `grandego` is still needed after the functional parity decisions above are resolved.
+
+## Assistant Widget Implementation Plan
+- Current status:
+  completed in the rewrite using `app/Views/partials/assistant-widget.php`, explicit public/customer route inclusion in `app/Views/layouts/app.php`, delegated JavaScript in `public/assets/js/app.js`, and widget styles in `public/assets/css/app.css`.
+- Goal:
+  restore the old public-page `GrandeGo. Assistant` parity as a lightweight, static FAQ assistant before final dashboard visual QA. This should not introduce external AI/API dependencies for v1.
+- Old behavior to match:
+  floating coffee-icon button, unread badge, compact chat window, welcome messages on first open, close button, typing indicator, timestamped bot/user bubbles, quick-reply buttons, keyword-based answers, and links to menu/reservation/feedback/contact flows.
+- Scope for v1:
+  implement the assistant on public pages only: home, about, menu, reserve, feedback, cart, checkout, and reservation checkout. Keep dashboards focused on operational work unless a later parity pass confirms the old dashboards included the widget there.
+- Files to add/update:
+  add `app/Views/partials/assistant-widget.php` for reusable markup.
+  update `app/Views/layouts/app.php` to include the widget for non-dashboard pages.
+  add assistant styles into `public/assets/css/app.css` or a dedicated `public/assets/css/assistant-widget.css` if the asset layout is split later.
+  extend `public/assets/js/app.js` with a namespaced assistant initializer, or add `public/assets/js/assistant-widget.js` if keeping it separate is cleaner.
+- Route/link adaptation:
+  convert old hardcoded `pages/menu.php` and `pages/reserve.php` links to rewrite URLs via `url('menu')`, `url('reserve')`, `url('feedback')`, and the current contact details from shared public content.
+  expose a small `window.GRANDE_ASSISTANT` config object from the layout or partial so JavaScript does not hardcode paths.
+- Implementation steps:
+  1. Port the old widget markup into a partial using the rewrite helpers `url()`, `asset()`, and `e()`.
+  2. Add layout inclusion rules so the widget appears on public/customer-facing pages and is excluded from dashboard pages.
+  3. Port the JavaScript behavior while removing inline `onclick`; bind quick replies with delegated event listeners and escape user input before rendering.
+  4. Port the visual style into the current design system, preserving old placement and feel while avoiding conflicts with the mobile nav, cart actions, receipt upload, and modal layers.
+  5. Update answer copy for rewrite routes and current flows: menu browsing, cart/checkout, reservation, GCash/cash payment, contact, 24/7 hours, and location.
+  6. Add accessibility polish: real buttons, `aria-expanded`, `aria-hidden`, close on Escape, focus the input on open, and keep focus behavior predictable on mobile.
+  7. Verify desktop and mobile rendering on all public pages, especially menu/cart/checkout where fixed-position controls can overlap.
+- Acceptance criteria:
+  the assistant button is visible and non-overlapping on public pages.
+  first open shows the welcome sequence and hides the badge.
+  quick replies produce the expected answers without inline JavaScript.
+  typed user messages are escaped and cannot inject HTML.
+  response links navigate to the rewrite routes.
+  the widget is absent from admin/employee/customer dashboards unless intentionally enabled later.
+  mobile view keeps the input, close button, and quick replies usable without covering checkout controls.
+- Deferred decisions:
+  whether to persist chat history in localStorage.
+  whether to add backend-managed FAQ content.
+  whether to add staff/admin live chat or an AI-backed assistant.
+  whether the assistant should appear for logged-in dashboard customers after the main parity gaps are complete.
 
 ## Implementation Changes
 - Use a simple MVC-style structure:
@@ -220,7 +265,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - UI regression:
   public pages and all dashboards render correctly on desktop and mobile with no duplicate or conflicting data blocks.
 - GrandeGo parity regression:
-  compare against `c:\xampp\htdocs\grandego` for old handler-backed flows, especially menu search/filter, reorder, notifications, profile-picture upload, change password, live order polling, menu/customer delete behavior, and dashboard JSON endpoint expectations.
+  compare against `c:\xampp\htdocs\grandego` for old handler-backed flows, especially menu search/filter, reorder, dashboard notifications, order/reservation status email updates, profile-picture upload, change password, live order polling, menu/customer delete behavior, and dashboard JSON endpoint expectations.
+  verify that staff/admin order status changes send non-blocking customer emails for `ready`, `completed`, `cancelled`, and `rejected`, with completed orders attaching a receipt-summary text file.
+  verify that staff/admin reservation status changes send non-blocking customer emails for `confirmed`, `completed`, and `cancelled`, with completed reservations attaching a reservation-summary text file.
+  verify mail failures are logged without rolling back the already-persisted status update.
 
 ## Assumptions And Defaults
 - Fresh database means no migration of current records; the rewrite will ship with a new schema and seedable admin account.

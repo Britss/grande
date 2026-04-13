@@ -14,7 +14,16 @@
         <?= $content ?>
     </main>
 
+    <?php
+        $assistantPaths = ['/', '/about', '/menu', '/reserve', '/feedback', '/cart', '/checkout', '/reservation-checkout'];
+        $showAssistant = !str_contains((string) ($bodyClass ?? ''), 'dashboard-body')
+            && in_array(request_path(), $assistantPaths, true);
+    ?>
+
     <?php if (!str_contains((string) ($bodyClass ?? ''), 'dashboard-body')): ?>
+        <?php if ($showAssistant): ?>
+            <?php require __DIR__ . '/../partials/assistant-widget.php'; ?>
+        <?php endif; ?>
         <?php require __DIR__ . '/../partials/footer.php'; ?>
     <?php endif; ?>
     <script src="<?= e(asset('js/app.js')) ?>"></script>
