@@ -580,10 +580,47 @@ $recentOrder = $recentOrders[0] ?? null;
                             <div class="records-panel-header">
                                 <h3>Password Access</h3>
                             </div>
-                            <p class="lead">Password changes use the reset-link flow so the account can be verified before a new password is accepted.</p>
-                            <div class="action-row action-row--left">
-                                <a href="<?= e(url('password/forgot')) ?>" class="button button-secondary button-small">Reset Password</a>
-                            </div>
+                            <p class="lead">Change your password here when you know the current one, or use reset access if you need an email link.</p>
+                            <form action="<?= e(url('dashboard/customer/password')) ?>" method="post" class="form-grid">
+                                <?= csrf_field() ?>
+                                <div class="form-field">
+                                    <label for="customer_current_password">Current Password</label>
+                                    <input
+                                        type="password"
+                                        id="customer_current_password"
+                                        name="current_password"
+                                        autocomplete="current-password"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-field">
+                                    <label for="customer_new_password">New Password</label>
+                                    <input
+                                        type="password"
+                                        id="customer_new_password"
+                                        name="password"
+                                        autocomplete="new-password"
+                                        minlength="8"
+                                        required
+                                    >
+                                    <p class="field-hint">Use at least 8 characters with uppercase, lowercase, and a number.</p>
+                                </div>
+                                <div class="form-field">
+                                    <label for="customer_confirm_password">Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        id="customer_confirm_password"
+                                        name="confirm_password"
+                                        autocomplete="new-password"
+                                        minlength="8"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-field full-width action-row action-row--left">
+                                    <button type="submit" class="button button-primary">Update Password</button>
+                                    <a href="<?= e(url('password/forgot')) ?>" class="button button-secondary button-small">Reset Password</a>
+                                </div>
+                            </form>
                         </article>
                     </div>
 

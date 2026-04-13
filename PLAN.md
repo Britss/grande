@@ -57,6 +57,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   public assistant widget parity is implemented on non-dashboard pages: floating coffee button, unread badge, first-open welcome sequence, timestamped bot/user bubbles, typing indicator, quick replies, rewrite route links, escaped typed messages, keyboard close behavior, and mobile-aware styling.
 - Completed:
   customer reorder parity is implemented from the dashboard: customers can add a previous order back to their cart, unavailable archived menu items/sizes are skipped, current catalog prices are used, CSRF is enforced, and successful reorder actions are audit logged.
+- Completed:
+  authenticated customer change-password parity is implemented from the profile dashboard: customers verify their current password, submit a policy-compliant new password, receive CSRF protection and validation feedback, keep reset-link access as fallback, and successful changes are audit logged.
 - Partially completed:
   direct `grandego` feature/flow parity. The main transactional backend workflows are implemented, and the public menu search/filter gap has been closed, but the rewrite is not yet a function-for-function clone of old handler endpoints.
 - Suggested next task:
@@ -82,7 +84,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Remaining parity gaps:
   customer profile-picture upload from `uploads/upload-profile-picture.php` is not implemented, even though the new users table has a `profile_picture` column.
 - Remaining parity gaps:
-  authenticated dashboard password change from `auth/change-password.php` is replaced by reset-link flow, not cloned.
+- Completed parity:
+  authenticated dashboard password change from `auth/change-password.php` is now implemented for customer profile dashboards; decide later whether staff/admin self-service password panels are required.
 - Remaining parity gaps:
   old menu delete behavior from `menu/delete_menu_item.php` is not implemented as a hard delete. The rewrite currently favors availability/archive-style management.
 - Remaining parity gaps:
@@ -157,7 +160,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   account-flow polish now adds profile guidance, password reset access, and clearer action-oriented empty states for orders, reservations, and feedback.
   shared dashboard density styles now make customer records, summary cards, and dashboard panels more compact and closer to the old dashboard rhythm.
 - Current gap:
-  profile-picture upload, authenticated change-password, and dashboard status notifications from the old customer dashboard are not yet implemented.
+  profile-picture upload and dashboard status notifications from the old customer dashboard are not yet implemented.
 - Build admin dashboard:
   overview, orders, reservations, menu management, user management, feedback inbox, reports/graphs, audit trail.
   Remove duplicate widgets and keep one source of truth per metric.
@@ -246,6 +249,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Current status:
   own orders/reservations are isolated correctly in the rebuilt dashboard.
   customers can update their own profile details with duplicate email/phone protection.
+  customers can change their password from the profile dashboard after verifying the current password; successful changes are audit logged.
   customer profile guidance, dashboard password reset access, and actionable empty states are implemented.
   customer cancellation rules are implemented with ownership checks, pending-only guards, in-progress/terminal blocking, linked pending reservation-order cancellation, CSRF protection, and audit logging.
   customer reorder is implemented with ownership checks, CSRF protection, current catalog pricing, unavailable item/size skipping, cart merge behavior, cart redirect, and audit logging.

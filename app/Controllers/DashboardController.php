@@ -71,6 +71,42 @@ final class DashboardController extends Controller
         redirect('/dashboard/customer?section=profile');
     }
 
+    public function updateCustomerPassword(): never
+    {
+        $user = $this->requireRole('customer');
+
+        if (!Csrf::validate((string) request_input('_token'))) {
+            Session::flash('error', 'The form expired. Please update your password again.');
+            redirect('/dashboard/customer?section=profile');
+        }
+
+        $users = new UserRepository();
+
+        try {
+            $input = $this->validatedCustomerPasswordData();
+            $freshUser = $users->findById((int) ($user['id'] ?? 0));
+
+            if ($freshUser === null || ($freshUser['role'] ?? null) !== 'customer') {
+                throw new \RuntimeException('Customer account not found.');
+            }
+
+            if (!password_verify($input['current_password'], (string) ($freshUser['password'] ?? ''))) {
+                throw new \RuntimeException('Current password is incorrect.');
+            }
+
+            $users->updatePassword((int) ($freshUser['id'] ?? 0), password_hash($input['password'], PASSWORD_DEFAULT));
+            Auth::login($freshUser);
+            (new AuditLogRepository())->log((int) ($freshUser['id'] ?? 0), 'customer_password_changed', 'user', (int) ($freshUser['id'] ?? 0), [
+                'email' => $freshUser['email'] ?? '',
+            ]);
+            Session::flash('status', 'Your password was updated successfully.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+
+        redirect('/dashboard/customer?section=profile');
+    }
+
     public function cancelCustomerOrder(): never
     {
         $user = $this->requireRole('customer');
@@ -878,6 +914,35 @@ final class DashboardController extends Controller
             if ($users->phoneExistsExcept($data['phone'], $userId)) {
                 $validator->addError('phone', 'This phone number is already registered.');
             }
+        }
+
+        if ($validator->fails()) {
+            throw new \RuntimeException($this->firstValidationError($validator->errors()));
+        }
+
+        return $data;
+    }
+
+    private function validatedCustomerPasswordData(): array
+    {
+        $data = [
+            'current_password' => (string) request_input('current_password'),
+            'password' => (string) request_input('password'),
+            'confirm_password' => (string) request_input('confirm_password'),
+        ];
+
+        $validator = Validator::make($data)
+            ->required('current_password', 'Current password')
+            ->required('password', 'New password')
+            ->min('password', 8, 'New password')
+            ->regex('password', '/[A-Z]/', 'Password must include at least one uppercase letter.')
+            ->regex('password', '/[a-z]/', 'Password must include at least one lowercase letter.')
+            ->regex('password', '/\d/', 'Password must include at least one number.')
+            ->required('confirm_password', 'Confirm password')
+            ->same('confirm_password', 'password', 'Confirm password', 'New password');
+
+        if (!$validator->fails() && hash_equals($data['current_password'], $data['password'])) {
+            $validator->addError('password', 'New password must be different from your current password.');
         }
 
         if ($validator->fails()) {
