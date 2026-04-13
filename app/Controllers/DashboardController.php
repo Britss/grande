@@ -98,6 +98,40 @@ final class DashboardController extends Controller
         redirect('/dashboard/customer?section=orders');
     }
 
+    public function reorderCustomerOrder(): never
+    {
+        $user = $this->requireRole('customer');
+
+        if (!Csrf::validate((string) request_input('_token'))) {
+            Session::flash('error', 'The form expired. Please try reordering again.');
+            redirect('/dashboard/customer?section=orders');
+        }
+
+        $orderId = (int) request_input('order_id', 0);
+
+        try {
+            $result = (new OrderRepository())->reorderToCart($orderId, (int) ($user['id'] ?? 0));
+            (new AuditLogRepository())->log((int) ($user['id'] ?? 0), 'customer_order_reordered', 'order', (int) ($result['order_id'] ?? $orderId), [
+                'order_number' => $result['order_number'] ?? '',
+                'restored_item_count' => (int) ($result['restored_item_count'] ?? 0),
+                'skipped_item_count' => (int) ($result['skipped_item_count'] ?? 0),
+            ]);
+
+            $message = 'Order ' . ($result['order_number'] ?? '') . ' was added back to your cart.';
+
+            if ((int) ($result['skipped_item_count'] ?? 0) > 0) {
+                $message .= ' Some unavailable items were skipped.';
+            }
+
+            Session::flash('status', $message);
+            redirect('/cart');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+
+        redirect('/dashboard/customer?section=orders');
+    }
+
     public function cancelCustomerReservation(): never
     {
         $user = $this->requireRole('customer');

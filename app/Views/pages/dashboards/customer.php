@@ -146,7 +146,11 @@ $recentOrder = $recentOrders[0] ?? null;
                                     </div>
                                 </div>
                                 <div class="action-row action-row--left">
-                                    <a href="<?= e(url('menu')) ?>" class="button button-primary">Reorder From Menu</a>
+                                    <form action="<?= e(url('dashboard/customer/orders/reorder')) ?>" method="post">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="order_id" value="<?= e((string) ($recentOrder['id'] ?? 0)) ?>">
+                                        <button type="submit" class="button button-primary">Reorder</button>
+                                    </form>
                                     <button
                                         class="button button-secondary"
                                         type="button"
@@ -333,6 +337,11 @@ $recentOrder = $recentOrders[0] ?? null;
                                                 </div>
                                             </div>
                                             <div class="reservation-actions">
+                                                <form action="<?= e(url('dashboard/customer/orders/reorder')) ?>" method="post">
+                                                    <?= csrf_field() ?>
+                                                    <input type="hidden" name="order_id" value="<?= e((string) ($order['id'] ?? 0)) ?>">
+                                                    <button type="submit" class="button button-primary button-small">Reorder</button>
+                                                </form>
                                                 <button
                                                     class="button button-secondary button-small"
                                                     type="button"

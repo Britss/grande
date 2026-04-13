@@ -43,6 +43,7 @@ return static function (Router $router): void {
 
     $router->get('/dashboard/customer', [DashboardController::class, 'customer']);
     $router->post('/dashboard/customer/profile', [DashboardController::class, 'updateCustomerProfile']);
+    $router->post('/dashboard/customer/orders/reorder', [DashboardController::class, 'reorderCustomerOrder']);
     $router->post('/dashboard/customer/orders/cancel', [DashboardController::class, 'cancelCustomerOrder']);
     $router->post('/dashboard/customer/reservations/cancel', [DashboardController::class, 'cancelCustomerReservation']);
     $router->get('/dashboard/admin', [DashboardController::class, 'admin']);

@@ -421,6 +421,128 @@ final class OrderRepository
         ];
     }
 
+    public function reorderToCart(int $orderId, int $userId): array
+    {
+        $connection = Database::connection();
+        $connection->beginTransaction();
+
+        try {
+            $orderStatement = $connection->prepare(
+                'SELECT id, order_number
+                 FROM orders
+                 WHERE id = :id AND user_id = :user_id
+                 LIMIT 1'
+            );
+            $orderStatement->execute([
+                'id' => $orderId,
+                'user_id' => $userId,
+            ]);
+            $order = $orderStatement->fetch();
+
+            if (!is_array($order)) {
+                throw new RuntimeException('Order not found.');
+            }
+
+            $itemStatement = $connection->prepare(
+                'SELECT
+                    oi.menu_item_id,
+                    oi.quantity,
+                    oi.size,
+                    mi.name AS item_name,
+                    mis.price AS current_price,
+                    mis.size_label
+                 FROM order_items oi
+                 INNER JOIN menu_items mi ON mi.id = oi.menu_item_id
+                 INNER JOIN menu_item_sizes mis
+                    ON mis.menu_item_id = oi.menu_item_id
+                   AND mis.size_label = oi.size
+                 WHERE oi.order_id = :order_id
+                   AND mi.is_available = 1
+                   AND mis.is_available = 1
+                 ORDER BY oi.id ASC'
+            );
+            $itemStatement->execute(['order_id' => $orderId]);
+            $items = $itemStatement->fetchAll();
+
+            if (!is_array($items) || $items === []) {
+                throw new RuntimeException('None of the items from this order are currently available to reorder.');
+            }
+
+            $totalItemStatement = $connection->prepare('SELECT COUNT(*) FROM order_items WHERE order_id = :order_id');
+            $totalItemStatement->execute(['order_id' => $orderId]);
+            $totalItemCount = (int) $totalItemStatement->fetchColumn();
+
+            $existingCartStatement = $connection->prepare(
+                'SELECT id
+                 FROM cart_items
+                 WHERE user_id = :user_id
+                   AND menu_item_id = :menu_item_id
+                   AND size = :size
+                 LIMIT 1'
+            );
+            $updateCartStatement = $connection->prepare(
+                'UPDATE cart_items
+                 SET quantity = quantity + :quantity,
+                     item_name = :item_name,
+                     item_price = :item_price
+                 WHERE id = :id AND user_id = :user_id'
+            );
+            $insertCartStatement = $connection->prepare(
+                'INSERT INTO cart_items (user_id, menu_item_id, item_name, item_price, size, quantity)
+                 VALUES (:user_id, :menu_item_id, :item_name, :item_price, :size, :quantity)'
+            );
+
+            foreach ($items as $item) {
+                $menuItemId = (int) ($item['menu_item_id'] ?? 0);
+                $sizeLabel = (string) ($item['size_label'] ?? $item['size'] ?? 'Default');
+                $quantity = max(1, (int) ($item['quantity'] ?? 1));
+
+                $existingCartStatement->execute([
+                    'user_id' => $userId,
+                    'menu_item_id' => $menuItemId,
+                    'size' => $sizeLabel,
+                ]);
+                $existingCartItem = $existingCartStatement->fetch();
+
+                if (is_array($existingCartItem)) {
+                    $updateCartStatement->execute([
+                        'quantity' => $quantity,
+                        'item_name' => (string) ($item['item_name'] ?? ''),
+                        'item_price' => (float) ($item['current_price'] ?? 0),
+                        'id' => (int) ($existingCartItem['id'] ?? 0),
+                        'user_id' => $userId,
+                    ]);
+
+                    continue;
+                }
+
+                $insertCartStatement->execute([
+                    'user_id' => $userId,
+                    'menu_item_id' => $menuItemId,
+                    'item_name' => (string) ($item['item_name'] ?? ''),
+                    'item_price' => (float) ($item['current_price'] ?? 0),
+                    'size' => $sizeLabel,
+                    'quantity' => $quantity,
+                ]);
+            }
+
+            $connection->commit();
+
+            return [
+                'order_id' => (int) $order['id'],
+                'order_number' => (string) ($order['order_number'] ?? ''),
+                'restored_item_count' => count($items),
+                'skipped_item_count' => max(0, $totalItemCount - count($items)),
+            ];
+        } catch (\Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
     private function fetchPaymentReviewOrders(string $whereClause, int $limit): array
     {
         $statement = Database::connection()->prepare(
