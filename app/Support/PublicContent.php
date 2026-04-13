@@ -42,18 +42,18 @@ final class PublicContent
         $shared = self::shared();
 
         return [
-            'title' => 'Grande. Pandesal + Coffee',
-            'description' => 'Freshly baked pandesal and freshly brewed coffee, rebuilt from the ground up.',
+            'title' => 'Home',
+            'description' => 'Freshly baked pandesal, premium coffee, and a cozy 24/7 stop in Sindalan.',
             'hero' => [
                 'eyebrow' => 'Home',
                 'title' => 'Freshly Baked, Freshly Brewed.',
                 'subtitle' => $shared['brand']['headline'],
             ],
-            'intro' => 'The rewrite now has a reusable structure for public pages so the existing GrandeGo experience can be rebuilt section by section instead of page-level procedural PHP.',
+            'intro' => 'Fresh bread, premium coffee, and a welcoming place to pause any time of day.',
             'highlights' => [
                 '24/7 neighborhood bakery and coffee shop',
                 'Fresh pan de sal, premium coffee, and community-first atmosphere',
-                'Step-by-step rebuild with design parity as the end state',
+                'Dine in, take out, or reserve a table',
             ],
             'cta' => [
                 [

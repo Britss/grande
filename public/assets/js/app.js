@@ -25,6 +25,68 @@ document.addEventListener("click", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    var menuFilter = document.querySelector("[data-menu-filter]");
+
+    if (!menuFilter) {
+        return;
+    }
+
+    var searchInput = menuFilter.querySelector("[data-menu-search]");
+    var categoryButtons = menuFilter.querySelectorAll("[data-menu-category]");
+    var items = document.querySelectorAll("[data-menu-item]");
+    var categoryBlocks = document.querySelectorAll("[data-menu-category-block]");
+    var emptyState = document.querySelector("[data-menu-empty]");
+    var activeCategory = "all";
+
+    var normalize = function (value) {
+        return String(value || "").trim().toLowerCase();
+    };
+
+    var applyMenuFilter = function () {
+        var query = normalize(searchInput ? searchInput.value : "");
+        var shown = 0;
+
+        items.forEach(function (item) {
+            var text = normalize(item.getAttribute("data-menu-text"));
+            var category = normalize(item.getAttribute("data-menu-category"));
+            var matchesSearch = !query || text.indexOf(query) !== -1;
+            var matchesCategory = activeCategory === "all" || category === activeCategory;
+            var visible = matchesSearch && matchesCategory;
+
+            item.hidden = !visible;
+
+            if (visible) {
+                shown += 1;
+            }
+        });
+
+        categoryBlocks.forEach(function (block) {
+            block.hidden = block.querySelectorAll("[data-menu-item]:not([hidden])").length === 0;
+        });
+
+        if (emptyState) {
+            emptyState.hidden = shown !== 0;
+        }
+    };
+
+    categoryButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            activeCategory = normalize(button.getAttribute("data-menu-category")) || "all";
+            categoryButtons.forEach(function (categoryButton) {
+                categoryButton.classList.toggle("is-active", categoryButton === button);
+            });
+            applyMenuFilter();
+        });
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener("input", applyMenuFilter);
+    }
+
+    applyMenuFilter();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     var revealItems = document.querySelectorAll("[data-reveal]");
 
     if (!revealItems.length) {

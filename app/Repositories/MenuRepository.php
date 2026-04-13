@@ -259,6 +259,7 @@ final class MenuRepository
 
             if (!isset($categories[$categoryKey])) {
                 $categories[$categoryKey] = [
+                    'key' => $categoryKey,
                     'name' => $this->formatCategoryName($categoryKey),
                     'description' => $this->categoryDescription($categoryKey),
                     'items' => [],
@@ -271,6 +272,7 @@ final class MenuRepository
                 $categories[$categoryKey]['items'][$itemId] = [
                     'id' => $itemId,
                     'name' => (string) $row['name'],
+                    'category' => $categoryKey,
                     'description' => $this->normalizeDescription($row['description']),
                     'image_url' => $row['image_url'],
                     'sizes' => [],

@@ -36,8 +36,36 @@
             <p>The menu catalog has not been loaded yet.</p>
         </div>
     <?php else: ?>
+        <div class="menu-controls" data-menu-filter>
+            <div class="form-field menu-search-field">
+                <label for="menu-search">Search menu</label>
+                <input
+                    id="menu-search"
+                    class="form-control"
+                    type="search"
+                    placeholder="Search drinks, bread, pastries"
+                    autocomplete="off"
+                    data-menu-search
+                >
+            </div>
+
+            <div class="menu-category-tabs" aria-label="Menu categories">
+                <button class="menu-category-tab is-active" type="button" data-menu-category="all">All</button>
+                <?php foreach ($page['categories'] as $category): ?>
+                    <button class="menu-category-tab" type="button" data-menu-category="<?= e(strtolower((string) ($category['key'] ?? $category['name']))) ?>">
+                        <?= e($category['name']) ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="content-card menu-empty-state" data-menu-empty hidden>
+            <h2>No menu items found</h2>
+            <p>Try another search term or choose a different category.</p>
+        </div>
+
         <?php foreach ($page['categories'] as $category): ?>
-            <section class="menu-category-block">
+            <section class="menu-category-block" data-menu-category-block>
                 <div class="section-heading">
                     <h2><?= e($category['name']) ?></h2>
                     <p><?= e($category['description']) ?></p>
@@ -45,7 +73,24 @@
 
                 <div class="content-grid">
                     <?php foreach ($category['items'] as $item): ?>
-                        <article class="content-card menu-item-card">
+                        <?php
+                            $sizeSearchText = implode(' ', array_map(
+                                static fn (array $size): string => (string) ($size['label'] ?? ''),
+                                $item['sizes']
+                            ));
+                            $filterText = strtolower(trim(
+                                ($item['name'] ?? '') . ' ' .
+                                ($item['category'] ?? '') . ' ' .
+                                ($item['description'] ?? '') . ' ' .
+                                $sizeSearchText
+                            ));
+                        ?>
+                        <article
+                            class="content-card menu-item-card"
+                            data-menu-item
+                            data-menu-category="<?= e(strtolower((string) ($item['category'] ?? $category['key'] ?? $category['name']))) ?>"
+                            data-menu-text="<?= e($filterText) ?>"
+                        >
                             <?php if (!empty($item['image_url'])): ?>
                                 <?php
                                     $imageUrl = (string) $item['image_url'];

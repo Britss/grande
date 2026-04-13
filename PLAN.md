@@ -13,6 +13,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed:
   imported menu catalog from `grandego_db` into `grande.menu_items` and `grande.menu_item_sizes`, and `/menu` now reads from the rebuilt `grande` database.
 - Completed:
+  public menu search and category filtering parity has been restored from the old `grandego` menu page. `/menu` now includes a search input, category tabs, item/category data hooks, hidden empty category sections, and a no-results state without adding a new backend endpoint.
+- Completed:
   shared-cart flow aligned with old `grandego` behavior:
   `menu -> cart -> checkout` for direct orders, and `menu -> cart -> reserve -> reservation-checkout` for reservation-linked orders.
 - Completed:
@@ -52,9 +54,35 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed:
   dashboard density polish is implemented: shared dashboard spacing, hero height, statistic cards, records panels, operational cards, order line items, and filter bars are tightened to better match the older compact `grandego` dashboard rhythm without changing workflows.
 - Partially completed:
-  dashboard UI parity. The main operational flows, first visual parity pass, queue filters, lightweight reporting graphs, customer feedback shortcuts, employee priority queue overview, admin attention queue, customer account-flow polish, customer cancellation controls, report export affordances, and shared dashboard density polish are implemented, but final browser-level visual QA against the old `grandego` dashboards can still tune any remaining per-module differences.
+  direct `grandego` feature/flow parity. The main transactional backend workflows are implemented, and the public menu search/filter gap has been closed, but the rewrite is not yet a function-for-function clone of old handler endpoints.
 - Suggested next task:
-  run browser-level dashboard visual QA next, comparing customer/admin/employee modules against the old `grandego` dashboards and tuning any remaining per-module spacing or density differences.
+  finish remaining `grandego` parity gaps before final visual QA: customer reorder, customer/staff notifications, new-order polling, profile-picture upload, authenticated change-password, menu item delete/archive parity, customer hard-delete decision, and compatibility decisions for old standalone JSON getter endpoints.
+
+## Direct GrandeGo Parity Audit
+- Source checked:
+  `c:\xampp\htdocs\grandego` was compared against this rewrite, including old page files, public JavaScript, dashboard JavaScript, helper functions, and `includes/handlers` backend entrypoints.
+- Completed parity:
+  core public routes, auth, cart, direct checkout, reservation checkout, receipt upload, payment review, order status management, reservation status management, feedback submission/review, menu item/size management, user activation/deactivation through `is_active`, reports, customer profile editing, customer cancellation rules, and dashboard filtering for staff/admin work queues.
+- Recently fixed parity:
+  old public menu search/category filtering from `grandego/pages/menu.php` and `grandego/assets/js/pages/public/menu.js` is now implemented in the new `/menu` page.
+- Remaining parity gaps:
+  customer reorder flows from `orders/reorder_order.php` and `orders/reorder_latest.php` are not implemented.
+- Remaining parity gaps:
+  customer order/reservation notification tables and endpoints from the old helper functions and notification handlers are not implemented.
+- Remaining parity gaps:
+  staff new-order polling from `orders/check-new-orders.php` is not implemented.
+- Remaining parity gaps:
+  customer profile-picture upload from `uploads/upload-profile-picture.php` is not implemented, even though the new users table has a `profile_picture` column.
+- Remaining parity gaps:
+  authenticated dashboard password change from `auth/change-password.php` is replaced by reset-link flow, not cloned.
+- Remaining parity gaps:
+  old menu delete behavior from `menu/delete_menu_item.php` is not implemented as a hard delete. The rewrite currently favors availability/archive-style management.
+- Remaining parity gaps:
+  old customer hard-delete behavior from `customers/delete_customer.php` is not implemented. The rewrite currently supports account status changes through `is_active`.
+- Remaining parity gaps:
+  standalone JSON getter endpoints such as old `get_orders.php`, `get_order_items.php`, `get_reservation_orders.php`, `get_customer_reservation_orders.php`, `get_menu_items.php`, `get_feedback.php`, `get_customers.php`, and report chart endpoints are mostly replaced by server-rendered dashboard data and AJAX panel refreshes. Decide whether compatibility endpoints are required.
+- Remaining visual QA:
+  browser-level dashboard comparison against old `grandego` is still needed after the functional parity decisions above are resolved.
 
 ## Implementation Changes
 - Use a simple MVC-style structure:
@@ -69,6 +97,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   landing, about, menu, reservation, feedback, login, signup.
 - Current status:
   landing, about, menu, reservation, feedback, login, signup, and email verification are rebuilt and routing through the new app structure.
+  public menu search and category filtering now match old `grandego` behavior client-side while using the new repository-rendered catalog.
   feedback submissions now persist to `grande.feedback`.
 - Build customer dashboard:
   overview, active orders, order history, reservation history, profile/account, feedback shortcut.
@@ -80,6 +109,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   feedback shortcut parity is expanded with a dedicated dashboard section, sidebar/stat entry points, latest-feedback summary, and recent feedback history.
   account-flow polish now adds profile guidance, password reset access, and clearer action-oriented empty states for orders, reservations, and feedback.
   shared dashboard density styles now make customer records, summary cards, and dashboard panels more compact and closer to the old dashboard rhythm.
+- Current gap:
+  customer reorder, profile-picture upload, authenticated change-password, and dashboard status notifications from the old customer dashboard are not yet implemented.
 - Build admin dashboard:
   overview, orders, reservations, menu management, user management, feedback inbox, reports/graphs, audit trail.
   Remove duplicate widgets and keep one source of truth per metric.
@@ -89,6 +120,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   admin overview parity is expanded with a compact Needs Attention queue for pending payments, reservations, and feedback.
   admin dashboard density is tightened through shared cards, filters, report tables, and operational list styling.
   `grandego` should remain the visual and flow reference for dashboard parity, especially for admin panel layout, customer account flow, familiar menu/reservation interactions, filter placement, and chart/report presentation.
+- Current gap:
+  old hard-delete endpoints for menu/customer records and old standalone JSON list/detail endpoints are not cloned. The rewrite currently prefers safer status/archive updates and rendered dashboard data.
 - Build employee dashboard:
   overview, orders queue, reservations queue.
   No user management, menu management, audit browsing, or admin reporting controls.
@@ -97,6 +130,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   employee sidebar styling, queue badges, compact cards, and mobile dashboard navigation now follow the old `grandego` staff dashboard more closely.
   employee-specific filtering and queue refinements now include dashboard filters plus a priority queue overview for payment, reservation, and feedback work.
   employee dashboard density is tightened through shared queue cards, filters, status blocks, and operational list styling.
+- Current gap:
+  old employee new-order polling/notification behavior is not yet implemented.
 - Define strict role permissions:
   customer can manage own profile, orders, reservations, feedback;
   employee can process payments, orders, reservations, and feedback queues only;
@@ -130,6 +165,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   public pages and customer operations use HTML form posts plus redirects.
   staff dashboard operations return JSON panel markup for AJAX requests and keep redirects as the fallback.
   detail snapshots are rendered client-side from embedded payloads, not fetched by JSON endpoints yet.
+- Compatibility note:
+  this differs from old `grandego`, which exposed many standalone JSON handler files for dashboard lists, item details, notifications, chart data, and mutations. Add compatibility routes only if old JavaScript/API compatibility is a project requirement.
 - Core tables for v1:
   `users`, `menu_items`, `menu_item_sizes`, `cart_items`, `orders`, `order_items`, `reservations`, `feedback`, `audit_logs`, `password_resets`.
 - Key schema rules:
@@ -155,7 +192,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Public flow:
   menu browse, add to cart, checkout submission, reservation submission, feedback submission.
 - Current status:
-  menu browse, add to cart, checkout, reservation creation, reservation checkout, payment receipt upload, and payment review path are implemented.
+  menu browse, search, category filtering, add to cart, checkout, reservation creation, reservation checkout, payment receipt upload, and payment review path are implemented.
   feedback submission and dashboard feedback history are implemented.
 - Customer:
   can only see own orders/reservations/profile data; can cancel only eligible pending direct orders and eligible pending reservations.
@@ -182,6 +219,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   archived users/menu items remain historically visible in past orders/audit logs.
 - UI regression:
   public pages and all dashboards render correctly on desktop and mobile with no duplicate or conflicting data blocks.
+- GrandeGo parity regression:
+  compare against `c:\xampp\htdocs\grandego` for old handler-backed flows, especially menu search/filter, reorder, notifications, profile-picture upload, change password, live order polling, menu/customer delete behavior, and dashboard JSON endpoint expectations.
 
 ## Assumptions And Defaults
 - Fresh database means no migration of current records; the rewrite will ship with a new schema and seedable admin account.

@@ -8,7 +8,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
 ?>
 <?php require __DIR__ . '/../partials/page-hero.php'; ?>
 
-<section class="page-section container">
+<section class="page-section container feedback-section">
     <?php if ($status = flash('status')): ?>
         <div class="alert alert-success"><?= e((string) $status) ?></div>
     <?php endif; ?>
@@ -74,7 +74,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
 
                 <div class="form-field">
                     <label for="feedback_body">Your Feedback</label>
-                    <textarea id="feedback_body" name="feedback_body" rows="4" class="form-control"><?= e((string) old('feedback_body')) ?></textarea>
+                    <textarea id="feedback_body" name="feedback_body" rows="3" class="form-control"><?= e((string) old('feedback_body')) ?></textarea>
                     <?php if ($message = field_error('feedback_body')): ?>
                         <p class="field-error"><?= e($message) ?></p>
                     <?php endif; ?>
@@ -95,7 +95,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
     </div>
 </section>
 
-<section class="page-section container">
+<section class="page-section container feedback-section">
     <div class="content-card cta-card">
         <h2><?= e($page['cta']['title']) ?></h2>
         <p><?= e($page['cta']['body']) ?></p>
