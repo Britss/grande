@@ -79,8 +79,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   the remaining customer hard-delete parity decision is resolved: the old customer delete handler is intentionally represented as customer deactivation, preserving historical orders, reservations, feedback, notifications, and audit references.
 - Completed:
   browser-level dashboard comparison has been made repeatable through `docs/dashboard-parity-qa.md`, covering legacy dashboard reference files, rewrite routes, desktop/mobile viewport checks, shared dashboard expectations, role-specific customer/employee/admin parity points, and pass criteria for documenting intentional visual differences.
+- Completed:
+  dashboard parity QA documentation now includes a dated static run record in `docs/dashboard-parity-qa-2026-04-14.md`, covering customer, employee, admin, shared dashboard behavior, intentional differences, and the exact browser checks that still require seeded accounts.
 - Suggested next task:
-  execute the dashboard parity QA checklist in a browser against seeded customer, employee, and admin accounts, then document any intentional visual differences or defects found.
+  execute the authenticated browser parity QA checklist against seeded customer, employee, and admin accounts, then append any viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:
@@ -114,7 +116,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed parity:
   old customer hard-delete behavior from `includes/handlers/customers/delete_customer.php` is intentionally bridged to account deactivation through `is_active = 0`, with cart cleanup and audit logging. The clean alias is `/api/customers/deactivate`; historical customer-linked records are preserved instead of deleted.
 - Remaining visual QA:
-  execute the repeatable browser checklist in `docs/dashboard-parity-qa.md` against old `grandego` and this rewrite, then document any intentional visual differences or defects found.
+  execute the repeatable authenticated browser checklist in `docs/dashboard-parity-qa.md` against old `grandego` and this rewrite, then append viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`. The static review portion is documented there already.
 
 ## Assistant Widget Implementation Plan
 - Current status:
