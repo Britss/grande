@@ -15,6 +15,9 @@ workspace without authenticated browser sessions. Use it with
   credentials.
 - Ran the QA account seed locally with the XAMPP PHP binary:
   `C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php`.
+- Added and ran `scripts/seed_dashboard_qa_workflow_data.php` with the XAMPP
+  PHP binary so authenticated browser runs can start with non-empty order,
+  reservation, feedback, and staff queue panels.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -72,10 +75,10 @@ workspace without authenticated browser sessions. Use it with
 
 ## Remaining Browser QA
 
-The account seed has been run for this local database. Sign in with the QA
-accounts documented in `docs/dashboard-parity-qa.md`, create or import any
-workflow data needed for non-empty order/reservation/feedback panels, and
-complete the browser checklist. The browser pass still needs to verify:
+The account seed and workflow data seed have been run for this local database.
+Sign in with the QA accounts documented in `docs/dashboard-parity-qa.md` and
+complete the browser checklist against the seeded non-empty dashboard panels.
+The browser pass still needs to verify:
 
 - Desktop, laptop, tablet, and mobile viewport rendering.
 - Mouse, keyboard, and touch access to every dashboard section.

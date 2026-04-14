@@ -49,6 +49,25 @@ Set `QA_SEED_PASSWORD` before running the script to use a different local QA
 password. The script only upserts users and does not create orders,
 reservations, feedback, or menu data.
 
+To seed representative non-empty dashboard panels for browser parity checks,
+run:
+
+```powershell
+php scripts/seed_dashboard_qa_workflow_data.php
+```
+
+Or, with the bundled XAMPP PHP binary:
+
+```powershell
+C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php
+```
+
+The workflow seeder also refreshes the QA accounts, then creates or refreshes
+QA-only menu items, direct orders, a reservation-linked order, reservations,
+and feedback records. It removes previous QA workflow rows using `QA-` order
+numbers, `[QA]` feedback messages, and the documented QA customer email before
+recreating the sample data.
+
 ## Viewports
 
 Run each dashboard through these viewport widths:
