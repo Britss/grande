@@ -35,6 +35,15 @@ workspace without authenticated browser sessions. Use it with
   `C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php`,
   `C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php`, and
   `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`.
+- Re-ran the dashboard QA preflight again on 2026-04-14 while preparing the
+  browser parity handoff:
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php`,
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php`,
+  `C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php`, and
+  `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`.
+  The seed scripts reported 2 QA menu items, 4 orders, 3 reservations, and 3
+  feedback records, and the authenticated smoke and viewport-readiness checks
+  passed for customer, employee, and admin dashboards.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -90,6 +99,10 @@ workspace without authenticated browser sessions. Use it with
 - The 2026-04-14 CLI rerun confirmed the QA accounts, non-empty workflow data,
   authenticated dashboard contracts, and viewport-readiness markers still pass
   for customer, employee, and admin dashboards.
+- The latest 2026-04-14 preflight rerun again confirmed that the browser
+  checklist can start from seeded, non-empty customer, employee, and admin
+  dashboards without first repairing account, data, route, or responsive-marker
+  setup.
 
 ## Intentional Differences
 

@@ -95,6 +95,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   browser dashboard parity QA handoff is now documented through `docs/dashboard-browser-parity-run-sheet.md`, giving the manual authenticated browser pass a role/viewport matrix, screenshot note table, interaction checks, defect log, and completion summary tied back to the dated QA run record.
 - Completed:
   dashboard parity QA preflight was re-run locally on 2026-04-14 with the XAMPP PHP binary after the browser run sheet was added. QA account seeding, non-empty workflow data seeding, authenticated dashboard smoke checks, and viewport-readiness checks all pass for customer, employee, and admin dashboards, and the dated QA documentation now records the rerun.
+- Completed:
+  dashboard browser QA handoff preflight was refreshed again on 2026-04-14 with the XAMPP PHP binary. QA account seeding, non-empty workflow data seeding, authenticated dashboard smoke checks, and viewport-readiness checks all passed; the workflow seed reported 2 QA menu items, 4 orders, 3 reservations, and 3 feedback records, and the run sheet plus dated QA documentation now record the latest preflight.
 - Suggested next task:
   execute the authenticated manual browser parity QA checklist against the seeded customer, employee, and admin accounts plus seeded workflow records, using `docs/dashboard-browser-parity-run-sheet.md` to capture viewport-specific defects and screenshot notes before appending confirmed findings to `docs/dashboard-parity-qa-2026-04-14.md`.
 

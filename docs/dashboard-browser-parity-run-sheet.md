@@ -107,3 +107,19 @@ Append browser-only defects here, then copy the confirmed findings into
 - Browser status:
   Pending manual execution in an authenticated browser session; no browser
   automation dependency is present in this repository.
+
+## Latest CLI Preflight Refresh
+
+- Date run: 2026-04-14
+- Commands:
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php`,
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php`,
+  `C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php`,
+  `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`
+- Result:
+  Pass. The workflow seed reported 2 QA menu items, 4 orders, 3 reservations,
+  and 3 feedback records. Authenticated dashboard smoke checks and
+  viewport-readiness markers passed for customer, employee, and admin.
+- Browser status:
+  Still pending manual execution in a browser session; this repository has no
+  browser automation dependency or screenshot capture harness.
