@@ -49,6 +49,10 @@ workspace without authenticated browser sessions. Use it with
   the manual authenticated browser pass. The same script should be run without
   `--allow-pending` after the browser sheet is filled, before confirmed findings
   are copied into this dated QA record.
+- Added and ran `scripts/prepare_dashboard_browser_qa_artifacts.php` with the
+  XAMPP PHP binary to prepare a dated screenshot and notes target under
+  `docs/dashboard-browser-qa-artifacts/2026-04-14/` before the manual browser
+  pass.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -111,6 +115,9 @@ workspace without authenticated browser sessions. Use it with
 - The browser run-sheet audit now confirms the handoff sheet has the required
   role/viewport matrix, screenshot rows, and completion fields while still
   allowing pending manual entries during preflight.
+- The browser artifact helper now gives the manual pass stable screenshot
+  filenames and a dated notes template for customer, employee, and admin across
+  all target viewport widths.
 
 ## Intentional Differences
 

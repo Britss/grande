@@ -105,6 +105,23 @@ scrolling, modal height limits, compact filters, and dashboard assistant
 exclusion. It is not a substitute for the visual browser pass, but it catches
 missing responsive scaffolding before manual viewport review.
 
+Prepare the dated browser artifact folder before taking screenshots:
+
+```powershell
+php scripts/prepare_dashboard_browser_qa_artifacts.php
+```
+
+Or, with the bundled XAMPP PHP binary:
+
+```powershell
+C:\xampp\php\php.exe scripts\prepare_dashboard_browser_qa_artifacts.php
+```
+
+The helper creates `docs/dashboard-browser-qa-artifacts/YYYY-MM-DD/notes.md`
+with the expected customer, employee, and admin screenshot filenames for all
+target viewports. Use those filenames when filling the run sheet so screenshot
+paths are consistent across browser QA runs.
+
 Use `docs/dashboard-browser-parity-run-sheet.md` during the browser pass to
 record the role/viewport matrix, screenshot paths, interaction checks, and
 browser-only defects before copying confirmed findings into the dated QA run

@@ -14,6 +14,7 @@ C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php
 C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php
 C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php
 C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php
+C:\xampp\php\php.exe scripts\prepare_dashboard_browser_qa_artifacts.php
 C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php --allow-pending
 ```
 
@@ -44,6 +45,10 @@ Check each role at these widths:
 Replace each `Not run` entry with `Pass`, `Pass with note`, or `Fail`.
 
 ## Screenshot Notes
+
+Before capturing screenshots, use the artifact directory printed by
+`scripts/prepare_dashboard_browser_qa_artifacts.php`. Save each screenshot with
+the matching filename from that script, then paste the path into this table.
 
 Record screenshot filenames or paths beside the related viewport.
 
@@ -125,11 +130,13 @@ C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php
   `C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php`,
   `C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php`,
   `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`,
+  `C:\xampp\php\php.exe scripts\prepare_dashboard_browser_qa_artifacts.php`,
   `C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php --allow-pending`
 - Result:
   Pass. The workflow seed reported 2 QA menu items, 4 orders, 3 reservations,
   and 3 feedback records. Authenticated dashboard smoke checks and
   viewport-readiness markers passed for customer, employee, and admin. The
+  browser artifact helper prepared the dated screenshot/notes target, and the
   browser run-sheet audit confirmed the pending handoff template is structurally
   valid.
 - Browser status:

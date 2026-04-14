@@ -99,8 +99,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   dashboard browser QA handoff preflight was refreshed again on 2026-04-14 with the XAMPP PHP binary. QA account seeding, non-empty workflow data seeding, authenticated dashboard smoke checks, and viewport-readiness checks all passed; the workflow seed reported 2 QA menu items, 4 orders, 3 reservations, and 3 feedback records, and the run sheet plus dated QA documentation now record the latest preflight.
 - Completed:
   browser parity run-sheet validation is implemented through `scripts/dashboard_browser_run_sheet_audit.php`, checking the manual QA role/viewport matrix, screenshot rows, and completion fields. The validator was run locally on 2026-04-14 with `--allow-pending` so the current browser handoff template is structurally verified before the authenticated manual browser pass.
+- Completed:
+  browser parity screenshot artifact preparation is implemented through `scripts/prepare_dashboard_browser_qa_artifacts.php`, creating a dated notes template and stable expected screenshot filenames for every customer/employee/admin viewport target before the authenticated manual browser pass.
 - Suggested next task:
-  execute the authenticated manual browser parity QA checklist against the seeded customer, employee, and admin accounts plus seeded workflow records, using `docs/dashboard-browser-parity-run-sheet.md` to capture viewport-specific defects and screenshot notes. Run `C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php` after filling the sheet, then append confirmed findings to `docs/dashboard-parity-qa-2026-04-14.md`.
+  execute the authenticated manual browser parity QA checklist against the seeded customer, employee, and admin accounts plus seeded workflow records, using `docs/dashboard-browser-parity-run-sheet.md` and the dated artifact folder from `scripts/prepare_dashboard_browser_qa_artifacts.php` to capture viewport-specific defects and screenshot notes. Run `C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php` after filling the sheet, then append confirmed findings to `docs/dashboard-parity-qa-2026-04-14.md`.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:
