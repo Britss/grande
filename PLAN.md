@@ -97,8 +97,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   dashboard parity QA preflight was re-run locally on 2026-04-14 with the XAMPP PHP binary after the browser run sheet was added. QA account seeding, non-empty workflow data seeding, authenticated dashboard smoke checks, and viewport-readiness checks all pass for customer, employee, and admin dashboards, and the dated QA documentation now records the rerun.
 - Completed:
   dashboard browser QA handoff preflight was refreshed again on 2026-04-14 with the XAMPP PHP binary. QA account seeding, non-empty workflow data seeding, authenticated dashboard smoke checks, and viewport-readiness checks all passed; the workflow seed reported 2 QA menu items, 4 orders, 3 reservations, and 3 feedback records, and the run sheet plus dated QA documentation now record the latest preflight.
+- Completed:
+  browser parity run-sheet validation is implemented through `scripts/dashboard_browser_run_sheet_audit.php`, checking the manual QA role/viewport matrix, screenshot rows, and completion fields. The validator was run locally on 2026-04-14 with `--allow-pending` so the current browser handoff template is structurally verified before the authenticated manual browser pass.
 - Suggested next task:
-  execute the authenticated manual browser parity QA checklist against the seeded customer, employee, and admin accounts plus seeded workflow records, using `docs/dashboard-browser-parity-run-sheet.md` to capture viewport-specific defects and screenshot notes before appending confirmed findings to `docs/dashboard-parity-qa-2026-04-14.md`.
+  execute the authenticated manual browser parity QA checklist against the seeded customer, employee, and admin accounts plus seeded workflow records, using `docs/dashboard-browser-parity-run-sheet.md` to capture viewport-specific defects and screenshot notes. Run `C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php` after filling the sheet, then append confirmed findings to `docs/dashboard-parity-qa-2026-04-14.md`.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:
@@ -132,7 +134,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed parity:
   old customer hard-delete behavior from `includes/handlers/customers/delete_customer.php` is intentionally bridged to account deactivation through `is_active = 0`, with cart cleanup and audit logging. The clean alias is `/api/customers/deactivate`; historical customer-linked records are preserved instead of deleted.
 - Remaining visual QA:
-  execute the repeatable authenticated browser checklist in `docs/dashboard-parity-qa.md` against old `grandego` and this rewrite, then append viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`. The static review portion is documented there already.
+  execute the repeatable authenticated browser checklist in `docs/dashboard-parity-qa.md` against old `grandego` and this rewrite, then validate the filled run sheet with `scripts/dashboard_browser_run_sheet_audit.php` before appending viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`. The static review portion is documented there already.
 
 ## Assistant Widget Implementation Plan
 - Current status:

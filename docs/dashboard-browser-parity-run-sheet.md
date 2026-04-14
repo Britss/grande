@@ -14,6 +14,7 @@ C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php
 C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php
 C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php
 C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php
+C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php --allow-pending
 ```
 
 Start the local app through Apache/XAMPP and open the rewrite routes:
@@ -92,6 +93,14 @@ Append browser-only defects here, then copy the confirmed findings into
 - Overall result:
 - Follow-up tasks opened:
 
+After filling this sheet, run the browser run-sheet audit without
+`--allow-pending` before copying confirmed findings into
+`docs/dashboard-parity-qa-2026-04-14.md`:
+
+```powershell
+C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php
+```
+
 ## CLI Preflight Record
 
 - Date run: 2026-04-14
@@ -115,11 +124,14 @@ Append browser-only defects here, then copy the confirmed findings into
   `C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php`,
   `C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php`,
   `C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php`,
-  `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`
+  `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`,
+  `C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php --allow-pending`
 - Result:
   Pass. The workflow seed reported 2 QA menu items, 4 orders, 3 reservations,
   and 3 feedback records. Authenticated dashboard smoke checks and
-  viewport-readiness markers passed for customer, employee, and admin.
+  viewport-readiness markers passed for customer, employee, and admin. The
+  browser run-sheet audit confirmed the pending handoff template is structurally
+  valid.
 - Browser status:
   Still pending manual execution in a browser session; this repository has no
   browser automation dependency or screenshot capture harness.

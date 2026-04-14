@@ -44,6 +44,11 @@ workspace without authenticated browser sessions. Use it with
   The seed scripts reported 2 QA menu items, 4 orders, 3 reservations, and 3
   feedback records, and the authenticated smoke and viewport-readiness checks
   passed for customer, employee, and admin dashboards.
+- Added and ran `scripts/dashboard_browser_run_sheet_audit.php --allow-pending`
+  with the XAMPP PHP binary to validate the browser run sheet structure before
+  the manual authenticated browser pass. The same script should be run without
+  `--allow-pending` after the browser sheet is filled, before confirmed findings
+  are copied into this dated QA record.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -103,6 +108,9 @@ workspace without authenticated browser sessions. Use it with
   checklist can start from seeded, non-empty customer, employee, and admin
   dashboards without first repairing account, data, route, or responsive-marker
   setup.
+- The browser run-sheet audit now confirms the handoff sheet has the required
+  role/viewport matrix, screenshot rows, and completion fields while still
+  allowing pending manual entries during preflight.
 
 ## Intentional Differences
 
