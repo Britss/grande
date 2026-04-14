@@ -77,8 +77,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   old report chart/report getter compatibility bridges are implemented for admin-only read consumers: `/includes/handlers/reports/get_sales_chart_data.php` and `/includes/handlers/reports/get_sales_report.php`, with clean `/api/reports/sales-chart-data` and `/api/reports/sales-report` aliases. These endpoints are backed by `ReportRepository`, preserve the old Chart.js/report response shapes, and avoid reintroducing page-level SQL handlers.
 - Completed:
   the remaining customer hard-delete parity decision is resolved: the old customer delete handler is intentionally represented as customer deactivation, preserving historical orders, reservations, feedback, notifications, and audit references.
+- Completed:
+  browser-level dashboard comparison has been made repeatable through `docs/dashboard-parity-qa.md`, covering legacy dashboard reference files, rewrite routes, desktop/mobile viewport checks, shared dashboard expectations, role-specific customer/employee/admin parity points, and pass criteria for documenting intentional visual differences.
 - Suggested next task:
-  run browser-level dashboard comparison against old `grandego` now that the remaining functional parity decision is documented and implemented.
+  execute the dashboard parity QA checklist in a browser against seeded customer, employee, and admin accounts, then document any intentional visual differences or defects found.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:
@@ -112,7 +114,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed parity:
   old customer hard-delete behavior from `includes/handlers/customers/delete_customer.php` is intentionally bridged to account deactivation through `is_active = 0`, with cart cleanup and audit logging. The clean alias is `/api/customers/deactivate`; historical customer-linked records are preserved instead of deleted.
 - Remaining visual QA:
-  browser-level dashboard comparison against old `grandego` is still needed after the functional parity decisions above are resolved.
+  execute the repeatable browser checklist in `docs/dashboard-parity-qa.md` against old `grandego` and this rewrite, then document any intentional visual differences or defects found.
 
 ## Assistant Widget Implementation Plan
 - Current status:
