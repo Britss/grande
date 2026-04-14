@@ -73,10 +73,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   remaining read-only standalone JSON getter compatibility bridges are implemented for old dashboard/public consumers: `/get_orders.php`, `/get_order_items.php`, `/get_reservation_orders.php`, `/get_customer_reservation_orders.php`, `/get_feedback.php`, and `/get_customers.php`, with clean `/api/...` route aliases. These endpoints are role-protected, repository-owned, and preserve old response envelopes where practical.
 - Completed:
   old report chart/report getter compatibility bridges are implemented for admin-only read consumers: `/includes/handlers/reports/get_sales_chart_data.php` and `/includes/handlers/reports/get_sales_report.php`, with clean `/api/reports/sales-chart-data` and `/api/reports/sales-report` aliases. These endpoints are backed by `ReportRepository`, preserve the old Chart.js/report response shapes, and avoid reintroducing page-level SQL handlers.
-- Partially completed:
-  direct `grandego` feature/flow parity. The main transactional backend workflows are implemented, and the public menu search/filter gap has been closed, but the rewrite is not yet a function-for-function clone of old handler endpoints.
+- Completed:
+  the remaining customer hard-delete parity decision is resolved: the old customer delete handler is intentionally represented as customer deactivation, preserving historical orders, reservations, feedback, notifications, and audit references.
 - Suggested next task:
-  finish the remaining `grandego` parity decision before final visual QA: whether old customer hard-delete behavior should remain intentionally replaced by account deactivation.
+  run browser-level dashboard comparison against old `grandego` now that the remaining functional parity decision is documented and implemented.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:
@@ -107,8 +107,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   authenticated dashboard password change from `auth/change-password.php` is now implemented for customer profile dashboards; decide later whether staff/admin self-service password panels are required.
 - Remaining parity gaps:
   old menu delete behavior from `menu/delete_menu_item.php` is intentionally represented as availability/archive-style management rather than hard delete, preserving historical order/audit references.
-- Remaining parity gaps:
-  old customer hard-delete behavior from `customers/delete_customer.php` is not implemented. The rewrite currently supports account status changes through `is_active`.
+- Completed parity:
+  old customer hard-delete behavior from `includes/handlers/customers/delete_customer.php` is intentionally bridged to account deactivation through `is_active = 0`, with cart cleanup and audit logging. The clean alias is `/api/customers/deactivate`; historical customer-linked records are preserved instead of deleted.
 - Remaining visual QA:
   browser-level dashboard comparison against old `grandego` is still needed after the functional parity decisions above are resolved.
 

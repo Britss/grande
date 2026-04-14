@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Repositories\AuditLogRepository;
 use App\Repositories\FeedbackRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ReportRepository;
@@ -103,6 +104,43 @@ final class CompatibilityController extends Controller
             'success' => true,
             'customers' => (new UserRepository())->customersForJson($status),
         ]);
+    }
+
+    public function deactivateCustomer(): never
+    {
+        $admin = $this->requireRole('admin');
+        $customerId = (int) request_input('customer_id', 0);
+
+        if ($customerId <= 0) {
+            $this->json(['success' => false, 'message' => 'Invalid customer ID'], 400);
+        }
+
+        try {
+            $result = (new UserRepository())->deactivateCustomerForCompatibility($customerId);
+            (new AuditLogRepository())->log((int) ($admin['id'] ?? 0), 'customer_deactivated_via_compatibility_delete', 'user', $customerId, [
+                'email' => $result['after']['email'] ?? '',
+                'previous_is_active' => (int) ($result['before']['is_active'] ?? 0),
+                'is_active' => (int) ($result['after']['is_active'] ?? 0),
+                'legacy_endpoint' => 'includes/handlers/customers/delete_customer.php',
+            ]);
+
+            $this->json([
+                'success' => true,
+                'message' => 'Customer deactivated successfully',
+                'deleted' => false,
+                'customer' => [
+                    'id' => (int) ($result['after']['id'] ?? $customerId),
+                    'is_active' => (int) ($result['after']['is_active'] ?? 0),
+                ],
+            ]);
+        } catch (\RuntimeException $exception) {
+            $message = $exception->getMessage();
+            $status = $message === 'Customer not found.' ? 404 : 400;
+            $this->json(['success' => false, 'message' => $message], $status);
+        } catch (\Throwable $exception) {
+            error_log('Error deactivating customer through compatibility endpoint: ' . $exception->getMessage());
+            $this->json(['success' => false, 'message' => 'Database error'], 500);
+        }
     }
 
     public function salesChartData(): never

@@ -201,6 +201,52 @@ final class UserRepository
         return $user;
     }
 
+    public function deactivateCustomerForCompatibility(int $userId): array
+    {
+        $user = $this->findById($userId);
+
+        if ($user === null) {
+            throw new \RuntimeException('Customer not found.');
+        }
+
+        if (($user['role'] ?? null) !== 'customer') {
+            throw new \RuntimeException('Cannot delete non-customer accounts.');
+        }
+
+        $connection = Database::connection();
+        $connection->beginTransaction();
+
+        try {
+            $deactivate = $connection->prepare(
+                'UPDATE users
+                 SET is_active = 0
+                 WHERE id = :id
+                   AND role = \'customer\'
+                 LIMIT 1'
+            );
+            $deactivate->execute(['id' => $userId]);
+
+            $clearCart = $connection->prepare('DELETE FROM cart_items WHERE user_id = :user_id');
+            $clearCart->execute(['user_id' => $userId]);
+
+            $connection->commit();
+        } catch (\Throwable $exception) {
+            $connection->rollBack();
+            throw $exception;
+        }
+
+        $updatedUser = $this->findById($userId);
+
+        if ($updatedUser === null) {
+            throw new \RuntimeException('Customer not found.');
+        }
+
+        return [
+            'before' => $user,
+            'after' => $updatedUser,
+        ];
+    }
+
     public function updateCustomerProfile(int $userId, array $data): array
     {
         $statement = Database::connection()->prepare(

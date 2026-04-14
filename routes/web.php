@@ -30,6 +30,8 @@ return static function (Router $router): void {
     $router->get('/get_feedback.php', [CompatibilityController::class, 'feedback']);
     $router->get('/api/customers', [CompatibilityController::class, 'customers']);
     $router->get('/get_customers.php', [CompatibilityController::class, 'customers']);
+    $router->post('/api/customers/deactivate', [CompatibilityController::class, 'deactivateCustomer']);
+    $router->post('/includes/handlers/customers/delete_customer.php', [CompatibilityController::class, 'deactivateCustomer']);
     $router->get('/api/reports/sales-chart-data', [CompatibilityController::class, 'salesChartData']);
     $router->get('/includes/handlers/reports/get_sales_chart_data.php', [CompatibilityController::class, 'salesChartData']);
     $router->get('/api/reports/sales-report', [CompatibilityController::class, 'salesReport']);
