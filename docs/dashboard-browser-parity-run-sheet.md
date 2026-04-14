@@ -91,3 +91,19 @@ Append browser-only defects here, then copy the confirmed findings into
 - Tester:
 - Overall result:
 - Follow-up tasks opened:
+
+## CLI Preflight Record
+
+- Date run: 2026-04-14
+- Commands:
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php`,
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php`,
+  `C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php`,
+  `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`
+- Result:
+  Pass. QA accounts and workflow records were seeded, authenticated customer,
+  employee, and admin dashboard contracts rendered, and viewport-readiness
+  markers passed for all three dashboard shells.
+- Browser status:
+  Pending manual execution in an authenticated browser session; no browser
+  automation dependency is present in this repository.

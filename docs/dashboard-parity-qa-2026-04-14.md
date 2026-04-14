@@ -29,6 +29,12 @@ workspace without authenticated browser sessions. Use it with
 - Added `docs/dashboard-browser-parity-run-sheet.md` as the manual browser run
   record for role/viewport status, screenshot paths, interaction checks, and
   browser-only defects.
+- Re-ran the dashboard QA setup and CLI checks on 2026-04-14 after the run
+  sheet was added:
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php`,
+  `C:\xampp\php\php.exe scripts\seed_dashboard_qa_workflow_data.php`,
+  `C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php`, and
+  `C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php`.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -81,6 +87,9 @@ workspace without authenticated browser sessions. Use it with
   route rendering, including dashboard target/panel pairs, shared responsive
   CSS breakpoints, horizontal table wrapping markers, modal dialog scaffolding,
   and public assistant exclusion on dashboard pages.
+- The 2026-04-14 CLI rerun confirmed the QA accounts, non-empty workflow data,
+  authenticated dashboard contracts, and viewport-readiness markers still pass
+  for customer, employee, and admin dashboards.
 
 ## Intentional Differences
 
