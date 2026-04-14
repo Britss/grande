@@ -63,6 +63,10 @@ $priorityFeedback = array_slice(array_values(array_filter($manageableFeedback ??
                     <img src="<?= e(url('public/icons/info.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
                     <span>Reports</span>
                 </button>
+                <button class="dashboard-sidebar__link" type="button" data-dashboard-target="account">
+                    <img src="<?= e(url('public/icons/target.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
+                    <span>Account</span>
+                </button>
             </nav>
         </aside>
 
@@ -266,6 +270,14 @@ $priorityFeedback = array_slice(array_values(array_filter($manageableFeedback ??
 
             <section class="dashboard-panel" data-dashboard-panel="reports">
                 <?php require __DIR__ . '/../../partials/reporting-dashboard.php'; ?>
+            </section>
+
+            <section class="dashboard-panel" data-dashboard-panel="account">
+                <?php
+                $staffRole = 'employee';
+                $passwordActionPath = '/dashboard/employee/password';
+                require __DIR__ . '/../../partials/staff-account-dashboard.php';
+                ?>
             </section>
         </div>
     </div>

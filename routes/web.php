@@ -78,10 +78,12 @@ return static function (Router $router): void {
     $router->post('/dashboard/admin/menu', [DashboardController::class, 'updateAdminMenu']);
     $router->post('/dashboard/admin/users', [DashboardController::class, 'updateAdminUsers']);
     $router->post('/dashboard/admin/feedback', [DashboardController::class, 'updateAdminFeedback']);
+    $router->post('/dashboard/admin/password', [DashboardController::class, 'updateAdminPassword']);
     $router->get('/dashboard/employee', [DashboardController::class, 'employee']);
     $router->post('/dashboard/employee/payments', [DashboardController::class, 'updateEmployeePayment']);
     $router->post('/dashboard/employee/orders', [DashboardController::class, 'updateEmployeeOrder']);
     $router->get('/dashboard/employee/orders/poll', [DashboardController::class, 'pollEmployeeOrders']);
     $router->post('/dashboard/employee/reservations', [DashboardController::class, 'updateEmployeeReservation']);
     $router->post('/dashboard/employee/feedback', [DashboardController::class, 'updateEmployeeFeedback']);
+    $router->post('/dashboard/employee/password', [DashboardController::class, 'updateEmployeePassword']);
 };

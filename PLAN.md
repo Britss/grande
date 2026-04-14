@@ -68,6 +68,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed:
   staff new-order polling parity is implemented for admin and employee dashboards with role-protected polling routes, repository-owned order summary counts, sidebar badge refreshes, and a compact toast that links staff to payment review or order management when new orders arrive after the dashboard opens.
 - Completed:
+  authenticated staff/admin change-password parity is implemented from the staff dashboards: admin and employee users now have an Account panel, verify their current password, submit a policy-compliant new password, receive CSRF protection and dashboard AJAX/fallback handling, keep reset-link access as fallback, and successful changes are audit logged.
+- Completed:
   menu JSON getter compatibility is implemented as a read-only bridge: `/api/menu-items` and old-style `/get_menu_items.php` both return active catalog items from `MenuRepository`, including normalized size data, without reintroducing page-level SQL handlers.
 - Completed:
   remaining read-only standalone JSON getter compatibility bridges are implemented for old dashboard/public consumers: `/get_orders.php`, `/get_order_items.php`, `/get_reservation_orders.php`, `/get_customer_reservation_orders.php`, `/get_feedback.php`, and `/get_customers.php`, with clean `/api/...` route aliases. These endpoints are role-protected, repository-owned, and preserve old response envelopes where practical.
@@ -104,7 +106,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed parity:
   customer profile-picture upload from `uploads/upload-profile-picture.php` is now represented by the customer profile dashboard upload form, backed by `users.profile_picture` and public uploaded image rendering in the dashboard sidebar/profile panel.
 - Completed parity:
-  authenticated dashboard password change from `auth/change-password.php` is now implemented for customer profile dashboards; decide later whether staff/admin self-service password panels are required.
+  authenticated dashboard password change from `auth/change-password.php` is now implemented for customer profile dashboards and staff/admin Account panels, with current-password verification, password policy validation, CSRF protection, reset-link fallback, and audit logging.
 - Remaining parity gaps:
   old menu delete behavior from `menu/delete_menu_item.php` is intentionally represented as availability/archive-style management rather than hard delete, preserving historical order/audit references.
 - Completed parity:
@@ -184,6 +186,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Current status:
   payment review, order management, reservation management, menu management, user management, feedback inbox, report summaries, audit log browsing, and detail snapshots are implemented.
   menu image upload is implemented with files saved under `public/uploads/menu-items` so XAMPP can serve them directly; order/reservation/menu/user filters, lightweight report graph visualizations, date-range reporting, and order/reservation drilldown tables are implemented.
+  admin self-service password changes are implemented from a dedicated Account panel with current-password verification and audit logging.
   admin overview parity is expanded with a compact Needs Attention queue for pending payments, reservations, and feedback.
   admin dashboard density is tightened through shared cards, filters, report tables, and operational list styling.
   `grandego` should remain the visual and flow reference for dashboard parity, especially for admin panel layout, customer account flow, familiar menu/reservation interactions, filter placement, and chart/report presentation.
@@ -194,6 +197,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   No user management, menu management, audit browsing, or admin reporting controls.
 - Current status:
   payment review, order management, reservation management, feedback review, queue-oriented reports, and detail snapshots are implemented.
+  employee self-service password changes are implemented from a dedicated Account panel with current-password verification and audit logging.
   employee sidebar styling, queue badges, compact cards, and mobile dashboard navigation now follow the old `grandego` staff dashboard more closely.
   employee-specific filtering and queue refinements now include dashboard filters plus a priority queue overview for payment, reservation, and feedback work.
   employee dashboard density is tightened through shared queue cards, filters, status blocks, and operational list styling.

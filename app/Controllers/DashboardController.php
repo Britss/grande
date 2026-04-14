@@ -464,6 +464,16 @@ final class DashboardController extends Controller
         $this->updateFeedbackForRole('employee');
     }
 
+    public function updateAdminPassword(): never
+    {
+        $this->updateStaffPassword('admin');
+    }
+
+    public function updateEmployeePassword(): never
+    {
+        $this->updateStaffPassword('employee');
+    }
+
     private function requireRole(string $role): array
     {
         if (!Auth::check()) {
@@ -696,6 +706,40 @@ final class DashboardController extends Controller
         $this->finishDashboardResponse($role, $section);
     }
 
+    private function updateStaffPassword(string $role): never
+    {
+        $user = $this->requireRole($role);
+        $section = $this->requestedSection('account');
+        $this->validateDashboardCsrf($role, $section, 'password update');
+
+        $users = new UserRepository();
+
+        try {
+            $input = $this->validatedCustomerPasswordData();
+            $freshUser = $users->findById((int) ($user['id'] ?? 0));
+
+            if ($freshUser === null || ($freshUser['role'] ?? null) !== $role) {
+                throw new \RuntimeException('Staff account not found.');
+            }
+
+            if (!password_verify($input['current_password'], (string) ($freshUser['password'] ?? ''))) {
+                throw new \RuntimeException('Current password is incorrect.');
+            }
+
+            $users->updatePassword((int) ($freshUser['id'] ?? 0), password_hash($input['password'], PASSWORD_DEFAULT));
+            Auth::login($freshUser);
+            (new AuditLogRepository())->log((int) ($freshUser['id'] ?? 0), $role . '_password_changed', 'user', (int) ($freshUser['id'] ?? 0), [
+                'email' => $freshUser['email'] ?? '',
+                'role' => $role,
+            ]);
+            Session::flash('status', 'Your password was updated successfully.');
+        } catch (\Throwable $exception) {
+            Session::flash('error', $exception->getMessage());
+        }
+
+        $this->finishDashboardResponse($role, $section);
+    }
+
     private function validateDashboardCsrf(string $role, string $section, string $context): bool
     {
         if (Csrf::validate((string) request_input('_token'))) {
@@ -771,6 +815,7 @@ final class DashboardController extends Controller
             'users' => $role === 'admin' ? 'user-management-dashboard' : '',
             'feedback' => 'feedback-management-dashboard',
             'reports' => 'reporting-dashboard',
+            'account' => 'staff-account-dashboard',
             default => '',
         };
 
@@ -797,6 +842,11 @@ final class DashboardController extends Controller
 
         if ($partial === 'feedback-management-dashboard') {
             $data['feedbackActionPath'] = '/dashboard/' . $role . '/feedback';
+        }
+
+        if ($partial === 'staff-account-dashboard') {
+            $data['staffRole'] = $role;
+            $data['passwordActionPath'] = '/dashboard/' . $role . '/password';
         }
 
         return $this->renderPartial($partial, $data);
