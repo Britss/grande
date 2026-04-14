@@ -10,7 +10,7 @@
         <div class="alert alert-error"><?= e((string) $error) ?></div>
     <?php endif; ?>
 
-    <div class="content-card menu-status-card">
+    <div class="menu-status-card">
         <?php if (!is_array($user ?? null)): ?>
             <h2>Login Before Building Your Cart</h2>
             <p>Add your drinks and bakery picks after logging in so your cart stays tied to your account.</p>
@@ -39,14 +39,17 @@
         <div class="menu-controls" data-menu-filter>
             <div class="form-field menu-search-field">
                 <label for="menu-search">Search menu</label>
-                <input
-                    id="menu-search"
-                    class="form-control"
-                    type="search"
-                    placeholder="Search drinks, bread, pastries"
-                    autocomplete="off"
-                    data-menu-search
-                >
+                <div class="menu-search-box">
+                    <input
+                        id="menu-search"
+                        class="form-control"
+                        type="search"
+                        placeholder="Search drinks, bread, pastries"
+                        autocomplete="off"
+                        data-menu-search
+                    >
+                    <img src="<?= e(url('public/icons/magnifying-glass.png')) ?>" alt="" aria-hidden="true">
+                </div>
             </div>
 
             <div class="menu-category-tabs" aria-label="Menu categories">
@@ -71,7 +74,7 @@
                     <p><?= e($category['description']) ?></p>
                 </div>
 
-                <div class="content-grid">
+                <div class="menu-grid">
                     <?php foreach ($category['items'] as $item): ?>
                         <?php
                             $sizeSearchText = implode(' ', array_map(
@@ -86,7 +89,7 @@
                             ));
                         ?>
                         <article
-                            class="content-card menu-item-card"
+                            class="menu-item-card"
                             data-menu-item
                             data-menu-category="<?= e(strtolower((string) ($item['category'] ?? $category['key'] ?? $category['name']))) ?>"
                             data-menu-text="<?= e($filterText) ?>"
@@ -98,18 +101,19 @@
                                 ?>
                                 <img class="menu-item-card__image" src="<?= e($imageSrc) ?>" alt="<?= e($item['name']) ?>">
                             <?php endif; ?>
-                            <h3><?= e($item['name']) ?></h3>
-                            <p><?= e($item['description']) ?></p>
-                            <div class="price-list">
+                            <div class="menu-item-card__body">
+                                <h3><?= e($item['name']) ?></h3>
+                                <p><?= e($item['description']) ?></p>
+                                <div class="price-list">
                                 <?php foreach ($item['sizes'] as $size): ?>
                                     <span class="price-pill">
                                         <?= e($size['label']) ?>: PHP <?= e(number_format((float) $size['price'], 2)) ?>
                                     </span>
                                 <?php endforeach; ?>
-                            </div>
+                                </div>
 
-                            <?php if (is_array($user ?? null) && (($user['role'] ?? 'customer') === 'customer')): ?>
-                                <form class="menu-order-form" method="post" action="<?= e(url('menu/cart')) ?>">
+                                <?php if (is_array($user ?? null) && (($user['role'] ?? 'customer') === 'customer')): ?>
+                                    <form class="menu-order-form" method="post" action="<?= e(url('menu/cart')) ?>">
                                     <?= csrf_field() ?>
                                     <div class="menu-order-grid">
                                         <div class="form-field">
@@ -128,12 +132,13 @@
                                         </div>
                                     </div>
                                     <button class="button button-primary menu-order-button" type="submit">Add to Cart</button>
-                                </form>
-                            <?php else: ?>
-                                <div class="menu-order-guest-note">
-                                    <p>Login first to add this item to your cart.</p>
-                                </div>
-                            <?php endif; ?>
+                                    </form>
+                                <?php else: ?>
+                                    <div class="menu-order-guest-note">
+                                        <p>Login first to add this item to your cart.</p>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </article>
                     <?php endforeach; ?>
                 </div>

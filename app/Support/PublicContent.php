@@ -301,9 +301,9 @@ final class PublicContent
             'hero' => [
                 'eyebrow' => 'Reserve',
                 'title' => 'Reserve Your Table',
-                'subtitle' => 'Book your coffee experience before the full reservation workflow is wired up.',
+                'subtitle' => 'Plan your visit, attach your cart, and let the team prepare your table before you arrive.',
             ],
-            'form_intro' => 'The final reservation flow will require login, cart validation, and workflow enforcement. This phase rebuilds the page structure and fields first.',
+            'form_intro' => 'Choose your schedule and confirm the contact details staff should use for reservation updates.',
             'form_fields' => [
                 ['label' => 'Date', 'type' => 'date', 'name' => 'date'],
                 ['label' => 'Time', 'type' => 'time', 'name' => 'time'],
@@ -315,19 +315,23 @@ final class PublicContent
             ],
             'sidebar_cards' => [
                 [
+                    'title' => 'Cart Required',
+                    'label' => 'Before booking',
+                    'body' => 'Add menu items first so your reservation can continue into checkout with the linked order.',
+                ],
+                [
+                    'title' => 'Visit Details',
+                    'label' => 'At the store',
+                    'body' => 'Arrive near your selected time and keep your phone reachable in case staff needs to confirm details.',
+                ],
+                [
                     'title' => 'Location',
+                    'label' => 'Where to go',
                     'body' => 'Beside Puregold, in front of St. Anthony\'s Drug Store, Sindalan, San Fernando, Pampanga.',
                 ],
                 [
-                    'title' => 'Contact Us',
-                    'body' => 'Reach out through phone or email if you need assistance before the booking system is finished.',
-                ],
-                [
-                    'title' => 'Operating Hours',
-                    'body' => 'Open 24/7. The brand promise remains visible here because it is central to the customer experience.',
-                ],
-                [
                     'title' => 'Reservation Policy',
+                    'label' => 'Good to know',
                     'body' => 'Reservations are held briefly, walk-ins remain welcome, and larger groups may need direct coordination.',
                 ],
             ],
@@ -337,6 +341,10 @@ final class PublicContent
                 '24/7 service',
                 'Affordable pricing',
                 'Warm community atmosphere',
+            ],
+            'cta' => [
+                'title' => 'Need More Items First?',
+                'body' => 'Build your cart from the menu, then return here to lock in the date, time, and guest count.',
             ],
         ];
     }
@@ -351,7 +359,7 @@ final class PublicContent
                 'title' => 'Share Your Feedback',
                 'subtitle' => 'Help us serve you better with your comments and suggestions.',
             ],
-            'form_intro' => 'Share your latest experience with Grande so the team can review it inside the rebuilt dashboard flow.',
+            'form_intro' => 'Tell us what happened during your visit. Short, specific notes are easiest for the team to act on.',
             'categories' => [
                 'Food Quality',
                 'Coffee Quality',
@@ -364,23 +372,28 @@ final class PublicContent
                 'Compliment',
                 'Other',
             ],
-            'info_cards' => [
-                [
-                    'title' => 'About Your Feedback',
-                    'body' => 'Every comment helps maintain Grande\'s commitment to freshness, quality, and hospitality.',
+            'examples' => [
+                'title' => 'Not sure what to write?',
+                'body' => 'Use one of these angles and keep it honest.',
+                'items' => [
+                    [
+                        'label' => 'Service',
+                        'body' => 'The counter was quick, but my drink took longer than expected.',
+                    ],
+                    [
+                        'label' => 'Food',
+                        'body' => 'The cheese pan de sal was fresh, soft, and still warm.',
+                    ],
+                    [
+                        'label' => 'Order',
+                        'body' => 'My reservation was easy to place, but I wanted clearer pickup timing.',
+                    ],
+                    [
+                        'label' => 'Suggestion',
+                        'body' => 'Please add more pastry bundle options for afternoon orders.',
+                    ],
                 ],
-                [
-                    'title' => 'Rate Your Experience',
-                    'body' => 'Customers can now send ratings and comments directly into the rebuilt feedback inbox.',
-                ],
-                [
-                    'title' => 'We\'re Listening 24/7',
-                    'body' => 'Urgent concerns can still be handled through direct contact channels while the digital workflow is being reviewed by staff.',
-                ],
-                [
-                    'title' => 'Visit Us',
-                    'body' => 'The rewrite keeps the same location and always-open brand message visible on feedback pages too.',
-                ],
+                'note' => 'Names and emails help us follow up, but the details matter most.',
             ],
             'cta' => [
                 'title' => 'Thank You for Your Feedback',

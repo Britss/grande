@@ -37,6 +37,7 @@ final class PublicPageController extends Controller
             'page' => $page,
             'user' => $user,
             'cartTotals' => $cartTotals,
+            'bodyClass' => 'menu-page',
         ]);
     }
 
@@ -66,13 +67,19 @@ final class PublicPageController extends Controller
 
     public function storeFeedback(): never
     {
+        $user = Auth::user();
+
+        if (!is_array($user)) {
+            Session::flash('error', 'You need to be logged in to submit feedback.');
+            redirect('/login');
+        }
+
         if (!Csrf::validate((string) request_input('_token'))) {
             Session::flash('error', 'Your session expired. Please try submitting your feedback again.');
             Session::flashInput($_POST);
             redirect('/feedback');
         }
 
-        $user = Auth::user();
         $input = [
             'feedback_name' => trim((string) request_input('feedback_name')),
             'feedback_email' => strtolower(trim((string) request_input('feedback_email'))),

@@ -34,6 +34,7 @@ final class ReservationController extends Controller
         return $this->render('pages.reserve', [
             'pageTitle' => $page['title'],
             'metaDescription' => $page['description'],
+            'bodyClass' => 'reserve-page',
             'page' => $page,
             'cartItems' => $cartItems,
             'cartTotals' => $cartTotals,
