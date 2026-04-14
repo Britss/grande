@@ -86,6 +86,25 @@ CLI session context, renders each dashboard route, and verifies the expected
 role-specific navigation and account markers while checking that forbidden
 dashboard panels and the public assistant widget are absent.
 
+Then run the dashboard viewport-readiness audit:
+
+```powershell
+php scripts/dashboard_viewport_readiness_audit.php
+```
+
+Or, with the bundled XAMPP PHP binary:
+
+```powershell
+C:\xampp\php\php.exe scripts\dashboard_viewport_readiness_audit.php
+```
+
+The audit signs in as the same seeded QA accounts, renders each dashboard, and
+checks that every role-specific panel is wired to navigation plus the shared
+responsive CSS markers needed for mobile dashboard navigation, horizontal table
+scrolling, modal height limits, compact filters, and dashboard assistant
+exclusion. It is not a substitute for the visual browser pass, but it catches
+missing responsive scaffolding before manual viewport review.
+
 ## Viewports
 
 Run each dashboard through these viewport widths:

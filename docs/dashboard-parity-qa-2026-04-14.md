@@ -21,6 +21,11 @@ workspace without authenticated browser sessions. Use it with
 - Added and ran `scripts/dashboard_parity_smoke.php` with the XAMPP PHP binary
   to render the authenticated customer, employee, and admin dashboards from the
   seeded QA accounts before manual viewport checks.
+- Added and ran `scripts/dashboard_viewport_readiness_audit.php` with the XAMPP
+  PHP binary to render the authenticated dashboards and verify role-specific
+  panel wiring plus responsive CSS markers for mobile dashboard navigation,
+  horizontally safe report tables, modal height limits, compact filters, and
+  dashboard assistant exclusion.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -69,6 +74,10 @@ workspace without authenticated browser sessions. Use it with
 - Authenticated smoke coverage passed for customer, employee, and admin route
   rendering, including role-specific navigation markers and absence of
   forbidden panels/public assistant widget on dashboard pages.
+- Viewport-readiness audit coverage passed for customer, employee, and admin
+  route rendering, including dashboard target/panel pairs, shared responsive
+  CSS breakpoints, horizontal table wrapping markers, modal dialog scaffolding,
+  and public assistant exclusion on dashboard pages.
 
 ## Intentional Differences
 
@@ -81,10 +90,11 @@ workspace without authenticated browser sessions. Use it with
 
 ## Remaining Browser QA
 
-The account seed, workflow data seed, and authenticated dashboard smoke test
-have been run for this local database. Sign in with the QA accounts documented
-in `docs/dashboard-parity-qa.md` and complete the browser checklist against the
-seeded non-empty dashboard panels. The browser pass still needs to verify:
+The account seed, workflow data seed, authenticated dashboard smoke test, and
+viewport-readiness audit have been run for this local database. Sign in with
+the QA accounts documented in `docs/dashboard-parity-qa.md` and complete the
+browser checklist against the seeded non-empty dashboard panels. The browser
+pass still needs to verify:
 
 - Desktop, laptop, tablet, and mobile viewport rendering.
 - Mouse, keyboard, and touch access to every dashboard section.
