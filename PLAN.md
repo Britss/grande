@@ -81,8 +81,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   browser-level dashboard comparison has been made repeatable through `docs/dashboard-parity-qa.md`, covering legacy dashboard reference files, rewrite routes, desktop/mobile viewport checks, shared dashboard expectations, role-specific customer/employee/admin parity points, and pass criteria for documenting intentional visual differences.
 - Completed:
   dashboard parity QA documentation now includes a dated static run record in `docs/dashboard-parity-qa-2026-04-14.md`, covering customer, employee, admin, shared dashboard behavior, intentional differences, and the exact browser checks that still require seeded accounts.
+- Completed:
+  repeatable dashboard QA account seeding is implemented through `scripts/seed_dashboard_qa_accounts.php`, documenting active customer, employee, and admin credentials for the authenticated browser parity checklist without creating workflow data.
 - Suggested next task:
-  execute the authenticated browser parity QA checklist against seeded customer, employee, and admin accounts, then append any viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`.
+  run `php scripts/seed_dashboard_qa_accounts.php`, execute the authenticated browser parity QA checklist against the seeded customer, employee, and admin accounts, then append any viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:

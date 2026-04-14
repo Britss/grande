@@ -10,8 +10,11 @@ workspace without authenticated browser sessions. Use it with
 - Reviewed dashboard navigation and panel keys used by the shared dashboard
   JavaScript.
 - Reviewed the existing parity checklist for viewport, role, and flow coverage.
+- Added a repeatable local seed script for customer, employee, and admin QA
+  accounts so authenticated browser runs no longer depend on undocumented
+  credentials.
 - Did not execute an authenticated browser pass because this workspace does not
-  provide seeded account credentials or a browser automation tool.
+  provide a browser automation tool.
 
 ## Static QA Results
 
@@ -67,9 +70,9 @@ workspace without authenticated browser sessions. Use it with
 
 ## Remaining Browser QA
 
-Run the full checklist in `docs/dashboard-parity-qa.md` after seeded customer,
-employee, and admin accounts are available. The browser pass still needs to
-verify:
+Run `php scripts/seed_dashboard_qa_accounts.php`, sign in with the QA accounts
+documented in `docs/dashboard-parity-qa.md`, and complete the browser checklist.
+The browser pass still needs to verify:
 
 - Desktop, laptop, tablet, and mobile viewport rendering.
 - Mouse, keyboard, and touch access to every dashboard section.

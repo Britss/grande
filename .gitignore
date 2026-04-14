@@ -8,6 +8,9 @@
 /storage/uploads/*
 !/storage/uploads/.gitkeep
 
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+
 /public/uploads/*
 !/public/uploads/.gitkeep
 

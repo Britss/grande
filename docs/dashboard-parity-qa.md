@@ -22,6 +22,27 @@ ownership.
 - Employee: `/dashboard/employee`
 - Admin: `/dashboard/admin`
 
+## Seeded QA Accounts
+
+Run this before the authenticated browser pass if the local `grande` database
+does not already have dashboard users:
+
+```powershell
+php scripts/seed_dashboard_qa_accounts.php
+```
+
+The script creates or refreshes these active accounts:
+
+- Customer: `qa.customer@grande.local`
+- Employee: `qa.employee@grande.local`
+- Admin: `qa.admin@grande.local`
+
+Default password: `GrandeQA#2026`
+
+Set `QA_SEED_PASSWORD` before running the script to use a different local QA
+password. The script only upserts users and does not create orders,
+reservations, feedback, or menu data.
+
 ## Viewports
 
 Run each dashboard through these viewport widths:
