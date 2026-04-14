@@ -596,15 +596,12 @@ h2 {
 .hero-highlights__item {
     display: inline-flex;
     align-items: center;
-    gap: 0.65rem;
-    padding: 0.7rem 1rem;
-    border-radius: 999px;
-    background: rgba(250, 235, 217, 0.12);
-    border: 1px solid rgba(250, 235, 217, 0.16);
+    gap: 0.42rem;
+    padding: 0.28rem 0.1rem;
     color: var(--cream);
-    backdrop-filter: blur(6px);
-    font-size: 0.92rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 500;
+    opacity: 0.88;
 }
 
 .hero-highlights__item img {
@@ -4776,9 +4773,9 @@ h2 {
     }
 
     .hero-highlights__item {
-        gap: 0.26rem;
-        padding: 0.38rem 0.48rem;
-        font-size: clamp(0.58rem, 2.35vw, 0.7rem);
+        gap: 0.2rem;
+        padding: 0.18rem 0;
+        font-size: clamp(0.54rem, 2.1vw, 0.64rem);
         line-height: 1;
         white-space: nowrap;
     }
