@@ -19,7 +19,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
 
     <div class="split-layout">
         <div class="content-card feedback-form-card">
-            <h2>Your Feedback Matters</h2>
+            <h2>Send a Note</h2>
             <p><?= e($page['form_intro']) ?></p>
 
             <?php if ($user !== null): ?>
@@ -44,11 +44,11 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
 
                     <div class="form-grid">
                         <div class="form-field">
-                            <label for="feedback_rating">Overall Experience Rating</label>
+                            <label for="feedback_rating">Rating</label>
                             <select id="feedback_rating" name="feedback_rating" class="form-control">
                                 <option value="">Select a rating</option>
                                 <?php foreach (['5', '4', '3', '2', '1'] as $rating): ?>
-                                    <option value="<?= e($rating) ?>" <?= old('feedback_rating') === $rating ? 'selected' : '' ?>><?= e($rating) ?> Stars</option>
+                                    <option value="<?= e($rating) ?>" <?= old('feedback_rating') === $rating ? 'selected' : '' ?>><?= e($rating) ?> star<?= $rating === '1' ? '' : 's' ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <?php if ($message = field_error('feedback_rating')): ?>
@@ -57,7 +57,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
                         </div>
 
                         <div class="form-field">
-                            <label for="feedback_category">Feedback Category</label>
+                            <label for="feedback_category">Topic</label>
                             <select id="feedback_category" name="feedback_category" class="form-control">
                                 <option value="">Select a category</option>
                                 <option value="service" <?= old('feedback_category') === 'service' ? 'selected' : '' ?>>Service</option>
@@ -74,7 +74,7 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
                     </div>
 
                     <div class="form-field">
-                        <label for="feedback_body">Your Feedback</label>
+                        <label for="feedback_body">Message</label>
                         <textarea id="feedback_body" name="feedback_body" rows="3" class="form-control"><?= e((string) old('feedback_body')) ?></textarea>
                         <?php if ($message = field_error('feedback_body')): ?>
                             <p class="field-error"><?= e($message) ?></p>
@@ -85,8 +85,8 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
                 </form>
             <?php else: ?>
                 <div class="feedback-login-prompt">
-                    <p>You need to be logged in to submit feedback.</p>
-                    <a href="<?= e(url('login')) ?>" class="button button-primary">Login to Submit Feedback</a>
+                    <p>Log in to send feedback to the Grande team.</p>
+                    <a href="<?= e(url('login')) ?>" class="button button-primary">Log In to Send Feedback</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -101,12 +101,15 @@ $defaultEmail = $user !== null ? (string) ($user['email'] ?? '') : '';
                 <?php foreach ($page['examples']['items'] as $example): ?>
                     <article class="feedback-example">
                         <span><?= e($example['label']) ?></span>
-                        <p><?= e($example['body']) ?></p>
+                        <div>
+                            <h3><?= e((string) ($example['title'] ?? $example['label'])) ?></h3>
+                            <p><?= e($example['body']) ?></p>
+                        </div>
                     </article>
                 <?php endforeach; ?>
             </div>
 
-            <p class="feedback-side-panel__note"><?= e($page['examples']['note']) ?></p>
+            <p class="feedback-side-panel__footer"><?= e($page['examples']['footer']) ?></p>
         </aside>
     </div>
 </section>

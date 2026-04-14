@@ -54,7 +54,6 @@ final class PublicPageController extends Controller
     public function feedback(): string
     {
         $page = PublicContent::feedback();
-        $page['form_intro'] = 'Share your recent experience with Grande. Feedback now goes straight into the rebuilt staff dashboard for review.';
 
         return $this->render('pages.feedback', [
             'pageTitle' => $page['title'],

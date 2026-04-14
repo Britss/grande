@@ -21,10 +21,16 @@
         <div class="about-poster__visual" data-reveal>
             <figure class="about-poster__image about-poster__image--primary">
                 <img src="<?= e($page['hero']['image']['src']) ?>" alt="<?= e($page['hero']['image']['alt']) ?>">
+                <?php if (!empty($page['hero']['image']['credit'])): ?>
+                    <span class="about-photo-credit"><?= e($page['hero']['image']['credit']) ?></span>
+                <?php endif; ?>
             </figure>
 
             <figure class="about-poster__image about-poster__image--secondary">
                 <img src="<?= e($page['hero']['secondary_image']['src']) ?>" alt="<?= e($page['hero']['secondary_image']['alt']) ?>">
+                <?php if (!empty($page['hero']['secondary_image']['credit'])): ?>
+                    <span class="about-photo-credit"><?= e($page['hero']['secondary_image']['credit']) ?></span>
+                <?php endif; ?>
             </figure>
 
             <?php if (!empty($page['hero']['framing'])): ?>
@@ -70,6 +76,9 @@
 
                     <figure class="about-proofbook__image">
                         <img src="<?= e($point['image']['src']) ?>" alt="<?= e($point['image']['alt']) ?>">
+                        <?php if (!empty($point['image']['credit'])): ?>
+                            <span class="about-photo-credit"><?= e($point['image']['credit']) ?></span>
+                        <?php endif; ?>
                     </figure>
                 </article>
             <?php endforeach; ?>

@@ -2,7 +2,21 @@
 <?php require __DIR__ . '/../partials/page-hero.php'; ?>
 
 <section class="page-section container reservation-section">
-    <?php $loggedInCustomer = is_array($user ?? null) && (($user['role'] ?? 'customer') === 'customer'); ?>
+    <?php
+    $loggedInCustomer = is_array($user ?? null) && (($user['role'] ?? 'customer') === 'customer');
+    $cartIsEmpty = ($cartTotals['item_count'] ?? 0) === 0;
+    $canReserve = $loggedInCustomer && !$cartIsEmpty;
+    $defaultReservationDateTime = new DateTimeImmutable('+30 minutes');
+    $defaultReservationMinute = (int) $defaultReservationDateTime->format('i');
+    if ($defaultReservationMinute > 30) {
+        $defaultReservationDateTime = $defaultReservationDateTime->modify('+1 hour');
+        $defaultReservationDateTime = $defaultReservationDateTime->setTime((int) $defaultReservationDateTime->format('H'), 0);
+    } elseif ($defaultReservationMinute > 0) {
+        $defaultReservationDateTime = $defaultReservationDateTime->setTime((int) $defaultReservationDateTime->format('H'), 30);
+    }
+    $defaultReservationDate = $defaultReservationDateTime->format('Y-m-d');
+    $defaultReservationTime = $defaultReservationDateTime->format('H:i');
+    ?>
 
     <?php if ($status = flash('status')): ?>
         <div class="alert alert-success"><?= e((string) $status) ?></div>
@@ -12,62 +26,109 @@
         <div class="alert alert-error"><?= e((string) $error) ?></div>
     <?php endif; ?>
 
-    <?php if (!auth_check()): ?>
-        <div class="alert alert-error">
-            You must be logged in to make a reservation.
-            <a href="<?= e(url('login')) ?>">Login now</a>.
-        </div>
-    <?php elseif (!$loggedInCustomer): ?>
-        <div class="alert alert-info">Only customer accounts can place reservation orders in this phase.</div>
-    <?php elseif (($cartTotals['item_count'] ?? 0) === 0): ?>
-        <div class="alert alert-info">
-            Add at least one item from the
-            <a href="<?= e(url('menu')) ?>">menu</a>
-            before making a reservation.
-        </div>
-    <?php endif; ?>
-
     <div class="split-layout">
         <div class="content-card reservation-form-card">
             <h2>Make a Reservation</h2>
             <p><?= e($page['form_intro']) ?></p>
-            <form class="stack-form" action="<?= e(url('reserve')) ?>" method="post">
-                <?= csrf_field() ?>
-                <div class="form-grid">
-                    <?php foreach ($page['form_fields'] as $field): ?>
-                        <div class="form-field <?= $field['name'] === 'guests' ? 'full-width' : '' ?>">
-                            <label for="<?= e($field['name']) ?>"><?= e($field['label']) ?></label>
-                            <input
-                                id="<?= e($field['name']) ?>"
-                                name="<?= e($field['name']) ?>"
-                                type="<?= e($field['type']) ?>"
-                                class="form-control <?= has_error($field['name']) ? 'is-invalid' : '' ?>"
-                                <?php if (!empty($field['min'])): ?>min="<?= e($field['min']) ?>"<?php endif; ?>
-                                <?php if (!empty($field['max'])): ?>max="<?= e($field['max']) ?>"<?php endif; ?>
-                                value="<?=
-                                    e((string) match ($field['name']) {
-                                        'date' => old('date', ''),
-                                        'time' => old('time', ''),
-                                        'guests' => old('guests', $field['value'] ?? '1'),
-                                        'first_name' => old('first_name', $user['first_name'] ?? ''),
-                                        'last_name' => old('last_name', $user['last_name'] ?? ''),
-                                        'email' => old('email', $user['email'] ?? ''),
-                                        'phone' => old('phone', $user['phone'] ?? ''),
-                                        default => old($field['name'], $field['value'] ?? ''),
-                                    })
-                                ?>"
-                                <?= (!$loggedInCustomer || ($cartTotals['item_count'] ?? 0) === 0) ? 'disabled' : '' ?>
-                            >
-                            <?php if ($message = field_error($field['name'])): ?>
-                                <small class="field-error"><?= e((string) $message) ?></small>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
+            <?php if ($canReserve): ?>
+                <form class="stack-form" action="<?= e(url('reserve')) ?>" method="post">
+                    <?= csrf_field() ?>
+                    <div class="form-grid">
+                        <?php foreach ($page['form_fields'] as $field): ?>
+                            <div class="form-field <?= $field['name'] === 'guests' ? 'full-width' : '' ?>">
+                                <label for="<?= e($field['name']) ?>"><?= e($field['label']) ?></label>
+                                <?php
+                                $fieldValue = (string) match ($field['name']) {
+                                    'date' => old('date', $defaultReservationDate),
+                                    'time' => old('time', $defaultReservationTime),
+                                    'guests' => old('guests', $field['value'] ?? '1'),
+                                    'first_name' => old('first_name', $user['first_name'] ?? ''),
+                                    'last_name' => old('last_name', $user['last_name'] ?? ''),
+                                    'email' => old('email', $user['email'] ?? ''),
+                                    'phone' => old('phone', $user['phone'] ?? ''),
+                                    default => old($field['name'], $field['value'] ?? ''),
+                                };
+                                ?>
+                                <input
+                                    id="<?= e($field['name']) ?>"
+                                    name="<?= e($field['name']) ?>"
+                                    type="<?= e($field['type']) ?>"
+                                    class="form-control <?= $field['name'] === 'date' ? 'reservation-native-date' : '' ?> <?= $field['name'] === 'time' ? 'reservation-native-time' : '' ?> <?= has_error($field['name']) ? 'is-invalid' : '' ?>"
+                                    <?php if ($field['name'] === 'date'): ?>data-reservation-date-input<?php endif; ?>
+                                    <?php if ($field['name'] === 'time'): ?>data-reservation-time-input<?php endif; ?>
+                                    <?php if ($field['name'] === 'date'): ?>min="<?= e(date('Y-m-d')) ?>"<?php endif; ?>
+                                    <?php if (!empty($field['min'])): ?>min="<?= e($field['min']) ?>"<?php endif; ?>
+                                    <?php if (!empty($field['max'])): ?>max="<?= e($field['max']) ?>"<?php endif; ?>
+                                    value="<?= e($fieldValue) ?>"
+                                >
+                                <?php if ($field['name'] === 'date'): ?>
+                                    <div
+                                        class="reservation-calendar"
+                                        data-reservation-calendar
+                                        data-selected-date="<?= e($fieldValue) ?>"
+                                        data-min-date="<?= e(date('Y-m-d')) ?>"
+                                        hidden
+                                    >
+                                        <div class="reservation-calendar__head">
+                                            <button type="button" class="reservation-calendar__nav" data-calendar-prev aria-label="Previous month">&lsaquo;</button>
+                                            <div>
+                                                <strong data-calendar-month></strong>
+                                                <span>Choose your visit date</span>
+                                            </div>
+                                            <button type="button" class="reservation-calendar__nav" data-calendar-next aria-label="Next month">&rsaquo;</button>
+                                        </div>
+                                        <div class="reservation-calendar__weekdays" aria-hidden="true">
+                                            <span>Sun</span>
+                                            <span>Mon</span>
+                                            <span>Tue</span>
+                                            <span>Wed</span>
+                                            <span>Thu</span>
+                                            <span>Fri</span>
+                                            <span>Sat</span>
+                                        </div>
+                                        <div class="reservation-calendar__days" data-calendar-days></div>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if ($field['name'] === 'time'): ?>
+                                    <div
+                                        class="reservation-time-picker"
+                                        data-reservation-time-picker
+                                        data-selected-time="<?= e($fieldValue) ?>"
+                                        hidden
+                                    >
+                                        <div class="reservation-time-picker__head">
+                                            <strong>Choose your visit time</strong>
+                                            <span>30-minute slots, open all day</span>
+                                        </div>
+                                        <div class="reservation-time-picker__slots" data-time-slots></div>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if ($message = field_error($field['name'])): ?>
+                                    <small class="field-error"><?= e((string) $message) ?></small>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <button type="submit" class="button button-primary">
+                        Reserve Table
+                    </button>
+                </form>
+            <?php elseif (!auth_check()): ?>
+                <div class="feedback-login-prompt">
+                    <p>Log in and add items to your cart before making a reservation.</p>
+                    <a href="<?= e(url('login')) ?>" class="button button-primary">Log In to Reserve</a>
                 </div>
-                <button type="submit" class="button button-primary" <?= (!$loggedInCustomer || ($cartTotals['item_count'] ?? 0) === 0) ? 'disabled' : '' ?>>
-                    Reserve Table
-                </button>
-            </form>
+            <?php elseif (!$loggedInCustomer): ?>
+                <div class="feedback-login-prompt">
+                    <p>Only customer accounts can place reservation orders.</p>
+                    <a href="<?= e(auth_dashboard_path()) ?>" class="button button-primary">Back to Dashboard</a>
+                </div>
+            <?php else: ?>
+                <div class="feedback-login-prompt">
+                    <p>Add at least one item from the menu before making a reservation.</p>
+                    <a href="<?= e(url('menu')) ?>" class="button button-primary">Go to Menu</a>
+                </div>
+            <?php endif; ?>
         </div>
 
         <aside class="reservation-side-panel" aria-labelledby="reservation-guide-title">
@@ -81,13 +142,13 @@
                     <div>
                         <h3>Cart Ready</h3>
                     <?php if ($cartItems !== []): ?>
-                        <p><?= e((string) $cartTotals['item_count']) ?> item(s) selected • PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
+                        <p><?= e((string) $cartTotals['item_count']) ?> item(s) selected &middot; PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
                         <div class="cart-summary-list">
                             <?php foreach (array_slice($cartItems, 0, 3) as $item): ?>
                                 <div class="cart-summary-item">
                                     <div>
                                         <strong><?= e($item['item_name']) ?></strong>
-                                        <p><?= e($item['size']) ?> • Qty <?= e((string) $item['quantity']) ?></p>
+                                        <p><?= e($item['size']) ?> &middot; Qty <?= e((string) $item['quantity']) ?></p>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -98,7 +159,6 @@
                         </div>
                     <?php else: ?>
                         <p>Your cart is empty. Build it from the menu before reserving.</p>
-                        <a class="button button-primary" href="<?= e(url('menu')) ?>">Go to Menu</a>
                     <?php endif; ?>
                     </div>
                 </article>
@@ -119,18 +179,6 @@
     </div>
 </section>
 
-<section class="page-section container reservation-benefits">
-    <h2>Why Reserve at Grande?</h2>
-    <div class="content-grid">
-        <?php foreach ($page['amenities'] as $amenity): ?>
-            <article class="content-card">
-                <h3><?= e(is_array($amenity) ? $amenity['title'] : $amenity) ?></h3>
-                <p><?= e(is_array($amenity) ? $amenity['body'] : 'This item remains part of the reservation page because it supports the same customer decision flow as the current site.') ?></p>
-            </article>
-        <?php endforeach; ?>
-    </div>
-</section>
-
 <section class="about-invitation reservation-invitation">
     <div class="container about-invitation__layout" data-reveal>
         <div class="about-invitation__copy">
@@ -138,9 +186,6 @@
             <p><?= e($page['cta']['body']) ?></p>
         </div>
 
-        <div class="about-invitation__actions">
-            <a class="button button-primary" href="<?= e(url('menu')) ?>">View Menu</a>
-            <a class="button button-secondary" href="<?= e(url('cart')) ?>">Review Cart</a>
-        </div>
     </div>
 </section>
+

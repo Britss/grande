@@ -72,19 +72,36 @@ final class PublicContent
     {
         return [
             'title' => 'About',
-            'description' => 'Meet Grande. Pandesal + Coffee in Sindalan: fresh bread, premium coffee, and a warm stop that stays open all day and night.',
+            'description' => 'Meet Grande. Pandesal + Coffee in Sindalan: a 24/7 neighborhood bread-and-coffee shop for everyday stops.',
             'hero' => [
                 'eyebrow' => 'Grande. Pan De Sal + Coffee',
-                'title' => 'From morning bread to late-night coffee, Grande stays part of the neighborhood rhythm.',
-                'body' => 'Some visits are quick, some turn into a quiet pause, and some happen when most places are already closed. Grande is built for all of them: bakery warmth in the morning, coffee comfort through the day, and a familiar light still on when the night runs long.',
+                'title' => 'Bread, coffee, and a familiar stop in Sindalan.',
+                'lead' => 'A 24/7 neighborhood bread-and-coffee shop for breakfast, merienda, takeout drinks, and late-night coffee runs.',
+                'body' => 'Grande keeps everyday comfort close: pan de sal, ensaymada, loaf breads, coffee-based drinks, tea, and non-coffee favorites served in a compact shop built for quick visits and familiar routines.',
                 'framing' => '',
                 'image' => [
                     'src' => url('public/images/2024-12-02.webp'),
-                    'alt' => 'Grande storefront glowing in Sindalan',
+                    'alt' => 'Grande food and drinks on a cafe table',
+                    'credit' => 'Photo by grande.',
                 ],
                 'secondary_image' => [
-                    'src' => url('public/images/menu-items/grande_coffee.jpg'),
-                    'alt' => 'Freshly served Grande coffee',
+                    'src' => url('public\icons\snaptik_7422529582160448786_2_v2.jpeg'),
+                    'alt' => 'Grande iced drinks served with bread inside the cafe',
+                    'credit' => 'Photo by fayecuico',
+                ],
+                'quick_facts' => [
+                    [
+                        'label' => 'Open',
+                        'detail' => '24/7 for early starts, errands, and late-night stops.',
+                    ],
+                    [
+                        'label' => 'Known For',
+                        'detail' => 'Pan de sal, ensaymada, loaf breads, coffee, tea, and refreshers.',
+                    ],
+                    [
+                        'label' => 'Location',
+                        'detail' => 'Sindalan, City of San Fernando, Pampanga.',
+                    ],
                 ],
             ],
             'timeline_moments' => [
@@ -119,54 +136,58 @@ final class PublicContent
             'proof_points' => [
                 'intro' => [
                     'eyebrow' => 'Why Grande Works',
-                    'title' => 'The atmosphere feels warm, but the reason people return is practical.',
-                    'body' => 'Grande stays easy to choose because the bakery and coffee quality are familiar, the location makes sense, and the shop is ready when the day starts early or ends late.',
+                    'title' => 'Warm in mood, useful in the moments that matter.',
+                    'body' => 'Grande works because it fits real routines: bread for the morning, drinks through the day, and an open door when nearby choices are limited.',
                 ],
                 [
                     'kicker' => 'Fresh bread',
-                    'title' => 'Warm pan de sal stays at the center of the visit.',
-                    'body' => 'The bakery side never feels secondary. Grande keeps the bread fresh, soft, and ready for the kind of quick stop that still needs to feel worth it.',
+                    'title' => 'Pastries keep the visit grounded.',
+                    'body' => 'Soft bread, ensaymada, and loaf favorites make Grande an easy stop for breakfast, merienda, or something to bring home.',
                     'icon' => url('public/icons/bread.png'),
                     'image' => [
-                        'src' => url('public/images/menu-items/pandesal_fest_bundle.jpg'),
-                        'alt' => 'Grande bread bundle ready for takeaway',
+                        'src' => url('public\icons\snaptik_7422529582160448786_5_v2.jpeg'),
+                        'alt' => 'Grande bread and iced drinks on a cafe table',
+                        'credit' => 'Photo by fayecuico',
                     ],
                 ],
                 [
                     'kicker' => 'Coffee comfort',
-                    'title' => 'Premium coffee stays approachable enough for repeat visits.',
-                    'body' => 'From a straightforward cup to sweeter favorites, the coffee is made for ordinary days, long catch-ups, and late resets without feeling overcomplicated.',
+                    'title' => 'Coffee stays simple to come back to.',
+                    'body' => 'From classic cups to sweeter blends, the drinks are made for ordinary days, catch-ups, and quick resets.',
                     'icon' => url('public/icons/coffee.png'),
                     'image' => [
-                        'src' => url('public/images/menu-items/spanish_latte.jpg'),
-                        'alt' => 'Grande premium coffee for a daytime pause',
+                        'src' => url('public/icons/snaptik_7422529582160448786_0_v2.jpeg'),
+                        'alt' => 'Four Grande iced drinks lined up by the cafe window',
+                        'credit' => 'Photo by fayecuico',
                     ],
                 ],
                 [
                     'kicker' => '24/7 service',
-                    'title' => 'The always-open promise is part of the product, not a footnote.',
-                    'body' => 'Grande is there for early starts, in-between errands, and late-night coffee runs. Being open all day and night makes the place genuinely useful, not just atmospheric.',
+                    'title' => 'Open hours carry real weight.',
+                    'body' => 'Being open day and night makes Grande useful for early starts, errands, night shifts, and late coffee runs.',
                     'icon' => url('public/icons/clock.png'),
                     'image' => [
-                        'src' => url('public/images/2024-12-02.webp'),
-                        'alt' => 'Grande storefront open at all hours',
+                        'src' => url('public\icons\snaptik_7422529582160448786_3_v2.jpeg'),
+                        'alt' => 'Grande exterior sign glowing at night',
+                        'credit' => 'Photo by fayecuico',
                     ],
                 ],
                 [
                     'kicker' => 'Sindalan stop',
-                    'title' => 'The location fits the way local routines actually move.',
-                    'body' => 'Beside Puregold Sindalan and in front of St. Anthony\'s Drug Store, Grande is simple to reach before heading out, while doing errands, or on the way home.',
+                    'title' => 'The location fits local routines.',
+                    'body' => 'In Sindalan, Grande is easy to reach before heading out, during errands, or on the way home.',
                     'icon' => url('public/icons/pin.png'),
                     'image' => [
-                        'src' => url('public/images/menu-items/classic_ensaymada.jpg'),
-                        'alt' => 'Grande bakery counter and neighborhood cafe atmosphere',
+                        'src' => url('public\icons\snaptik_7422529582160448786_4_v2.jpeg'),
+                        'alt' => 'Grande counter view looking toward the Sindalan street at night',
+                        'credit' => 'Photo by fayecuico',
                     ],
                 ],
             ],
             'closing_cta' => [
                 'eyebrow' => 'Visit Any Hour',
-                'title' => 'Drop by for bread, coffee, and a familiar seat whenever the day gives you time.',
-                'body' => 'Browse the menu first or reserve a table, then stop in whenever you are nearby in Sindalan.',
+                'title' => 'Drop by when bread or coffee fits your day.',
+                'body' => 'Browse the menu first or reserve a table, then stop in when you are nearby in Sindalan.',
                 'actions' => [
                     [
                         'label' => 'View Menu',
@@ -299,11 +320,11 @@ final class PublicContent
             'title' => 'Reserve',
             'description' => 'Reserve your table at Grande. Pandesal + Coffee online.',
             'hero' => [
-                'eyebrow' => 'Reserve',
-                'title' => 'Reserve Your Table',
-                'subtitle' => 'Plan your visit, attach your cart, and let the team prepare your table before you arrive.',
+                'eyebrow' => '',
+                'title' => 'Save a Spot at Grande',
+                'subtitle' => 'Plan a bread-and-coffee run for breakfast, merienda, or a late-night stop in Sindalan.',
             ],
-            'form_intro' => 'Choose your schedule and confirm the contact details staff should use for reservation updates.',
+            'form_intro' => 'Pick a time and leave the contact details staff can use for quick updates.',
             'form_fields' => [
                 ['label' => 'Date', 'type' => 'date', 'name' => 'date'],
                 ['label' => 'Time', 'type' => 'time', 'name' => 'time'],
@@ -315,14 +336,14 @@ final class PublicContent
             ],
             'sidebar_cards' => [
                 [
-                    'title' => 'Cart Required',
+                    'title' => 'Start With Your Cart',
                     'label' => 'Before booking',
-                    'body' => 'Add menu items first so your reservation can continue into checkout with the linked order.',
+                    'body' => 'Add your pandesal, pastries, coffee, or tea first so the visit and order stay together.',
                 ],
                 [
-                    'title' => 'Visit Details',
+                    'title' => 'Arrive Around Your Time',
                     'label' => 'At the store',
-                    'body' => 'Arrive near your selected time and keep your phone reachable in case staff needs to confirm details.',
+                    'body' => 'Drop by near your selected schedule and keep your phone reachable for any quick confirmation.',
                 ],
                 [
                     'title' => 'Location',
@@ -330,21 +351,36 @@ final class PublicContent
                     'body' => 'Beside Puregold, in front of St. Anthony\'s Drug Store, Sindalan, San Fernando, Pampanga.',
                 ],
                 [
-                    'title' => 'Reservation Policy',
+                    'title' => 'Good to Know',
                     'label' => 'Good to know',
-                    'body' => 'Reservations are held briefly, walk-ins remain welcome, and larger groups may need direct coordination.',
+                    'body' => 'Walk-ins are still welcome. Larger groups may need direct coordination with the store.',
                 ],
             ],
             'amenities' => [
-                'Fresh pan de sal',
-                'Premium coffee',
-                '24/7 service',
-                'Affordable pricing',
-                'Warm community atmosphere',
+                [
+                    'title' => 'Bread Favorites',
+                    'body' => 'Pandesal, ensaymada, and loaf breads for everyday cravings.',
+                ],
+                [
+                    'title' => 'Coffee and More',
+                    'body' => 'Classic coffee, teas, non-coffee drinks, and refreshers in one stop.',
+                ],
+                [
+                    'title' => 'Open Anytime',
+                    'body' => 'A neighborhood stop for morning, merienda, and late-night visits.',
+                ],
+                [
+                    'title' => 'Easy to Find',
+                    'body' => 'Located in Sindalan, beside Puregold and in front of St. Anthony\'s Drug Store.',
+                ],
+                [
+                    'title' => 'Made for Takeout',
+                    'body' => 'Quick bread-and-drink orders for everyday comfort and convenience.',
+                ],
             ],
             'cta' => [
-                'title' => 'Need More Items First?',
-                'body' => 'Build your cart from the menu, then return here to lock in the date, time, and guest count.',
+                'title' => 'We Are Happy to Have You',
+                'body' => 'The store is happily waiting for your visit. Come by near your selected time and settle in with something warm, fresh, and familiar.',
             ],
         ];
     }
@@ -356,10 +392,10 @@ final class PublicContent
             'description' => 'Share your Grande. Pandesal + Coffee experience.',
             'hero' => [
                 'eyebrow' => '',
-                'title' => 'Share Your Feedback',
-                'subtitle' => 'Help us serve you better with your comments and suggestions.',
+                'title' => 'How Was Your Visit?',
+                'subtitle' => 'A quick note helps us make the next bread, coffee, or pickup run smoother.',
             ],
-            'form_intro' => 'Tell us what happened during your visit. Short, specific notes are easiest for the team to act on.',
+            'form_intro' => 'Tell us what stood out. A few clear details are enough.',
             'categories' => [
                 'Food Quality',
                 'Coffee Quality',
@@ -373,31 +409,35 @@ final class PublicContent
                 'Other',
             ],
             'examples' => [
-                'title' => 'Not sure what to write?',
-                'body' => 'Use one of these angles and keep it honest.',
+                'title' => 'What Helps Most',
+                'body' => 'Start with one moment from your visit, order, or pickup.',
                 'items' => [
                     [
                         'label' => 'Service',
-                        'body' => 'The counter was quick, but my drink took longer than expected.',
+                        'title' => 'At the Counter',
+                        'body' => 'Service was quick, but my drink needed a little more time.',
                     ],
                     [
                         'label' => 'Food',
-                        'body' => 'The cheese pan de sal was fresh, soft, and still warm.',
+                        'title' => 'Bread and Pastries',
+                        'body' => 'The cheese pan de sal was soft and still warm.',
                     ],
                     [
                         'label' => 'Order',
-                        'body' => 'My reservation was easy to place, but I wanted clearer pickup timing.',
+                        'title' => 'Pickup Flow',
+                        'body' => 'Ordering was easy. Pickup time could be clearer.',
                     ],
                     [
                         'label' => 'Suggestion',
-                        'body' => 'Please add more pastry bundle options for afternoon orders.',
+                        'title' => 'Menu Ideas',
+                        'body' => 'More pastry bundles would be nice for merienda.',
                     ],
                 ],
-                'note' => 'Names and emails help us follow up, but the details matter most.',
+                'footer' => 'We use your name and email only when a follow-up is needed.',
             ],
             'cta' => [
-                'title' => 'Thank You for Your Feedback',
-                'body' => 'Your voice helps improve the experience every single day.',
+                'title' => 'Thanks for the Note',
+                'body' => 'We read every message so everyday stops at Grande stay easy and familiar.',
             ],
         ];
     }

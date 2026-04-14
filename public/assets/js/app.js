@@ -1125,6 +1125,391 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    var input = document.querySelector("[data-reservation-date-input]");
+    var calendar = document.querySelector("[data-reservation-calendar]");
+
+    if (!input || !calendar) {
+        return;
+    }
+
+    var monthLabel = calendar.querySelector("[data-calendar-month]");
+    var daysGrid = calendar.querySelector("[data-calendar-days]");
+    var prevButton = calendar.querySelector("[data-calendar-prev]");
+    var nextButton = calendar.querySelector("[data-calendar-next]");
+    var monthFormatter = new Intl.DateTimeFormat("en-PH", {
+        month: "long",
+        year: "numeric"
+    });
+
+    var parseDate = function (value) {
+        var parts = String(value || "").split("-");
+
+        if (parts.length !== 3) {
+            return null;
+        }
+
+        var year = Number(parts[0]);
+        var month = Number(parts[1]) - 1;
+        var day = Number(parts[2]);
+        var parsed = new Date(year, month, day);
+
+        if (parsed.getFullYear() !== year || parsed.getMonth() !== month || parsed.getDate() !== day) {
+            return null;
+        }
+
+        return parsed;
+    };
+
+    var formatDate = function (date) {
+        var month = String(date.getMonth() + 1).padStart(2, "0");
+        var day = String(date.getDate()).padStart(2, "0");
+
+        return String(date.getFullYear()) + "-" + month + "-" + day;
+    };
+
+    var today = parseDate(calendar.getAttribute("data-min-date")) || new Date();
+    today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+    var selectedDate = parseDate(input.value) || today;
+
+    if (selectedDate < today) {
+        selectedDate = today;
+        input.value = formatDate(today);
+    }
+
+    var visibleMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+
+    var renderCalendar = function () {
+        var firstDay = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
+        var startDate = new Date(firstDay);
+        var selectedValue = formatDate(selectedDate);
+        var todayValue = formatDate(today);
+
+        startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+        monthLabel.textContent = monthFormatter.format(visibleMonth);
+        daysGrid.innerHTML = "";
+
+        for (var index = 0; index < 42; index += 1) {
+            var date = new Date(startDate);
+            var button = document.createElement("button");
+            var dateValue = formatDate(date);
+
+            date.setDate(startDate.getDate() + index);
+            dateValue = formatDate(date);
+
+            button.type = "button";
+            button.className = "reservation-calendar__day";
+            button.textContent = String(date.getDate());
+            button.setAttribute("data-calendar-date", dateValue);
+            button.setAttribute("aria-label", date.toLocaleDateString("en-PH", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric"
+            }));
+
+            if (date.getMonth() !== visibleMonth.getMonth()) {
+                button.classList.add("is-muted");
+            }
+
+            if (dateValue === todayValue) {
+                button.classList.add("is-today");
+            }
+
+            if (dateValue === selectedValue) {
+                button.classList.add("is-selected");
+                button.setAttribute("aria-pressed", "true");
+            } else {
+                button.setAttribute("aria-pressed", "false");
+            }
+
+            if (date < today) {
+                button.disabled = true;
+            }
+
+            daysGrid.appendChild(button);
+        }
+
+        prevButton.disabled = visibleMonth.getFullYear() === today.getFullYear() && visibleMonth.getMonth() === today.getMonth();
+    };
+
+    input.classList.add("is-enhanced");
+    input.type = "hidden";
+    calendar.hidden = false;
+    renderCalendar();
+
+    daysGrid.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-calendar-date]");
+
+        if (!button || button.disabled) {
+            return;
+        }
+
+        var nextDate = parseDate(button.getAttribute("data-calendar-date"));
+
+        if (!nextDate) {
+            return;
+        }
+
+        selectedDate = nextDate;
+        visibleMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+        input.value = formatDate(selectedDate);
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+        renderCalendar();
+    });
+
+    prevButton.addEventListener("click", function () {
+        visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
+        renderCalendar();
+    });
+
+    nextButton.addEventListener("click", function () {
+        visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1);
+        renderCalendar();
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    var timeInput = document.querySelector("[data-reservation-time-input]");
+    var timePicker = document.querySelector("[data-reservation-time-picker]");
+
+    if (!timeInput || !timePicker) {
+        return;
+    }
+
+    var dateInput = document.querySelector("[data-reservation-date-input]");
+    var slotsGrid = timePicker.querySelector("[data-time-slots]");
+
+    if (!slotsGrid) {
+        return;
+    }
+
+    var clockReadout = document.createElement("div");
+    var clockHand = document.createElement("span");
+    var clockDisplay = document.createElement("div");
+    var displayHour = document.createElement("span");
+    var displayMinute = document.createElement("span");
+    var meridiemToggle = document.createElement("div");
+    var amButton = document.createElement("button");
+    var pmButton = document.createElement("button");
+
+    clockReadout.className = "reservation-time-picker__readout";
+    clockReadout.setAttribute("aria-live", "polite");
+    clockHand.className = "reservation-time-picker__hand";
+    clockHand.setAttribute("aria-hidden", "true");
+    clockDisplay.className = "reservation-time-picker__display";
+    displayHour.className = "reservation-time-picker__display-hour";
+    displayMinute.className = "reservation-time-picker__display-minute";
+    meridiemToggle.className = "reservation-time-picker__meridiem";
+    meridiemToggle.setAttribute("aria-label", "Choose AM or PM");
+    amButton.type = "button";
+    amButton.className = "reservation-time-picker__period";
+    amButton.setAttribute("data-time-period", "am");
+    amButton.textContent = "AM";
+    pmButton.type = "button";
+    pmButton.className = "reservation-time-picker__period";
+    pmButton.setAttribute("data-time-period", "pm");
+    pmButton.textContent = "PM";
+    clockDisplay.appendChild(displayHour);
+    clockDisplay.appendChild(document.createTextNode(":"));
+    clockDisplay.appendChild(displayMinute);
+    meridiemToggle.appendChild(amButton);
+    meridiemToggle.appendChild(pmButton);
+    clockDisplay.appendChild(meridiemToggle);
+    timePicker.insertBefore(clockDisplay, slotsGrid);
+    slotsGrid.appendChild(clockHand);
+    slotsGrid.appendChild(clockReadout);
+    var activePeriod = "am";
+
+    var padTime = function (value) {
+        return String(value).padStart(2, "0");
+    };
+
+    var formatTime = function (minutes) {
+        var hour = Math.floor(minutes / 60);
+        var minute = minutes % 60;
+
+        return padTime(hour) + ":" + padTime(minute);
+    };
+
+    var parseTime = function (value) {
+        var parts = String(value || "").split(":");
+
+        if (parts.length < 2) {
+            return null;
+        }
+
+        var hour = Number(parts[0]);
+        var minute = Number(parts[1]);
+
+        if (!Number.isInteger(hour) || !Number.isInteger(minute) || hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+            return null;
+        }
+
+        return (hour * 60) + minute;
+    };
+
+    activePeriod = parseTime(timeInput.value) >= 720 ? "pm" : "am";
+
+    var formatTimeLabel = function (value) {
+        var minutes = parseTime(value);
+
+        if (minutes === null) {
+            return value;
+        }
+
+        var hour = Math.floor(minutes / 60);
+        var minute = minutes % 60;
+        var suffix = hour >= 12 ? "PM" : "AM";
+        var displayHour = hour % 12 || 12;
+
+        return String(displayHour) + ":" + padTime(minute) + " " + suffix;
+    };
+
+    var formatClockSlotLabel = function (minutes) {
+        var hour = Math.floor(minutes / 60);
+        var minute = minutes % 60;
+        var displayHour = hour % 12 || 12;
+
+        if (minute === 30) {
+            return "";
+        }
+
+        return String(displayHour);
+    };
+
+    var todayValue = function () {
+        var today = new Date();
+
+        return String(today.getFullYear()) + "-" + padTime(today.getMonth() + 1) + "-" + padTime(today.getDate());
+    };
+
+    var currentMinuteOfDay = function () {
+        var now = new Date();
+
+        return (now.getHours() * 60) + now.getMinutes();
+    };
+
+    var isSelectedDateToday = function () {
+        return dateInput && dateInput.value === todayValue();
+    };
+
+    var renderTimeSlots = function () {
+        var selectedTime = timeInput.value;
+        var selectedMinutes = parseTime(selectedTime);
+        var minimumMinutes = isSelectedDateToday() ? currentMinuteOfDay() : -1;
+        var firstAvailable = "";
+        var periodStart = activePeriod === "pm" ? 720 : 0;
+        var selectedIsVisible = selectedMinutes !== null && selectedMinutes >= periodStart && selectedMinutes < periodStart + 720;
+
+        slotsGrid.innerHTML = "";
+        slotsGrid.appendChild(clockHand);
+        slotsGrid.appendChild(clockReadout);
+        amButton.classList.toggle("is-selected", activePeriod === "am");
+        pmButton.classList.toggle("is-selected", activePeriod === "pm");
+        amButton.setAttribute("aria-pressed", activePeriod === "am" ? "true" : "false");
+        pmButton.setAttribute("aria-pressed", activePeriod === "pm" ? "true" : "false");
+
+        for (var periodMinutes = 0; periodMinutes < 720; periodMinutes += 30) {
+            var minutes = periodStart + periodMinutes;
+            var timeValue = formatTime(minutes);
+            var button = document.createElement("button");
+            var isDisabled = minutes <= minimumMinutes;
+            var angle = ((periodMinutes / 720) * Math.PI * 2) - (Math.PI / 2);
+            var radius = minutes % 60 === 0 ? 40 : 33;
+            var x = 50 + (Math.cos(angle) * radius);
+            var y = 50 + (Math.sin(angle) * radius);
+
+            button.type = "button";
+            button.className = "reservation-time-picker__slot";
+            button.textContent = formatClockSlotLabel(minutes);
+            button.style.left = String(x) + "%";
+            button.style.top = String(y) + "%";
+            button.setAttribute("data-time-value", timeValue);
+            button.setAttribute("aria-label", formatTimeLabel(timeValue));
+            button.setAttribute("aria-pressed", timeValue === selectedTime ? "true" : "false");
+
+            if (isDisabled) {
+                button.disabled = true;
+            } else if (!firstAvailable) {
+                firstAvailable = timeValue;
+            }
+
+            if (selectedIsVisible && minutes === selectedMinutes) {
+                button.classList.add("is-selected");
+            }
+
+            slotsGrid.appendChild(button);
+        }
+
+        if (selectedMinutes !== null) {
+            periodStart = activePeriod === "pm" ? 720 : 0;
+            var selectedPeriodMinutes = selectedIsVisible ? selectedMinutes - periodStart : 0;
+            clockHand.style.transform = "translateX(-50%) rotate(" + String((selectedPeriodMinutes / 720) * 360) + "deg)";
+            clockReadout.textContent = formatTimeLabel(selectedTime);
+            displayHour.textContent = String(Math.floor(selectedMinutes / 60) % 12 || 12);
+            displayMinute.textContent = padTime(selectedMinutes % 60);
+        } else {
+            clockHand.style.transform = "translateX(-50%) rotate(0deg)";
+            clockReadout.textContent = "Choose a time";
+            displayHour.textContent = "--";
+            displayMinute.textContent = "--";
+        }
+
+        if ((!selectedTime || selectedMinutes === null || selectedMinutes <= minimumMinutes) && firstAvailable) {
+            timeInput.value = firstAvailable;
+            timeInput.dispatchEvent(new Event("change", { bubbles: true }));
+            renderTimeSlots();
+        }
+    };
+
+    timeInput.classList.add("is-enhanced");
+    timeInput.type = "hidden";
+    timePicker.hidden = false;
+    renderTimeSlots();
+
+    slotsGrid.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-time-value]");
+
+        if (!button || button.disabled) {
+            return;
+        }
+
+        timeInput.value = button.getAttribute("data-time-value") || "";
+        timeInput.dispatchEvent(new Event("change", { bubbles: true }));
+        renderTimeSlots();
+    });
+
+    meridiemToggle.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-time-period]");
+
+        if (!button) {
+            return;
+        }
+
+        activePeriod = button.getAttribute("data-time-period") === "pm" ? "pm" : "am";
+        var selectedMinutes = parseTime(timeInput.value);
+
+        if (selectedMinutes !== null) {
+            var periodMinutes = selectedMinutes % 720;
+            var nextMinutes = (activePeriod === "pm" ? 720 : 0) + periodMinutes;
+
+            if (!isSelectedDateToday() || nextMinutes > currentMinuteOfDay()) {
+                timeInput.value = formatTime(nextMinutes);
+                timeInput.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+        }
+
+        renderTimeSlots();
+    });
+
+    if (dateInput) {
+        dateInput.addEventListener("change", renderTimeSlots);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     var orderModal = document.getElementById("dashboard-order-modal");
     var reservationModal = document.getElementById("dashboard-reservation-modal");
     var activeModal = null;
