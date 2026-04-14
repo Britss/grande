@@ -1464,9 +1464,9 @@ h2 {
 .home-middle {
     position: relative;
     overflow: hidden;
-    padding: clamp(3.5rem, 7vw, 6.5rem) 0;
+    padding: clamp(4.25rem, 8vw, 7rem) 0;
     background:
-        linear-gradient(135deg, rgba(255, 250, 248, 0.98) 0%, rgba(249, 247, 245, 0.94) 58%, rgba(233, 227, 221, 0.72) 100%);
+        linear-gradient(135deg, rgba(255, 250, 248, 0.98) 0%, rgba(249, 247, 245, 0.96) 58%, rgba(239, 234, 229, 0.78) 100%);
 }
 
 .home-middle::before {
@@ -1475,29 +1475,29 @@ h2 {
     inset: 0;
     pointer-events: none;
     background:
-        linear-gradient(90deg, rgba(75, 62, 52, 0.08) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(75, 62, 52, 0.06) 1px, transparent 1px);
+        linear-gradient(90deg, rgba(93, 68, 50, 0.075) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(93, 68, 50, 0.055) 1px, transparent 1px);
     background-size: 64px 64px;
     mask-image: linear-gradient(90deg, transparent, #000 24%, #000 76%, transparent);
-    opacity: 0.45;
+    opacity: 0.38;
 }
 
 .home-middle__layout {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
-    gap: clamp(2rem, 5vw, 4.5rem);
+    grid-template-columns: minmax(310px, 0.82fr) minmax(520px, 1.18fr);
+    gap: clamp(2.5rem, 5.4vw, 5.25rem);
     align-items: center;
 }
 
 .home-middle__copy {
-    max-width: 560px;
+    max-width: 520px;
 }
 
 .home-middle__eyebrow {
-    margin: 0 0 0.9rem;
-    color: var(--accent);
+    margin: 0 0 0.75rem;
+    color: #66574c;
     font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0;
@@ -1507,15 +1507,16 @@ h2 {
 .home-middle__copy h2 {
     margin-bottom: 1rem;
     color: var(--accent-strong);
-    font-size: clamp(2rem, 4.4vw, 4rem);
-    line-height: 1.02;
+    font-size: clamp(2.35rem, 4.5vw, 4.3rem);
+    font-weight: 900;
+    line-height: 0.98;
 }
 
 .home-middle__copy p {
     margin-bottom: 0;
-    color: #5f5046;
-    font-size: clamp(1rem, 1.35vw, 1.15rem);
-    line-height: 1.75;
+    color: #56483e;
+    font-size: clamp(1rem, 1.25vw, 1.12rem);
+    line-height: 1.8;
 }
 
 .home-middle__actions {
@@ -1534,6 +1535,7 @@ h2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
     align-items: stretch;
+    max-width: 600px;
 }
 
 .home-product {
@@ -1541,10 +1543,10 @@ h2 {
     min-height: 260px;
     overflow: hidden;
     border-radius: 8px;
-    background: #1f1c19;
+    background: #1d1916;
     color: #fffaf4;
-    border: 1px solid rgba(93, 68, 50, 0.12);
-    box-shadow: 0 18px 38px rgba(62, 43, 30, 0.12);
+    border: 1px solid rgba(62, 43, 30, 0.22);
+    box-shadow: 0 18px 36px rgba(62, 43, 30, 0.14);
     isolation: isolate;
 }
 
@@ -1560,7 +1562,7 @@ h2 {
     height: 100%;
     object-fit: cover;
     transform: scale(1.01);
-    filter: saturate(0.95) contrast(1.03);
+    filter: saturate(0.9) contrast(1.03) brightness(0.9);
     transition: transform 0.35s ease, filter 0.35s ease;
 }
 
@@ -1582,8 +1584,8 @@ h2 {
     inset: 0;
     z-index: 1;
     background:
-        linear-gradient(180deg, rgba(20, 15, 11, 0.1) 0%, rgba(20, 15, 11, 0.2) 38%, rgba(20, 15, 11, 0.84) 100%),
-        linear-gradient(90deg, rgba(20, 15, 11, 0.28), transparent 62%);
+        linear-gradient(180deg, rgba(20, 15, 11, 0.04) 0%, rgba(20, 15, 11, 0.28) 42%, rgba(20, 15, 11, 0.9) 100%),
+        linear-gradient(90deg, rgba(20, 15, 11, 0.26), transparent 64%);
 }
 
 .home-product__content {
@@ -1597,21 +1599,21 @@ h2 {
 
 .home-product h3 {
     margin-bottom: 0.35rem;
-    font-size: clamp(1.08rem, 2vw, 1.45rem);
+    font-size: clamp(1.18rem, 2.1vw, 1.55rem);
     font-weight: 800;
-    line-height: 1.15;
+    line-height: 1.1;
 }
 
 .home-product p {
     max-width: 28rem;
     margin-bottom: 0;
-    color: rgba(255, 250, 248, 0.9);
+    color: rgba(255, 250, 248, 0.92);
     font-size: 0.92rem;
     line-height: 1.5;
 }
 
 .home-product:hover img {
-    filter: saturate(1.05) contrast(1.06);
+    filter: saturate(1.02) contrast(1.06) brightness(0.95);
     transform: scale(1.06);
 }
 

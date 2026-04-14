@@ -52,10 +52,10 @@
 <section class="home-middle" aria-labelledby="home-middle-title">
     <div class="container home-middle__layout">
         <div class="home-middle__copy">
-            <p class="home-middle__eyebrow">Fresh Every Hour</p>
-            <h2 id="home-middle-title">Pan de sal, coffee, and comfort any time of day.</h2>
+            <p class="home-middle__eyebrow">Neighborhood Bread-and-Coffee Shop</p>
+            <h2 id="home-middle-title">Pandesal, coffee, and comfort any time of day.</h2>
             <p>
-                Drop by in Sindalan for warm bread, premium coffee, and a table ready whenever the craving hits.
+                Drop by in Sindalan for pandesal, ensaymada, loaf breads, coffee, tea, and non-coffee favorites made for everyday cravings.
             </p>
 
             <div class="home-middle__actions">
@@ -66,26 +66,26 @@
 
         <div class="home-middle__showcase" aria-label="Grande favorites">
             <article class="home-product home-product--large">
-                <img src="<?= e(url('public/images/menu-items/classic_pan_de_sal.png')) ?>" alt="Fresh classic pan de sal">
+                <img src="<?= e(url('public/icons/655246833_18124300747608919_2009439322626676202_n.jpg')) ?>" alt="Fresh classic pan de sal">
                 <div class="home-product__content">
                     <h3>Fresh Pan De Sal</h3>
-                    <p>Soft, warm, and baked for breakfast, merienda, and late-night cravings.</p>
+                    <p>Soft bread favorites for breakfast, merienda, and late-night cravings.</p>
                 </div>
             </article>
 
             <article class="home-product home-product--coffee">
-                <img src="<?= e(url('public/images/menu-items/cappuccino.png')) ?>" alt="Grande cappuccino">
+                <img src="<?= e(url('public/icons/655334160_18076399910528644_7808741231818070649_n.jpg')) ?>" alt="Grande cappuccino">
                 <div class="home-product__content">
-                    <h3>Premium Coffee</h3>
-                    <p>Freshly brewed for dine in or take out.</p>
+                    <h3>Coffee and Drinks</h3>
+                    <p>Coffee, tea, and non-coffee favorites for dine in or take out.</p>
                 </div>
             </article>
 
             <article class="home-product home-product--open">
-                <img src="<?= e(url('public/images/menu-items/pandesal_fest_bundle.jpg')) ?>" alt="Grande pan de sal bundle">
+                <img src="<?= e(url('public/icons/619261900_17938819824128887_4837502282444083523_n.jpg')) ?>" alt="Grande pan de sal bundle">
                 <div class="home-product__content">
                     <h3>Open 24/7</h3>
-                    <p>Beside Puregold Sindalan, ready whenever you are.</p>
+                    <p>A neighborhood stop beside Puregold Sindalan, ready whenever you are.</p>
                 </div>
             </article>
         </div>
