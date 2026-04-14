@@ -118,6 +118,10 @@ workspace without authenticated browser sessions. Use it with
 - The browser artifact helper now gives the manual pass stable screenshot
   filenames and a dated notes template for customer, employee, and admin across
   all target viewport widths.
+- The browser run-sheet audit now resolves recorded screenshot paths relative
+  to the repository root and fails completed runs when a referenced screenshot
+  artifact is missing, while still allowing blank pending rows during handoff
+  validation with `--allow-pending`.
 
 ## Intentional Differences
 

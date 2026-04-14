@@ -51,6 +51,10 @@ Before capturing screenshots, use the artifact directory printed by
 the matching filename from that script, then paste the path into this table.
 
 Record screenshot filenames or paths beside the related viewport.
+Use paths relative to the repository root, for example
+`docs/dashboard-browser-qa-artifacts/2026-04-14/customer-dashboard-1440px.png`.
+When the sheet is complete, the audit script checks that every recorded
+screenshot path exists.
 
 | Role | Viewport | Screenshot | Notes |
 | --- | --- | --- | --- |
@@ -100,7 +104,9 @@ Append browser-only defects here, then copy the confirmed findings into
 
 After filling this sheet, run the browser run-sheet audit without
 `--allow-pending` before copying confirmed findings into
-`docs/dashboard-parity-qa-2026-04-14.md`:
+`docs/dashboard-parity-qa-2026-04-14.md`. The completed audit validates the
+viewport statuses, completion fields, screenshot table shape, and any recorded
+screenshot file paths:
 
 ```powershell
 C:\xampp\php\php.exe scripts\dashboard_browser_run_sheet_audit.php

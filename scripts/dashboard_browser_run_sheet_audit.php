@@ -7,7 +7,14 @@ if (PHP_SAPI !== 'cli') {
 }
 
 $allowPending = in_array('--allow-pending', $argv, true);
-$runSheetPath = __DIR__ . '/../docs/dashboard-browser-parity-run-sheet.md';
+$root = realpath(__DIR__ . '/..');
+
+if ($root === false) {
+    fwrite(STDERR, "Could not resolve repository root.\n");
+    exit(1);
+}
+
+$runSheetPath = $root . '/docs/dashboard-browser-parity-run-sheet.md';
 
 if (!is_file($runSheetPath)) {
     fwrite(STDERR, "Missing browser parity run sheet: {$runSheetPath}\n");
@@ -84,6 +91,23 @@ foreach ($screenshotRows as $row) {
 
     if ($screenshot === '' && $notes === '') {
         $warnings[] = "{$role} {$viewport}: no screenshot path or note was recorded.";
+        continue;
+    }
+
+    if ($screenshot === '') {
+        continue;
+    }
+
+    $screenshotPath = str_replace('\\', '/', $screenshot);
+
+    if (preg_match('/^[A-Za-z]:\//', $screenshotPath) === 1 || str_starts_with($screenshotPath, '/')) {
+        $resolvedScreenshotPath = $screenshotPath;
+    } else {
+        $resolvedScreenshotPath = $root . '/' . ltrim($screenshotPath, '/');
+    }
+
+    if (!is_file($resolvedScreenshotPath)) {
+        $failures[] = "{$role} {$viewport}: screenshot file was not found at `{$screenshot}`.";
     }
 }
 
