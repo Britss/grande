@@ -2,7 +2,7 @@
 
 <footer class="footer">
     <div class="container">
-        <p>&copy; <?= date('Y') ?> Grande. Pandesal + Coffee. All rights reserved.</p>
+        <p>&copy; <?= date('Y') ?> Grande. Pan De Sal + Coffee. All rights reserved.</p>
         <p class="footer-address">
             Beside Puregold, In front of St. Anthony's Drug Store<br>
             Sindalan, San Fernando, Pampanga

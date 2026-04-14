@@ -1588,6 +1588,25 @@ h2 {
         linear-gradient(90deg, rgba(20, 15, 11, 0.26), transparent 64%);
 }
 
+.home-product__credit {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    z-index: 2;
+    padding: 0.34rem 0.58rem;
+    border: 1px solid rgba(255, 250, 248, 0.24);
+    border-radius: 8px;
+    background: rgba(20, 15, 11, 0.7);
+    color: rgba(255, 250, 248, 0.94);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.2;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-0.35rem);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
 .home-product__content {
     position: absolute;
     right: 0;
@@ -1615,6 +1634,11 @@ h2 {
 .home-product:hover img {
     filter: saturate(1.02) contrast(1.06) brightness(0.95);
     transform: scale(1.06);
+}
+
+.home-product:hover .home-product__credit {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .section-heading {

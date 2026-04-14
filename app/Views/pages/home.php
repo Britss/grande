@@ -67,14 +67,16 @@
         <div class="home-middle__showcase" aria-label="Grande favorites">
             <article class="home-product home-product--large">
                 <img src="<?= e(url('public/icons/655246833_18124300747608919_2009439322626676202_n.jpg')) ?>" alt="Fresh classic pan de sal">
+                <span class="home-product__credit">Photo by kimfhotography</span>
                 <div class="home-product__content">
-                    <h3>Fresh Pan De Sal</h3>
+                    <h3>Fresh Pandesal</h3>
                     <p>Soft bread favorites for breakfast, merienda, and late-night cravings.</p>
                 </div>
             </article>
 
             <article class="home-product home-product--coffee">
                 <img src="<?= e(url('public/icons/655334160_18076399910528644_7808741231818070649_n.jpg')) ?>" alt="Grande cappuccino">
+                <span class="home-product__credit">Photo by kimfhotography</span>
                 <div class="home-product__content">
                     <h3>Coffee and Drinks</h3>
                     <p>Coffee, tea, and non-coffee favorites for dine in or take out.</p>
@@ -83,6 +85,7 @@
 
             <article class="home-product home-product--open">
                 <img src="<?= e(url('public/icons/619261900_17938819824128887_4837502282444083523_n.jpg')) ?>" alt="Grande pan de sal bundle">
+                <span class="home-product__credit">Photo by grande.</span>
                 <div class="home-product__content">
                     <h3>Open 24/7</h3>
                     <p>A neighborhood stop beside Puregold Sindalan, ready whenever you are.</p>
