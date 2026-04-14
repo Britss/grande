@@ -4,15 +4,18 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Repositories\AuditLogRepository;
+use App\Repositories\CustomerNotificationRepository;
 use App\Repositories\FeedbackRepository;
 use App\Repositories\MenuRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\ReportRepository;
 use App\Repositories\ReservationRepository;
 use App\Repositories\UserRepository;
+use App\Services\StatusNotificationService;
 use App\Support\Auth;
 use App\Support\Csrf;
 use App\Support\MenuImageUploader;
+use App\Support\ProfilePictureUploader;
 use App\Support\Session;
 use App\Support\Validator;
 
@@ -107,6 +110,41 @@ final class DashboardController extends Controller
         redirect('/dashboard/customer?section=profile');
     }
 
+    public function updateCustomerProfilePicture(): never
+    {
+        $user = $this->requireRole('customer');
+
+        if (!Csrf::validate((string) request_input('_token'))) {
+            Session::flash('error', 'The form expired. Please upload your profile picture again.');
+            redirect('/dashboard/customer?section=profile');
+        }
+
+        $users = new UserRepository();
+        $uploadedPath = null;
+
+        try {
+            $freshUser = $users->findById((int) ($user['id'] ?? 0));
+
+            if ($freshUser === null || ($freshUser['role'] ?? null) !== 'customer') {
+                throw new \RuntimeException('Customer account not found.');
+            }
+
+            $uploadedPath = ProfilePictureUploader::storeRequired($_FILES['profile_picture'] ?? null);
+            $updatedUser = $users->updateCustomerProfilePicture((int) ($freshUser['id'] ?? 0), $uploadedPath);
+            ProfilePictureUploader::deleteIfExists((string) ($freshUser['profile_picture'] ?? ''));
+            Auth::login($updatedUser);
+            (new AuditLogRepository())->log((int) ($updatedUser['id'] ?? 0), 'customer_profile_picture_updated', 'user', (int) ($updatedUser['id'] ?? 0), [
+                'profile_picture' => $updatedUser['profile_picture'] ?? '',
+            ]);
+            Session::flash('status', 'Your profile picture was updated successfully.');
+        } catch (\Throwable $exception) {
+            ProfilePictureUploader::deleteIfExists($uploadedPath);
+            Session::flash('error', $exception->getMessage());
+        }
+
+        redirect('/dashboard/customer?section=profile');
+    }
+
     public function cancelCustomerOrder(): never
     {
         $user = $this->requireRole('customer');
@@ -194,6 +232,21 @@ final class DashboardController extends Controller
         redirect('/dashboard/customer?section=reservations');
     }
 
+    public function customerNotifications(): never
+    {
+        $user = $this->requireRole('customer');
+        $notifications = new CustomerNotificationRepository();
+        $items = $notifications->unreadForUser((int) ($user['id'] ?? 0), 5);
+        $notifications->markReadForUser((int) ($user['id'] ?? 0), $items);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'notifications' => $items,
+        ]);
+        exit;
+    }
+
     public function admin(): string
     {
         $user = $this->requireRole('admin');
@@ -241,9 +294,19 @@ final class DashboardController extends Controller
         $this->updateOrderForRole('admin');
     }
 
+    public function pollAdminOrders(): never
+    {
+        $this->pollStaffOrders('admin');
+    }
+
     public function updateEmployeeOrder(): never
     {
         $this->updateOrderForRole('employee');
+    }
+
+    public function pollEmployeeOrders(): never
+    {
+        $this->pollStaffOrders('employee');
     }
 
     public function updateAdminReservation(): never
@@ -438,6 +501,7 @@ final class DashboardController extends Controller
             'reviewedPaymentOrders' => $orders->getReviewedPaymentOrders(),
             'fulfillmentStats' => $orders->getFulfillmentStats(),
             'fulfillmentOrders' => $orders->getFulfillmentOrders(),
+            'latestOrderId' => $orders->latestOrderId(),
             'reservationManagementStats' => $reservations->getManagementStats(),
             'manageableReservations' => $reservations->getManageableReservations(),
             'feedbackStats' => $feedback->getManagementStats(),
@@ -510,6 +574,13 @@ final class DashboardController extends Controller
                 'order_number' => $reviewedOrder['order_number'] ?? '',
                 'payment_status' => $reviewedOrder['payment_status'] ?? '',
             ]);
+            (new CustomerNotificationRepository())->createOrderStatusNotification(
+                (int) ($reviewedOrder['user_id'] ?? 0),
+                (int) ($reviewedOrder['id'] ?? $orderId),
+                (string) ($reviewedOrder['previous_status'] ?? ''),
+                (string) ($reviewedOrder['status'] ?? ''),
+                (string) ($reviewedOrder['order_number'] ?? $orderId)
+            );
             $verb = ($reviewedOrder['payment_status'] ?? 'pending') === 'verified' ? 'verified' : 'rejected';
             Session::flash('status', 'Payment for order ' . ($reviewedOrder['order_number'] ?? '') . ' was ' . $verb . '.');
         } catch (\Throwable $exception) {
@@ -517,6 +588,26 @@ final class DashboardController extends Controller
         }
 
         $this->finishDashboardResponse($role, $section);
+    }
+
+    private function pollStaffOrders(string $role): never
+    {
+        $this->requireRole($role);
+        $afterId = max(0, (int) request_input('after_id', 0));
+        $orders = new OrderRepository();
+        $summary = $orders->staffOrderPollSummary($afterId);
+
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'latestOrderId' => $summary['latest_order_id'],
+            'newOrderCount' => $summary['new_order_count'],
+            'pendingPaymentCount' => $summary['pending_payment_count'],
+            'fulfillmentCount' => $summary['fulfillment_count'],
+            'paymentStats' => $orders->getPaymentReviewStats(),
+            'fulfillmentStats' => $orders->getFulfillmentStats(),
+        ]);
+        exit;
     }
 
     private function updateOrderForRole(string $role): never
@@ -535,6 +626,14 @@ final class DashboardController extends Controller
                 'order_number' => $updatedOrder['order_number'] ?? '',
                 'status' => $updatedOrder['status'] ?? '',
             ]);
+            (new CustomerNotificationRepository())->createOrderStatusNotification(
+                (int) ($updatedOrder['user_id'] ?? 0),
+                (int) ($updatedOrder['id'] ?? $orderId),
+                (string) ($updatedOrder['previous_status'] ?? ''),
+                (string) ($updatedOrder['status'] ?? ''),
+                (string) ($updatedOrder['order_number'] ?? $orderId)
+            );
+            (new StatusNotificationService())->sendOrderStatusUpdate((int) ($updatedOrder['id'] ?? $orderId));
             Session::flash('status', 'Order ' . ($updatedOrder['order_number'] ?? '') . ' moved to ' . ($updatedOrder['status'] ?? 'pending') . '.');
         } catch (\Throwable $exception) {
             Session::flash('error', $exception->getMessage());
@@ -558,6 +657,13 @@ final class DashboardController extends Controller
             (new AuditLogRepository())->log((int) ($user['id'] ?? 0), 'reservation_status_updated', 'reservation', (int) ($updatedReservation['id'] ?? $reservationId), [
                 'status' => $updatedReservation['status'] ?? '',
             ]);
+            (new CustomerNotificationRepository())->createReservationStatusNotification(
+                (int) ($updatedReservation['user_id'] ?? 0),
+                (int) ($updatedReservation['id'] ?? $reservationId),
+                (string) ($updatedReservation['previous_status'] ?? ''),
+                (string) ($updatedReservation['status'] ?? '')
+            );
+            (new StatusNotificationService())->sendReservationStatusUpdate((int) ($updatedReservation['id'] ?? $reservationId));
             Session::flash('status', 'Reservation #' . ($updatedReservation['id'] ?? 0) . ' moved to ' . ($updatedReservation['status'] ?? 'pending') . '.');
         } catch (\Throwable $exception) {
             Session::flash('error', $exception->getMessage());

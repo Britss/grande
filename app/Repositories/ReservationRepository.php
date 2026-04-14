@@ -162,7 +162,7 @@ final class ReservationRepository
 
         $connection = Database::connection();
         $statement = $connection->prepare(
-            'SELECT id, status
+            'SELECT id, user_id, status
              FROM reservations
              WHERE id = :id
              LIMIT 1'
@@ -179,6 +179,8 @@ final class ReservationRepository
         if ($currentStatus === $status) {
             return [
                 'id' => (int) $reservation['id'],
+                'user_id' => (int) ($reservation['user_id'] ?? 0),
+                'previous_status' => $currentStatus,
                 'status' => $currentStatus,
             ];
         }
@@ -215,8 +217,58 @@ final class ReservationRepository
 
         return [
             'id' => (int) $reservation['id'],
+            'user_id' => (int) ($reservation['user_id'] ?? 0),
+            'previous_status' => $currentStatus,
             'status' => $status,
         ];
+    }
+
+    public function findForStatusEmail(int $reservationId): ?array
+    {
+        $statement = Database::connection()->prepare(
+            "SELECT
+                r.id,
+                r.first_name,
+                r.last_name,
+                r.email,
+                r.phone,
+                r.date,
+                r.time,
+                r.guests,
+                r.status,
+                r.created_at,
+                COUNT(o.id) AS order_count,
+                SUM(CASE WHEN o.payment_status = 'verified' THEN 1 ELSE 0 END) AS verified_order_count
+             FROM reservations r
+             LEFT JOIN orders o ON o.reservation_id = r.id
+             WHERE r.id = :id
+             GROUP BY
+                r.id, r.first_name, r.last_name, r.email, r.phone, r.date, r.time, r.guests, r.status, r.created_at
+             LIMIT 1"
+        );
+        $statement->execute(['id' => $reservationId]);
+        $reservation = $statement->fetch();
+
+        if (!is_array($reservation)) {
+            return null;
+        }
+
+        $reservations = $this->attachReservationOrders([$reservation]);
+
+        return $reservations[0] ?? $reservation;
+    }
+
+    public function customerOwnsReservation(int $reservationId, int $userId): bool
+    {
+        $statement = Database::connection()->prepare(
+            'SELECT COUNT(*) FROM reservations WHERE id = :id AND user_id = :user_id'
+        );
+        $statement->execute([
+            'id' => $reservationId,
+            'user_id' => $userId,
+        ]);
+
+        return (int) $statement->fetchColumn() > 0;
     }
 
     public function cancelPendingForCustomer(int $reservationId, int $userId): array

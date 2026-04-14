@@ -4,6 +4,7 @@ declare(strict_types=1);
 use App\Controllers\AuthController;
 use App\Controllers\CartController;
 use App\Controllers\CheckoutController;
+use App\Controllers\CompatibilityController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
 use App\Controllers\PublicPageController;
@@ -15,6 +16,20 @@ return static function (Router $router): void {
 
     $router->get('/about', [PublicPageController::class, 'about']);
     $router->get('/menu', [PublicPageController::class, 'menu']);
+    $router->get('/api/menu-items', [PublicPageController::class, 'menuItemsJson']);
+    $router->get('/get_menu_items.php', [PublicPageController::class, 'menuItemsJson']);
+    $router->get('/api/orders', [CompatibilityController::class, 'orders']);
+    $router->get('/get_orders.php', [CompatibilityController::class, 'orders']);
+    $router->get('/api/order-items', [CompatibilityController::class, 'orderItems']);
+    $router->get('/get_order_items.php', [CompatibilityController::class, 'orderItems']);
+    $router->get('/api/reservation-orders', [CompatibilityController::class, 'reservationOrders']);
+    $router->get('/get_reservation_orders.php', [CompatibilityController::class, 'reservationOrders']);
+    $router->get('/api/customer-reservation-orders', [CompatibilityController::class, 'customerReservationOrders']);
+    $router->get('/get_customer_reservation_orders.php', [CompatibilityController::class, 'customerReservationOrders']);
+    $router->get('/api/feedback', [CompatibilityController::class, 'feedback']);
+    $router->get('/get_feedback.php', [CompatibilityController::class, 'feedback']);
+    $router->get('/api/customers', [CompatibilityController::class, 'customers']);
+    $router->get('/get_customers.php', [CompatibilityController::class, 'customers']);
     $router->post('/menu/cart', [CartController::class, 'add']);
     $router->get('/cart', [CartController::class, 'show']);
     $router->post('/cart/update', [CartController::class, 'update']);
@@ -43,13 +58,16 @@ return static function (Router $router): void {
 
     $router->get('/dashboard/customer', [DashboardController::class, 'customer']);
     $router->post('/dashboard/customer/profile', [DashboardController::class, 'updateCustomerProfile']);
+    $router->post('/dashboard/customer/profile-picture', [DashboardController::class, 'updateCustomerProfilePicture']);
     $router->post('/dashboard/customer/password', [DashboardController::class, 'updateCustomerPassword']);
     $router->post('/dashboard/customer/orders/reorder', [DashboardController::class, 'reorderCustomerOrder']);
     $router->post('/dashboard/customer/orders/cancel', [DashboardController::class, 'cancelCustomerOrder']);
     $router->post('/dashboard/customer/reservations/cancel', [DashboardController::class, 'cancelCustomerReservation']);
+    $router->get('/dashboard/customer/notifications', [DashboardController::class, 'customerNotifications']);
     $router->get('/dashboard/admin', [DashboardController::class, 'admin']);
     $router->post('/dashboard/admin/payments', [DashboardController::class, 'updateAdminPayment']);
     $router->post('/dashboard/admin/orders', [DashboardController::class, 'updateAdminOrder']);
+    $router->get('/dashboard/admin/orders/poll', [DashboardController::class, 'pollAdminOrders']);
     $router->post('/dashboard/admin/reservations', [DashboardController::class, 'updateAdminReservation']);
     $router->post('/dashboard/admin/menu', [DashboardController::class, 'updateAdminMenu']);
     $router->post('/dashboard/admin/users', [DashboardController::class, 'updateAdminUsers']);
@@ -57,6 +75,7 @@ return static function (Router $router): void {
     $router->get('/dashboard/employee', [DashboardController::class, 'employee']);
     $router->post('/dashboard/employee/payments', [DashboardController::class, 'updateEmployeePayment']);
     $router->post('/dashboard/employee/orders', [DashboardController::class, 'updateEmployeeOrder']);
+    $router->get('/dashboard/employee/orders/poll', [DashboardController::class, 'pollEmployeeOrders']);
     $router->post('/dashboard/employee/reservations', [DashboardController::class, 'updateEmployeeReservation']);
     $router->post('/dashboard/employee/feedback', [DashboardController::class, 'updateEmployeeFeedback']);
 };

@@ -10,7 +10,7 @@ final class UserRepository
     public function findById(int $userId): ?array
     {
         $statement = Database::connection()->prepare(
-            'SELECT id, first_name, last_name, email, phone, password, role, is_active, created_at
+            'SELECT id, first_name, last_name, email, phone, password, role, is_active, profile_picture, created_at
              FROM users
              WHERE id = :id
              LIMIT 1'
@@ -24,7 +24,7 @@ final class UserRepository
     public function findByEmail(string $email): ?array
     {
         $statement = Database::connection()->prepare(
-            'SELECT id, first_name, last_name, email, phone, password, role, is_active, created_at
+            'SELECT id, first_name, last_name, email, phone, password, role, is_active, profile_picture, created_at
              FROM users
              WHERE email = :email
              LIMIT 1'
@@ -99,7 +99,7 @@ final class UserRepository
     public function listForManagement(): array
     {
         $statement = Database::connection()->query(
-            'SELECT id, first_name, last_name, email, phone, role, is_active, created_at
+            'SELECT id, first_name, last_name, email, phone, role, is_active, profile_picture, created_at
              FROM users
              ORDER BY FIELD(role, \'admin\', \'employee\', \'customer\'), created_at DESC, id DESC'
         );
@@ -125,6 +125,47 @@ final class UserRepository
             'customer_count' => 0,
             'active_count' => 0,
         ];
+    }
+
+    public function customersForJson(string $status = 'active'): array
+    {
+        $where = match ($status) {
+            'inactive' => "WHERE u.role = 'customer' AND u.is_active = 0",
+            'all' => "WHERE u.role = 'customer'",
+            default => "WHERE u.role = 'customer' AND u.is_active = 1",
+        };
+
+        $statement = Database::connection()->query(
+            "SELECT
+                u.id,
+                u.first_name,
+                u.last_name,
+                CONCAT(u.first_name, ' ', u.last_name) AS full_name,
+                u.email,
+                u.phone,
+                u.created_at,
+                u.is_active,
+                COUNT(DISTINCT o.id) AS order_count,
+                COALESCE(SUM(CASE WHEN o.status <> 'cancelled' THEN o.total_amount ELSE 0 END), 0) AS total_spent
+             FROM users u
+             LEFT JOIN orders o ON o.user_id = u.id
+             {$where}
+             GROUP BY u.id, u.first_name, u.last_name, u.email, u.phone, u.created_at, u.is_active
+             ORDER BY u.created_at DESC"
+        );
+
+        return array_map(static fn (array $customer): array => [
+            'id' => (int) ($customer['id'] ?? 0),
+            'first_name' => (string) ($customer['first_name'] ?? ''),
+            'last_name' => (string) ($customer['last_name'] ?? ''),
+            'full_name' => (string) ($customer['full_name'] ?? ''),
+            'email' => (string) ($customer['email'] ?? ''),
+            'phone' => (string) ($customer['phone'] ?? ''),
+            'created_at' => (string) ($customer['created_at'] ?? ''),
+            'is_active' => (int) ($customer['is_active'] ?? 0),
+            'order_count' => (int) ($customer['order_count'] ?? 0),
+            'total_spent' => (float) ($customer['total_spent'] ?? 0),
+        ], $statement->fetchAll() ?: []);
     }
 
     public function updateManagement(int $userId, array $data): array
@@ -202,5 +243,28 @@ final class UserRepository
             'password' => $passwordHash,
             'id' => $userId,
         ]);
+    }
+
+    public function updateCustomerProfilePicture(int $userId, string $profilePicture): array
+    {
+        $statement = Database::connection()->prepare(
+            'UPDATE users
+             SET profile_picture = :profile_picture
+             WHERE id = :id
+               AND role = \'customer\'
+             LIMIT 1'
+        );
+        $statement->execute([
+            'profile_picture' => $profilePicture,
+            'id' => $userId,
+        ]);
+
+        $user = $this->findById($userId);
+
+        if ($user === null || ($user['role'] ?? null) !== 'customer') {
+            throw new \RuntimeException('Customer profile not found.');
+        }
+
+        return $user;
     }
 }

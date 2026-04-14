@@ -40,6 +40,16 @@ final class PublicPageController extends Controller
         ]);
     }
 
+    public function menuItemsJson(): never
+    {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'items' => (new MenuRepository())->activeItemsForJson(),
+        ]);
+        exit;
+    }
+
     public function feedback(): string
     {
         $page = PublicContent::feedback();

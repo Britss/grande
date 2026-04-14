@@ -241,6 +241,181 @@ final class OrderRepository
         return $this->attachOrderItems(is_array($orders) ? $orders : []);
     }
 
+    public function directOrdersForJson(int $limit = 50): array
+    {
+        $statement = Database::connection()->prepare(
+            "SELECT
+                o.id,
+                o.order_number,
+                CONCAT(COALESCE(u.first_name, 'Guest'), ' ', COALESCE(u.last_name, '')) AS customer_name,
+                o.status,
+                o.total_amount,
+                o.created_at,
+                o.payment_status,
+                o.receipt_image,
+                o.reservation_id,
+                COUNT(oi.id) AS item_count
+             FROM orders o
+             LEFT JOIN users u ON u.id = o.user_id
+             LEFT JOIN order_items oi ON oi.order_id = o.id
+             WHERE o.reservation_id IS NULL
+             GROUP BY
+                o.id, o.order_number, u.first_name, u.last_name, o.status, o.total_amount,
+                o.created_at, o.payment_status, o.receipt_image, o.reservation_id
+             ORDER BY o.created_at DESC
+             LIMIT :limit"
+        );
+        $statement->bindValue('limit', max(1, $limit), \PDO::PARAM_INT);
+        $statement->execute();
+
+        return array_map(static fn (array $order): array => [
+            'id' => (int) ($order['id'] ?? 0),
+            'order_number' => (string) ($order['order_number'] ?? ''),
+            'customer_name' => trim((string) ($order['customer_name'] ?? '')),
+            'status' => (string) ($order['status'] ?? 'pending'),
+            'total_amount' => (string) ($order['total_amount'] ?? '0.00'),
+            'created_at' => (string) ($order['created_at'] ?? ''),
+            'payment_status' => (string) ($order['payment_status'] ?? 'pending'),
+            'receipt_image' => (string) ($order['receipt_image'] ?? ''),
+            'reservation_id' => $order['reservation_id'] === null ? null : (int) $order['reservation_id'],
+            'item_count' => (int) ($order['item_count'] ?? 0),
+        ], $statement->fetchAll() ?: []);
+    }
+
+    public function findForJson(int $orderId, ?int $userId = null): ?array
+    {
+        $sql = "SELECT
+                o.id,
+                o.order_number,
+                o.total_amount,
+                o.status,
+                o.payment_status,
+                o.receipt_image,
+                o.created_at,
+                u.first_name,
+                u.last_name
+             FROM orders o
+             LEFT JOIN users u ON u.id = o.user_id
+             WHERE o.id = :id";
+
+        if ($userId !== null) {
+            $sql .= ' AND o.user_id = :user_id';
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $statement = Database::connection()->prepare($sql);
+        $statement->bindValue('id', $orderId, \PDO::PARAM_INT);
+
+        if ($userId !== null) {
+            $statement->bindValue('user_id', $userId, \PDO::PARAM_INT);
+        }
+
+        $statement->execute();
+        $order = $statement->fetch();
+
+        if (!is_array($order)) {
+            return null;
+        }
+
+        $itemsStatement = Database::connection()->prepare(
+            "SELECT
+                oi.id,
+                mi.name AS menu_item_name,
+                oi.price,
+                oi.quantity,
+                oi.subtotal,
+                oi.size
+             FROM order_items oi
+             INNER JOIN menu_items mi ON mi.id = oi.menu_item_id
+             WHERE oi.order_id = :order_id
+             ORDER BY oi.id ASC"
+        );
+        $itemsStatement->execute(['order_id' => $orderId]);
+
+        $items = array_map(static fn (array $item): array => [
+            'id' => (int) ($item['id'] ?? 0),
+            'menu_item_name' => (string) ($item['menu_item_name'] ?? ''),
+            'price' => (string) ($item['price'] ?? '0.00'),
+            'quantity' => (int) ($item['quantity'] ?? 0),
+            'subtotal' => (string) ($item['subtotal'] ?? '0.00'),
+            'size' => (string) ($item['size'] ?? ''),
+        ], $itemsStatement->fetchAll() ?: []);
+
+        return [
+            'order' => $order,
+            'items' => $items,
+        ];
+    }
+
+    public function reservationOrdersForJson(int $reservationId, ?int $userId = null): array
+    {
+        $sql = "SELECT
+                id,
+                order_number,
+                total_amount,
+                status,
+                payment_status,
+                created_at,
+                receipt_image
+             FROM orders
+             WHERE reservation_id = :reservation_id";
+
+        if ($userId !== null) {
+            $sql .= ' AND user_id = :user_id';
+        }
+
+        $sql .= ' ORDER BY created_at DESC';
+
+        $statement = Database::connection()->prepare($sql);
+        $statement->bindValue('reservation_id', $reservationId, \PDO::PARAM_INT);
+
+        if ($userId !== null) {
+            $statement->bindValue('user_id', $userId, \PDO::PARAM_INT);
+        }
+
+        $statement->execute();
+
+        return array_map(static fn (array $order): array => [
+            'id' => (int) ($order['id'] ?? 0),
+            'order_number' => (string) ($order['order_number'] ?? ''),
+            'total_amount' => (string) ($order['total_amount'] ?? '0.00'),
+            'status' => (string) ($order['status'] ?? 'pending'),
+            'payment_status' => (string) ($order['payment_status'] ?? 'pending'),
+            'created_at' => (string) ($order['created_at'] ?? ''),
+            'receipt_image' => (string) ($order['receipt_image'] ?? ''),
+        ], $statement->fetchAll() ?: []);
+    }
+
+    public function latestOrderId(): int
+    {
+        $statement = Database::connection()->query('SELECT COALESCE(MAX(id), 0) FROM orders');
+
+        return (int) $statement->fetchColumn();
+    }
+
+    public function staffOrderPollSummary(int $afterId): array
+    {
+        $statement = Database::connection()->prepare(
+            "SELECT
+                COALESCE(MAX(id), 0) AS latest_order_id,
+                COUNT(*) AS new_order_count,
+                SUM(CASE WHEN payment_status = 'pending' AND receipt_image IS NOT NULL AND receipt_image <> '' THEN 1 ELSE 0 END) AS pending_payment_count,
+                SUM(CASE WHEN payment_status = 'verified' AND status IN ('pending', 'preparing', 'ready') THEN 1 ELSE 0 END) AS fulfillment_count
+             FROM orders
+             WHERE id > :after_id"
+        );
+        $statement->execute(['after_id' => max(0, $afterId)]);
+        $row = $statement->fetch() ?: [];
+
+        return [
+            'latest_order_id' => (int) ($row['latest_order_id'] ?? $afterId),
+            'new_order_count' => (int) ($row['new_order_count'] ?? 0),
+            'pending_payment_count' => (int) ($row['pending_payment_count'] ?? 0),
+            'fulfillment_count' => (int) ($row['fulfillment_count'] ?? 0),
+        ];
+    }
+
     public function reviewPayment(int $orderId, string $action): array
     {
         if (!in_array($action, ['verify', 'reject'], true)) {
@@ -252,7 +427,7 @@ final class OrderRepository
 
         try {
             $orderStatement = $connection->prepare(
-                'SELECT id, order_number, reservation_id, payment_status, receipt_image
+                'SELECT id, user_id, order_number, reservation_id, status, payment_status, receipt_image
                  FROM orders
                  WHERE id = :id
                  LIMIT 1'
@@ -303,8 +478,11 @@ final class OrderRepository
 
             return [
                 'id' => (int) $order['id'],
+                'user_id' => (int) ($order['user_id'] ?? 0),
                 'order_number' => (string) ($order['order_number'] ?? ''),
                 'payment_status' => $action === 'verify' ? 'verified' : 'rejected',
+                'previous_status' => (string) ($order['status'] ?? 'pending'),
+                'status' => $action === 'verify' ? (string) ($order['status'] ?? 'pending') : 'cancelled',
             ];
         } catch (\Throwable $exception) {
             if ($connection->inTransaction()) {
@@ -323,7 +501,7 @@ final class OrderRepository
 
         $connection = Database::connection();
         $statement = $connection->prepare(
-            'SELECT id, order_number, status, payment_status
+            'SELECT id, user_id, order_number, status, payment_status
              FROM orders
              WHERE id = :id
              LIMIT 1'
@@ -341,7 +519,9 @@ final class OrderRepository
         if ($currentStatus === $status) {
             return [
                 'id' => (int) $order['id'],
+                'user_id' => (int) ($order['user_id'] ?? 0),
                 'order_number' => (string) ($order['order_number'] ?? ''),
+                'previous_status' => $currentStatus,
                 'status' => $currentStatus,
             ];
         }
@@ -366,9 +546,45 @@ final class OrderRepository
 
         return [
             'id' => (int) $order['id'],
+            'user_id' => (int) ($order['user_id'] ?? 0),
             'order_number' => (string) ($order['order_number'] ?? ''),
+            'previous_status' => $currentStatus,
             'status' => $status,
         ];
+    }
+
+    public function findForStatusEmail(int $orderId): ?array
+    {
+        $statement = Database::connection()->prepare(
+            "SELECT
+                o.id,
+                o.order_number,
+                o.total_amount,
+                o.status,
+                o.payment_status,
+                o.created_at,
+                o.reservation_id,
+                u.first_name,
+                u.last_name,
+                u.email,
+                r.date AS reservation_date,
+                r.time AS reservation_time
+             FROM orders o
+             LEFT JOIN users u ON u.id = o.user_id
+             LEFT JOIN reservations r ON r.id = o.reservation_id
+             WHERE o.id = :id
+             LIMIT 1"
+        );
+        $statement->execute(['id' => $orderId]);
+        $order = $statement->fetch();
+
+        if (!is_array($order)) {
+            return null;
+        }
+
+        $orders = $this->attachOrderItems([$order]);
+
+        return $orders[0] ?? $order;
     }
 
     public function cancelPendingDirectOrderForCustomer(int $orderId, int $userId): array

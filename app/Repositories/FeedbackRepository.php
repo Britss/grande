@@ -78,6 +78,21 @@ final class FeedbackRepository
         return $statement->fetchAll();
     }
 
+    public function listForJson(int $limit = 20): array
+    {
+        return array_map(static fn (array $feedback): array => [
+            'id' => (int) ($feedback['id'] ?? 0),
+            'name' => (string) ($feedback['name'] ?? ''),
+            'email' => (string) ($feedback['email'] ?? ''),
+            'category' => (string) ($feedback['category'] ?? ''),
+            'rating' => (int) ($feedback['rating'] ?? 0),
+            'feedback' => (string) ($feedback['message'] ?? ''),
+            'message' => (string) ($feedback['message'] ?? ''),
+            'status' => (string) ($feedback['status'] ?? 'new'),
+            'created_at' => (string) ($feedback['created_at'] ?? ''),
+        ], $this->getManageableFeedback($limit));
+    }
+
     public function updateStatus(int $feedbackId, string $status): array
     {
         $allowed = ['new', 'in_review', 'resolved', 'archived'];

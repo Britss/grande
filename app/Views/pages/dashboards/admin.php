@@ -7,7 +7,11 @@ $adminPriorityFeedback = array_slice(array_values(array_filter($manageableFeedba
     return ($feedback['status'] ?? '') === 'new';
 })), 0, 2);
 ?>
-<section class="dashboard-workspace dashboard-workspace--staff">
+<section
+    class="dashboard-workspace dashboard-workspace--staff"
+    data-staff-order-poll-url="<?= e(url('dashboard/admin/orders/poll')) ?>"
+    data-staff-order-last-id="<?= e((string) ($latestOrderId ?? 0)) ?>"
+>
     <div class="dashboard-shell">
         <aside class="dashboard-sidebar">
             <div class="dashboard-sidebar__brand">

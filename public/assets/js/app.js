@@ -25,6 +25,304 @@ document.addEventListener("click", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    var notification = document.getElementById("customerOrderNotification");
+
+    if (notification) {
+        var closeButton = document.getElementById("customerOrderNotificationClose");
+        var title = document.getElementById("customerOrderNotificationTitle");
+        var text = document.getElementById("customerOrderNotificationText");
+        var feed = document.querySelector("[data-customer-notification-feed]");
+        var endpoint = notification.getAttribute("data-customer-notifications-url");
+        var hideTimer = null;
+
+        var hideNotification = function () {
+            notification.classList.remove("show");
+        };
+
+        var formatNotificationTime = function (value) {
+            if (!value) {
+                return "";
+            }
+
+            var date = new Date(String(value).replace(" ", "T"));
+
+            if (Number.isNaN(date.getTime())) {
+                return "";
+            }
+
+            return date.toLocaleString([], {
+                month: "short",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        };
+
+        var renderFeed = function (items) {
+            if (!feed || !Array.isArray(items) || items.length === 0) {
+                return;
+            }
+
+            feed.innerHTML = "";
+
+            items.forEach(function (item) {
+                var row = document.createElement("div");
+                var copy = document.createElement("div");
+                var label = document.createElement("span");
+                var message = document.createElement("p");
+                var time = document.createElement("span");
+
+                row.className = "customer-notification-feed__item";
+                copy.className = "customer-notification-feed__copy";
+                label.className = "customer-notification-feed__label";
+                message.className = "customer-notification-feed__message";
+                time.className = "customer-notification-feed__time";
+
+                label.textContent = item.type === "reservation" ? "Reservation" : "Order";
+                message.textContent = String(item.message || "Your account has a new status update.");
+                time.textContent = formatNotificationTime(item.created_at);
+
+                copy.appendChild(label);
+                copy.appendChild(message);
+                row.appendChild(copy);
+
+                if (time.textContent) {
+                    row.appendChild(time);
+                }
+
+                feed.appendChild(row);
+            });
+        };
+
+        var showNotification = function (items) {
+            if (!Array.isArray(items) || items.length === 0 || !title || !text) {
+                return;
+            }
+
+            if (items.length === 1) {
+                title.textContent = items[0].type === "reservation" ? "Reservation Updated" : "Order Updated";
+                text.textContent = String(items[0].message || "Your account has a new status update.");
+            } else {
+                title.textContent = "Updates Available";
+                text.textContent = "You have " + String(items.length) + " new account updates. Open your records to review the latest statuses.";
+            }
+
+            renderFeed(items);
+            notification.classList.add("show");
+            window.clearTimeout(hideTimer);
+            hideTimer = window.setTimeout(hideNotification, 7000);
+        };
+
+        var fetchNotifications = function () {
+            if (!endpoint || document.hidden) {
+                return;
+            }
+
+            fetch(endpoint, {
+                headers: {
+                    "Accept": "application/json"
+                }
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (!data || !data.success) {
+                        return;
+                    }
+
+                    showNotification(data.notifications || []);
+                })
+                .catch(function () {});
+        };
+
+        if (closeButton) {
+            closeButton.addEventListener("click", hideNotification);
+        }
+
+        fetchNotifications();
+        window.addEventListener("focus", fetchNotifications);
+        document.addEventListener("visibilitychange", fetchNotifications);
+        window.setInterval(fetchNotifications, 30000);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    var staffWorkspace = document.querySelector("[data-staff-order-poll-url]");
+
+    if (!staffWorkspace || !window.fetch) {
+        return;
+    }
+
+    var endpoint = staffWorkspace.getAttribute("data-staff-order-poll-url");
+    var lastOrderId = parseInt(staffWorkspace.getAttribute("data-staff-order-last-id") || "0", 10) || 0;
+    var isPolling = false;
+    var toastTimer = null;
+
+    var ensureToast = function () {
+        var existing = document.getElementById("staffOrderToast");
+
+        if (existing) {
+            return existing;
+        }
+
+        var toast = document.createElement("div");
+        var copy = document.createElement("div");
+        var title = document.createElement("h3");
+        var message = document.createElement("p");
+        var actions = document.createElement("div");
+        var paymentButton = document.createElement("button");
+        var orderButton = document.createElement("button");
+        var closeButton = document.createElement("button");
+
+        toast.id = "staffOrderToast";
+        toast.className = "staff-order-toast";
+        toast.setAttribute("role", "status");
+        toast.setAttribute("aria-live", "polite");
+        copy.className = "staff-order-toast__copy";
+        title.id = "staffOrderToastTitle";
+        message.id = "staffOrderToastMessage";
+        actions.className = "staff-order-toast__actions";
+        paymentButton.type = "button";
+        paymentButton.className = "button button-primary button-small";
+        paymentButton.textContent = "Review Payments";
+        paymentButton.setAttribute("data-dashboard-target", "payments");
+        orderButton.type = "button";
+        orderButton.className = "button button-secondary button-small";
+        orderButton.textContent = "Manage Orders";
+        orderButton.setAttribute("data-dashboard-target", "orders");
+        closeButton.type = "button";
+        closeButton.className = "staff-order-toast__close";
+        closeButton.textContent = "Close";
+
+        copy.appendChild(title);
+        copy.appendChild(message);
+        actions.appendChild(paymentButton);
+        actions.appendChild(orderButton);
+        actions.appendChild(closeButton);
+        toast.appendChild(copy);
+        toast.appendChild(actions);
+        document.body.appendChild(toast);
+
+        closeButton.addEventListener("click", function () {
+            toast.classList.remove("show");
+        });
+
+        [paymentButton, orderButton].forEach(function (button) {
+            button.addEventListener("click", function () {
+                var target = button.getAttribute("data-dashboard-target");
+                var dashboardButton = document.querySelector(".dashboard-workspace [data-dashboard-target='" + target + "']");
+
+                if (dashboardButton) {
+                    dashboardButton.click();
+                }
+
+                toast.classList.remove("show");
+            });
+        });
+
+        return toast;
+    };
+
+    var showStaffOrderToast = function (payload) {
+        var toast = ensureToast();
+        var title = toast.querySelector("#staffOrderToastTitle");
+        var message = toast.querySelector("#staffOrderToastMessage");
+        var count = Number(payload.newOrderCount || 0);
+        var paymentCount = Number(payload.pendingPaymentCount || 0);
+        var fulfillmentCount = Number(payload.fulfillmentCount || 0);
+
+        if (title) {
+            title.textContent = count === 1 ? "New order received" : String(count) + " new orders received";
+        }
+
+        if (message) {
+            message.textContent = String(paymentCount) + " waiting for payment review, " + String(fulfillmentCount) + " ready for fulfillment.";
+        }
+
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(function () {
+            toast.classList.remove("show");
+        }, 9000);
+    };
+
+    var updateBadge = function (target, value) {
+        var link = document.querySelector("[data-dashboard-target='" + target + "']");
+
+        if (!link) {
+            return;
+        }
+
+        var badge = link.querySelector(".dashboard-sidebar__badge");
+        var count = Number(value || 0);
+
+        if (count <= 0) {
+            if (badge) {
+                badge.remove();
+            }
+            return;
+        }
+
+        if (!badge) {
+            badge = document.createElement("span");
+            badge.className = "dashboard-sidebar__badge";
+            link.appendChild(badge);
+        }
+
+        badge.textContent = String(count);
+    };
+
+    var pollStaffOrders = function () {
+        if (!endpoint || isPolling || document.hidden) {
+            return;
+        }
+
+        isPolling = true;
+
+        fetch(endpoint + "?after_id=" + encodeURIComponent(String(lastOrderId)), {
+            headers: {
+                "Accept": "application/json"
+            },
+            credentials: "same-origin"
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (payload) {
+                if (!payload || !payload.success) {
+                    return;
+                }
+
+                if (Number(payload.latestOrderId || 0) > lastOrderId) {
+                    lastOrderId = Number(payload.latestOrderId || lastOrderId);
+                    staffWorkspace.setAttribute("data-staff-order-last-id", String(lastOrderId));
+                }
+
+                if (payload.paymentStats) {
+                    updateBadge("payments", payload.paymentStats.pending_review);
+                }
+
+                if (payload.fulfillmentStats) {
+                    updateBadge("orders", payload.fulfillmentStats.active_fulfillment);
+                }
+
+                if (Number(payload.newOrderCount || 0) > 0) {
+                    showStaffOrderToast(payload);
+                }
+            })
+            .catch(function () {})
+            .finally(function () {
+                isPolling = false;
+            });
+    };
+
+    window.addEventListener("focus", pollStaffOrders);
+    document.addEventListener("visibilitychange", pollStaffOrders);
+    window.setInterval(pollStaffOrders, 20000);
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     var widget = document.querySelector("[data-assistant-widget]");
 
     if (!widget) {

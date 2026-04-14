@@ -32,6 +32,7 @@ final class Auth
             'last_name' => (string) ($user['last_name'] ?? ''),
             'email' => (string) ($user['email'] ?? ''),
             'phone' => (string) ($user['phone'] ?? ''),
+            'profile_picture' => (string) ($user['profile_picture'] ?? ''),
             'role' => (string) ($user['role'] ?? 'customer'),
         ]);
 

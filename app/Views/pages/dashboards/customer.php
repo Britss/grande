@@ -6,6 +6,8 @@ $greetingHour = (int) date('G');
 $greeting = $greetingHour < 12 ? 'Good Morning' : ($greetingHour < 18 ? 'Good Afternoon' : 'Good Evening');
 $memberSince = isset($user['created_at']) ? date('F Y', strtotime((string) $user['created_at'])) : 'this year';
 $recentOrder = $recentOrders[0] ?? null;
+$profilePicture = trim((string) ($user['profile_picture'] ?? ''));
+$profilePictureUrl = $profilePicture !== '' ? url($profilePicture) : '';
 ?>
 <section class="dashboard-workspace dashboard-workspace--customer">
     <div class="dashboard-shell">
@@ -15,7 +17,13 @@ $recentOrder = $recentOrders[0] ?? null;
             </div>
 
             <div class="dashboard-sidebar__profile">
-                <div class="dashboard-sidebar__avatar"><?= e(strtoupper(substr($firstName, 0, 1))) ?></div>
+                <div class="dashboard-sidebar__avatar">
+                    <?php if ($profilePictureUrl !== ''): ?>
+                        <img src="<?= e($profilePictureUrl) ?>" alt="<?= e($fullName !== '' ? $fullName : 'Customer') ?>">
+                    <?php else: ?>
+                        <?= e(strtoupper(substr($firstName, 0, 1))) ?>
+                    <?php endif; ?>
+                </div>
                 <div>
                     <h3><?= e($fullName !== '' ? $fullName : 'Customer') ?></h3>
                     <p>Member since <?= e($memberSince) ?></p>
@@ -63,6 +71,25 @@ $recentOrder = $recentOrders[0] ?? null;
         </aside>
 
         <div class="dashboard-main">
+            <div
+                id="customerOrderNotification"
+                class="customer-order-notification"
+                data-customer-notifications-url="<?= e(url('dashboard/customer/notifications')) ?>"
+                aria-live="polite"
+                aria-atomic="true"
+            >
+                <div class="customer-order-notification-card">
+                    <div class="customer-order-notification-icon">
+                        <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true">
+                    </div>
+                    <div class="customer-order-notification-copy">
+                        <h3 id="customerOrderNotificationTitle">Updates Available</h3>
+                        <p id="customerOrderNotificationText">Open your dashboard records to review the latest status changes.</p>
+                    </div>
+                    <button type="button" class="customer-order-notification-close" id="customerOrderNotificationClose" aria-label="Close notification">&times;</button>
+                </div>
+            </div>
+
             <?php if ($status = flash('status')): ?>
                 <div class="alert alert-success"><?= e((string) $status) ?></div>
             <?php endif; ?>
@@ -207,6 +234,15 @@ $recentOrder = $recentOrders[0] ?? null;
                                     <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--inline" aria-hidden="true">
                                     <span>Send Feedback</span>
                                 </a>
+                            </div>
+                        </article>
+
+                        <article class="content-card dashboard-card">
+                            <div class="dashboard-card__header">
+                                <h2>Latest Updates</h2>
+                            </div>
+                            <div class="customer-notification-feed" data-customer-notification-feed>
+                                <p class="lead">No unread order or reservation updates right now.</p>
                             </div>
                         </article>
 
@@ -517,6 +553,38 @@ $recentOrder = $recentOrders[0] ?? null;
                     <div class="records-main-column">
                         <article class="records-panel">
                             <div class="records-panel-header">
+                                <h3>Profile Picture</h3>
+                            </div>
+                            <div class="profile-picture-panel">
+                                <div class="profile-picture-preview">
+                                    <?php if ($profilePictureUrl !== ''): ?>
+                                        <img src="<?= e($profilePictureUrl) ?>" alt="<?= e($fullName !== '' ? $fullName : 'Customer') ?>">
+                                    <?php else: ?>
+                                        <span><?= e(strtoupper(substr($firstName, 0, 1))) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <form action="<?= e(url('dashboard/customer/profile-picture')) ?>" method="post" enctype="multipart/form-data" class="form-grid profile-picture-form">
+                                    <?= csrf_field() ?>
+                                    <div class="form-field">
+                                        <label for="customer_profile_picture">Upload Image</label>
+                                        <input
+                                            type="file"
+                                            id="customer_profile_picture"
+                                            name="profile_picture"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            required
+                                        >
+                                        <p class="field-hint">JPG, PNG, or WEBP. Maximum file size is 3MB.</p>
+                                    </div>
+                                    <div class="form-field profile-picture-actions">
+                                        <button type="submit" class="button button-primary">Upload Picture</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </article>
+
+                        <article class="records-panel">
+                            <div class="records-panel-header">
                                 <h3>Profile Details</h3>
                             </div>
                             <p class="lead">These details are used for checkout receipts, reservation follow-ups, and staff contact when an order needs attention.</p>
@@ -646,6 +714,10 @@ $recentOrder = $recentOrders[0] ?? null;
                                     <span class="label">Member Since</span>
                                     <span class="value"><?= e($memberSince) ?></span>
                                 </div>
+                                <div class="detail-row">
+                                    <span class="label">Picture</span>
+                                    <span class="value"><?= $profilePictureUrl !== '' ? 'Ready' : 'Not uploaded' ?></span>
+                                </div>
                             </div>
                         </article>
 
@@ -685,6 +757,10 @@ $recentOrder = $recentOrders[0] ?? null;
                                 <div class="detail-row">
                                     <span class="label">Phone</span>
                                     <span class="value"><?= !empty($user['phone']) ? 'Ready' : 'Needs update' ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Picture</span>
+                                    <span class="value"><?= $profilePictureUrl !== '' ? 'Ready' : 'Optional' ?></span>
                                 </div>
                             </div>
                         </article>

@@ -66,6 +66,28 @@ final class MenuRepository
         return $this->groupRowsByCategory($rows);
     }
 
+    public function activeItemsForJson(): array
+    {
+        $categories = $this->groupedCatalog();
+        $items = [];
+
+        foreach ($categories as $category) {
+            foreach ($category['items'] as $item) {
+                $items[] = [
+                    'id' => (int) ($item['id'] ?? 0),
+                    'name' => (string) ($item['name'] ?? ''),
+                    'category' => (string) ($item['category'] ?? $category['key'] ?? ''),
+                    'category_name' => (string) ($category['name'] ?? ''),
+                    'description' => (string) ($item['description'] ?? ''),
+                    'image_url' => (string) ($item['image_url'] ?? ''),
+                    'sizes' => array_values($item['sizes'] ?? []),
+                ];
+            }
+        }
+
+        return $items;
+    }
+
     public function createItem(array $data): int
     {
         $statement = Database::connection()->prepare(
