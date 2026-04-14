@@ -105,6 +105,11 @@ scrolling, modal height limits, compact filters, and dashboard assistant
 exclusion. It is not a substitute for the visual browser pass, but it catches
 missing responsive scaffolding before manual viewport review.
 
+Use `docs/dashboard-browser-parity-run-sheet.md` during the browser pass to
+record the role/viewport matrix, screenshot paths, interaction checks, and
+browser-only defects before copying confirmed findings into the dated QA run
+log.
+
 ## Viewports
 
 Run each dashboard through these viewport widths:

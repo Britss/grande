@@ -91,8 +91,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   authenticated dashboard parity smoke testing is implemented through `scripts/dashboard_parity_smoke.php`, rendering the seeded customer, employee, and admin dashboards in CLI session context and checking role-specific navigation/account markers plus forbidden panel/public assistant exclusions. The smoke test was run locally on 2026-04-14 with the XAMPP PHP binary.
 - Completed:
   authenticated dashboard viewport-readiness auditing is implemented through `scripts/dashboard_viewport_readiness_audit.php`, rendering the seeded customer, employee, and admin dashboards in CLI session context and checking role-specific target/panel wiring plus responsive CSS markers for mobile dashboard navigation, horizontally safe report tables, modal height limits, compact filters, and dashboard assistant exclusion. The audit was run locally on 2026-04-14 with the XAMPP PHP binary.
+- Completed:
+  browser dashboard parity QA handoff is now documented through `docs/dashboard-browser-parity-run-sheet.md`, giving the manual authenticated browser pass a role/viewport matrix, screenshot note table, interaction checks, defect log, and completion summary tied back to the dated QA run record.
 - Suggested next task:
-  execute the authenticated browser parity QA checklist against the seeded customer, employee, and admin accounts plus seeded workflow records, then append any viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`.
+  execute the authenticated browser parity QA checklist against the seeded customer, employee, and admin accounts plus seeded workflow records, using `docs/dashboard-browser-parity-run-sheet.md` to capture viewport-specific defects and screenshot notes before appending confirmed findings to `docs/dashboard-parity-qa-2026-04-14.md`.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:

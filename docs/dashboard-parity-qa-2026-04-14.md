@@ -26,6 +26,9 @@ workspace without authenticated browser sessions. Use it with
   panel wiring plus responsive CSS markers for mobile dashboard navigation,
   horizontally safe report tables, modal height limits, compact filters, and
   dashboard assistant exclusion.
+- Added `docs/dashboard-browser-parity-run-sheet.md` as the manual browser run
+  record for role/viewport status, screenshot paths, interaction checks, and
+  browser-only defects.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -92,9 +95,10 @@ workspace without authenticated browser sessions. Use it with
 
 The account seed, workflow data seed, authenticated dashboard smoke test, and
 viewport-readiness audit have been run for this local database. Sign in with
-the QA accounts documented in `docs/dashboard-parity-qa.md` and complete the
-browser checklist against the seeded non-empty dashboard panels. The browser
-pass still needs to verify:
+the QA accounts documented in `docs/dashboard-parity-qa.md`, use
+`docs/dashboard-browser-parity-run-sheet.md` to record screenshots and viewport
+status, and complete the browser checklist against the seeded non-empty
+dashboard panels. The browser pass still needs to verify:
 
 - Desktop, laptop, tablet, and mobile viewport rendering.
 - Mouse, keyboard, and touch access to every dashboard section.
