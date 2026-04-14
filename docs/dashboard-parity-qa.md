@@ -68,6 +68,24 @@ and feedback records. It removes previous QA workflow rows using `QA-` order
 numbers, `[QA]` feedback messages, and the documented QA customer email before
 recreating the sample data.
 
+Before opening the browser checklist, run the authenticated dashboard contract
+smoke test:
+
+```powershell
+php scripts/dashboard_parity_smoke.php
+```
+
+Or, with the bundled XAMPP PHP binary:
+
+```powershell
+C:\xampp\php\php.exe scripts\dashboard_parity_smoke.php
+```
+
+The smoke test signs in as the seeded customer, employee, and admin accounts in
+CLI session context, renders each dashboard route, and verifies the expected
+role-specific navigation and account markers while checking that forbidden
+dashboard panels and the public assistant widget are absent.
+
 ## Viewports
 
 Run each dashboard through these viewport widths:

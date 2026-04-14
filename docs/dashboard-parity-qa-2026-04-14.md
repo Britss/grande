@@ -18,6 +18,9 @@ workspace without authenticated browser sessions. Use it with
 - Added and ran `scripts/seed_dashboard_qa_workflow_data.php` with the XAMPP
   PHP binary so authenticated browser runs can start with non-empty order,
   reservation, feedback, and staff queue panels.
+- Added and ran `scripts/dashboard_parity_smoke.php` with the XAMPP PHP binary
+  to render the authenticated customer, employee, and admin dashboards from the
+  seeded QA accounts before manual viewport checks.
 - Did not execute an authenticated browser pass because this workspace does not
   provide a browser automation tool.
 
@@ -63,6 +66,9 @@ workspace without authenticated browser sessions. Use it with
   AJAX refresh and form-post fallback.
 - Queue badges are conditional and appear only when counts are actionable.
 - Modal partials are loaded for order and reservation detail snapshots.
+- Authenticated smoke coverage passed for customer, employee, and admin route
+  rendering, including role-specific navigation markers and absence of
+  forbidden panels/public assistant widget on dashboard pages.
 
 ## Intentional Differences
 
@@ -75,10 +81,10 @@ workspace without authenticated browser sessions. Use it with
 
 ## Remaining Browser QA
 
-The account seed and workflow data seed have been run for this local database.
-Sign in with the QA accounts documented in `docs/dashboard-parity-qa.md` and
-complete the browser checklist against the seeded non-empty dashboard panels.
-The browser pass still needs to verify:
+The account seed, workflow data seed, and authenticated dashboard smoke test
+have been run for this local database. Sign in with the QA accounts documented
+in `docs/dashboard-parity-qa.md` and complete the browser checklist against the
+seeded non-empty dashboard panels. The browser pass still needs to verify:
 
 - Desktop, laptop, tablet, and mobile viewport rendering.
 - Mouse, keyboard, and touch access to every dashboard section.
