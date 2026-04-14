@@ -1,20 +1,21 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
 
 :root {
     color-scheme: light;
-    --background: #f7efe4;
-    --surface: #fffaf4;
-    --surface-border: #dfcdbc;
-    --text: #2b221c;
-    --muted: #6f6358;
-    --accent: #4b3e34;
-    --accent-strong: #393330;
-    --cream: #faebd9;
-    --cream-deep: #ebd6c6;
+    --background: #f9f7f5;
+    --surface: #fffaf8;
+    --surface-border: #e9e3dd;
+    --text: #3e2b1e;
+    --muted: #6d6259;
+    --accent: #5d4432;
+    --accent-strong: #3e2b1e;
+    --cream: #f7eee6;
+    --cream-deep: #e9e3dd;
     --footer-bg: #2b2623;
     --container: 1120px;
-    --shadow: 0 22px 55px rgba(43, 38, 35, 0.1);
-    --shadow-soft: 0 10px 30px rgba(43, 38, 35, 0.08);
+    --shadow: 0 22px 55px rgba(62, 43, 30, 0.1);
+    --shadow-soft: 0 10px 30px rgba(62, 43, 30, 0.08);
+    --focus-ring: 0 0 0 3px rgba(93, 68, 50, 0.22);
 }
 
 * {
@@ -29,7 +30,7 @@ html {
 
 body {
     margin: 0;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Poppins", sans-serif;
     background: var(--background);
     color: var(--text);
     line-height: 1.6;
@@ -96,8 +97,8 @@ a {
     left: 0;
     right: 0;
     z-index: 30;
-    background: rgba(247, 239, 228, 0.94);
-    border-bottom: 1px solid rgba(75, 62, 52, 0.08);
+    background: rgba(249, 247, 245, 0.94);
+    border-bottom: 1px solid rgba(93, 68, 50, 0.1);
     backdrop-filter: blur(12px);
 }
 
@@ -119,7 +120,7 @@ a {
     display: block;
     height: 52px;
     width: auto;
-    filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0 3px 8px rgba(62, 43, 30, 0.3));
 }
 
 .brand-mark,
@@ -174,18 +175,26 @@ a {
     cursor: pointer;
     font: inherit;
     padding: 0.72rem 1.15rem;
-    border-radius: 999px;
+    border-radius: 8px;
     color: var(--muted);
     font-size: 0.95rem;
     font-weight: 600;
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .site-nav a:hover,
 .site-nav__button:hover {
     transform: translateY(-1px);
-    background: rgba(75, 62, 52, 0.08);
+    background: rgba(93, 68, 50, 0.08);
     color: var(--accent-strong);
+}
+
+.site-nav a:focus-visible,
+.site-nav__button:focus-visible,
+.site-nav-toggle:focus-visible,
+.button:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 
 .site-nav a.is-active,
@@ -492,9 +501,9 @@ h2 {
     justify-content: center;
     font: inherit;
     padding: 0.92rem 1.45rem;
-    border-radius: 999px;
+    border-radius: 8px;
     font-weight: 700;
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .button:hover {
@@ -503,14 +512,24 @@ h2 {
 
 .button-primary {
     background: var(--accent);
-    color: #fff;
-    box-shadow: 0 14px 28px rgba(75, 62, 52, 0.2);
+    color: #fffaf8;
+    box-shadow: 0 14px 28px rgba(93, 68, 50, 0.18);
 }
 
 .button-secondary {
-    border: 2px solid var(--surface-border);
+    border: 1px solid rgba(93, 68, 50, 0.22);
     background: rgba(255, 250, 244, 0.86);
     color: var(--accent-strong);
+}
+
+.button-primary:hover {
+    background: var(--accent-strong);
+    box-shadow: 0 16px 34px rgba(62, 43, 30, 0.22);
+}
+
+.button-secondary:hover {
+    border-color: rgba(93, 68, 50, 0.38);
+    background: #fffaf8;
 }
 
 .home-hero {
@@ -521,7 +540,8 @@ h2 {
     position: relative;
     overflow: hidden;
     background:
-        linear-gradient(rgba(43, 38, 35, 0.72), rgba(43, 38, 35, 0.72)),
+        linear-gradient(90deg, rgba(31, 25, 20, 0.78) 0%, rgba(31, 25, 20, 0.66) 42%, rgba(31, 25, 20, 0.74) 100%),
+        linear-gradient(180deg, rgba(31, 25, 20, 0.25) 0%, rgba(31, 25, 20, 0.8) 100%),
         url("../../images/2024-12-02.webp") center 20% / cover no-repeat;
     color: var(--cream);
 }
@@ -537,8 +557,8 @@ h2 {
 
 .home-hero__eyebrow {
     margin: 0 0 1rem;
-    color: rgba(250, 235, 217, 0.88);
-    letter-spacing: 0.22em;
+    color: rgba(247, 238, 230, 0.88);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     font-size: 0.78rem;
 }
@@ -548,7 +568,7 @@ h2 {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 1rem;
-    font-size: clamp(2.5rem, 5vw, 4.4rem);
+    font-size: clamp(2.45rem, 5vw, 4.35rem);
     line-height: 1.08;
     letter-spacing: 0;
     color: #fff;
@@ -570,19 +590,20 @@ h2 {
     max-width: 720px;
     margin: 0 auto 1.8rem;
     font-size: clamp(1.05rem, 2vw, 1.4rem);
-    color: rgba(250, 235, 217, 0.95);
+    color: rgba(247, 238, 230, 0.95);
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .home-page .home-hero .button-primary {
-    background: var(--accent);
+    background: rgba(93, 68, 50, 0.94);
     color: var(--cream);
 }
 
 .home-page .home-hero .button-secondary {
-    background: transparent;
+    background: rgba(31, 25, 20, 0.18);
     color: var(--cream);
-    border-color: var(--cream);
+    border-color: rgba(247, 238, 230, 0.78);
+    backdrop-filter: blur(6px);
 }
 
 .hero-highlights {
@@ -613,9 +634,9 @@ h2 {
 }
 
 .home-band {
-    background: linear-gradient(180deg, var(--cream-deep) 0%, var(--background) 100%);
-    border-top: 1px solid rgba(75, 62, 52, 0.08);
-    border-bottom: 1px solid rgba(75, 62, 52, 0.08);
+    background: linear-gradient(180deg, #f1ebe5 0%, var(--background) 100%);
+    border-top: 1px solid rgba(93, 68, 50, 0.08);
+    border-bottom: 1px solid rgba(93, 68, 50, 0.1);
 }
 
 .home-band__row {
@@ -1445,7 +1466,7 @@ h2 {
     overflow: hidden;
     padding: clamp(3.5rem, 7vw, 6.5rem) 0;
     background:
-        linear-gradient(135deg, rgba(255, 250, 244, 0.98) 0%, rgba(247, 239, 228, 0.94) 54%, rgba(219, 229, 210, 0.62) 100%);
+        linear-gradient(135deg, rgba(255, 250, 248, 0.98) 0%, rgba(249, 247, 245, 0.94) 58%, rgba(233, 227, 221, 0.72) 100%);
 }
 
 .home-middle::before {
@@ -1456,7 +1477,7 @@ h2 {
     background:
         linear-gradient(90deg, rgba(75, 62, 52, 0.08) 1px, transparent 1px),
         linear-gradient(180deg, rgba(75, 62, 52, 0.06) 1px, transparent 1px);
-    background-size: 72px 72px;
+    background-size: 64px 64px;
     mask-image: linear-gradient(90deg, transparent, #000 24%, #000 76%, transparent);
     opacity: 0.45;
 }
@@ -1476,7 +1497,7 @@ h2 {
 
 .home-middle__eyebrow {
     margin: 0 0 0.9rem;
-    color: #7d3426;
+    color: var(--accent);
     font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0;
@@ -1522,7 +1543,8 @@ h2 {
     border-radius: 8px;
     background: #1f1c19;
     color: #fffaf4;
-    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(93, 68, 50, 0.12);
+    box-shadow: 0 18px 38px rgba(62, 43, 30, 0.12);
     isolation: isolate;
 }
 
@@ -1538,6 +1560,7 @@ h2 {
     height: 100%;
     object-fit: cover;
     transform: scale(1.01);
+    filter: saturate(0.95) contrast(1.03);
     transition: transform 0.35s ease, filter 0.35s ease;
 }
 
@@ -1559,7 +1582,8 @@ h2 {
     inset: 0;
     z-index: 1;
     background:
-        linear-gradient(180deg, rgba(15, 12, 10, 0.08) 0%, rgba(15, 12, 10, 0.18) 42%, rgba(15, 12, 10, 0.78) 100%);
+        linear-gradient(180deg, rgba(20, 15, 11, 0.1) 0%, rgba(20, 15, 11, 0.2) 38%, rgba(20, 15, 11, 0.84) 100%),
+        linear-gradient(90deg, rgba(20, 15, 11, 0.28), transparent 62%);
 }
 
 .home-product__content {
@@ -1573,20 +1597,21 @@ h2 {
 
 .home-product h3 {
     margin-bottom: 0.35rem;
-    font-size: clamp(1.05rem, 2vw, 1.45rem);
+    font-size: clamp(1.08rem, 2vw, 1.45rem);
+    font-weight: 800;
     line-height: 1.15;
 }
 
 .home-product p {
     max-width: 28rem;
     margin-bottom: 0;
-    color: rgba(255, 250, 244, 0.88);
+    color: rgba(255, 250, 248, 0.9);
     font-size: 0.92rem;
     line-height: 1.5;
 }
 
 .home-product:hover img {
-    filter: saturate(1.05) contrast(1.04);
+    filter: saturate(1.05) contrast(1.06);
     transform: scale(1.06);
 }
 
@@ -4758,9 +4783,8 @@ h2 {
 
     .home-hero__lead {
         max-width: 100%;
-        font-size: clamp(0.74rem, 3.1vw, 0.9rem);
-        line-height: 1.3;
-        white-space: nowrap;
+        font-size: clamp(0.78rem, 3vw, 0.9rem);
+        line-height: 1.4;
     }
 
     .hero-highlights {

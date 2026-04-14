@@ -2,7 +2,7 @@
     <div class="container home-hero__content">
         <p class="home-hero__eyebrow">Grande. Pan De Sal + Coffee</p>
         <h1>
-            <span>Freshly Baked, Freshly Brewed -</span>
+            <span>Freshly Baked, Freshly Brewed</span>
             <span>EVERY. SINGLE. DAY.</span>
         </h1>
         <p class="home-hero__lead">
