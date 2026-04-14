@@ -83,8 +83,10 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   dashboard parity QA documentation now includes a dated static run record in `docs/dashboard-parity-qa-2026-04-14.md`, covering customer, employee, admin, shared dashboard behavior, intentional differences, and the exact browser checks that still require seeded accounts.
 - Completed:
   repeatable dashboard QA account seeding is implemented through `scripts/seed_dashboard_qa_accounts.php`, documenting active customer, employee, and admin credentials for the authenticated browser parity checklist without creating workflow data.
+- Completed:
+  dashboard QA accounts were seeded locally on 2026-04-14 using the XAMPP PHP binary, and the QA documentation now records the direct `C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php` fallback for shells where `php` is not on PATH.
 - Suggested next task:
-  run `php scripts/seed_dashboard_qa_accounts.php`, execute the authenticated browser parity QA checklist against the seeded customer, employee, and admin accounts, then append any viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`.
+  execute the authenticated browser parity QA checklist against the seeded customer, employee, and admin accounts, create or import workflow data where non-empty panels are needed, then append any viewport-specific defects or screenshot notes to `docs/dashboard-parity-qa-2026-04-14.md`.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:

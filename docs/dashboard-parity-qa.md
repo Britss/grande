@@ -31,6 +31,12 @@ does not already have dashboard users:
 php scripts/seed_dashboard_qa_accounts.php
 ```
 
+If PHP is not on PATH in a default XAMPP shell, run the bundled binary directly:
+
+```powershell
+C:\xampp\php\php.exe scripts\seed_dashboard_qa_accounts.php
+```
+
 The script creates or refreshes these active accounts:
 
 - Customer: `qa.customer@grande.local`
