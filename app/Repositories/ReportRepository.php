@@ -70,6 +70,39 @@ final class ReportRepository
         return $this->fillDailySeries($statement->fetchAll() ?: [], $days, 'total');
     }
 
+    public function salesByHourToday(int $startHour = 8, int $endHour = 20): array
+    {
+        $startHour = max(0, min(23, $startHour));
+        $endHour = max($startHour, min(23, $endHour));
+        $statement = Database::connection()->query(
+            "SELECT HOUR(created_at) AS report_hour, COALESCE(SUM(total_amount), 0) AS total
+             FROM orders
+             WHERE payment_status = 'verified'
+               AND status NOT IN ('cancelled', 'rejected')
+               AND DATE(created_at) = CURDATE()
+             GROUP BY HOUR(created_at)
+             ORDER BY report_hour ASC"
+        );
+
+        $valuesByHour = array_fill(0, 24, 0.0);
+
+        foreach ($statement->fetchAll() ?: [] as $row) {
+            $valuesByHour[(int) ($row['report_hour'] ?? 0)] = (float) ($row['total'] ?? 0);
+        }
+
+        $series = [];
+
+        for ($hour = $startHour; $hour <= $endHour; $hour++) {
+            $series[] = [
+                'hour' => $hour,
+                'label' => date('h A', strtotime($hour . ':00:00')),
+                'total' => $valuesByHour[$hour] ?? 0,
+            ];
+        }
+
+        return $series;
+    }
+
     public function dailySalesForRange(string $startDate, string $endDate): array
     {
         $statement = Database::connection()->prepare(
@@ -199,6 +232,54 @@ final class ReportRepository
         $statement->bindValue('end_date', $endDate);
         $statement->bindValue('limit', max(1, $limit), \PDO::PARAM_INT);
         $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public function salesByCategory(?string $startDate = null, ?string $endDate = null): array
+    {
+        $where = "WHERE o.status NOT IN ('cancelled', 'rejected')
+               AND o.payment_status = 'verified'";
+        $params = [];
+
+        if ($startDate !== null && $endDate !== null) {
+            $where .= ' AND DATE(o.created_at) BETWEEN :start_date AND :end_date';
+            $params = [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ];
+        }
+
+        $statement = Database::connection()->prepare(
+            "SELECT
+                mi.category,
+                SUM(oi.quantity) AS total_quantity,
+                SUM(oi.subtotal) AS total_revenue
+             FROM order_items oi
+             INNER JOIN menu_items mi ON mi.id = oi.menu_item_id
+             INNER JOIN orders o ON o.id = oi.order_id
+             {$where}
+             GROUP BY mi.category
+             ORDER BY total_revenue DESC"
+        );
+        $statement->execute($params);
+
+        return $statement->fetchAll();
+    }
+
+    public function orderStatusBreakdownForRange(string $startDate, string $endDate): array
+    {
+        $statement = Database::connection()->prepare(
+            "SELECT status, COUNT(*) AS count, COALESCE(SUM(total_amount), 0) AS amount
+             FROM orders
+             WHERE DATE(created_at) BETWEEN :start_date AND :end_date
+             GROUP BY status
+             ORDER BY FIELD(status, 'pending', 'preparing', 'ready', 'completed', 'cancelled', 'rejected')"
+        );
+        $statement->execute([
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+        ]);
 
         return $statement->fetchAll();
     }

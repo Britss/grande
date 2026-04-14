@@ -71,10 +71,12 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   menu JSON getter compatibility is implemented as a read-only bridge: `/api/menu-items` and old-style `/get_menu_items.php` both return active catalog items from `MenuRepository`, including normalized size data, without reintroducing page-level SQL handlers.
 - Completed:
   remaining read-only standalone JSON getter compatibility bridges are implemented for old dashboard/public consumers: `/get_orders.php`, `/get_order_items.php`, `/get_reservation_orders.php`, `/get_customer_reservation_orders.php`, `/get_feedback.php`, and `/get_customers.php`, with clean `/api/...` route aliases. These endpoints are role-protected, repository-owned, and preserve old response envelopes where practical.
+- Completed:
+  old report chart/report getter compatibility bridges are implemented for admin-only read consumers: `/includes/handlers/reports/get_sales_chart_data.php` and `/includes/handlers/reports/get_sales_report.php`, with clean `/api/reports/sales-chart-data` and `/api/reports/sales-report` aliases. These endpoints are backed by `ReportRepository`, preserve the old Chart.js/report response shapes, and avoid reintroducing page-level SQL handlers.
 - Partially completed:
   direct `grandego` feature/flow parity. The main transactional backend workflows are implemented, and the public menu search/filter gap has been closed, but the rewrite is not yet a function-for-function clone of old handler endpoints.
 - Suggested next task:
-  finish remaining `grandego` parity decisions before final visual QA: customer hard-delete decision and whether old report chart getter endpoints need compatibility bridges.
+  finish the remaining `grandego` parity decision before final visual QA: whether old customer hard-delete behavior should remain intentionally replaced by account deactivation.
 
 ## Direct GrandeGo Parity Audit
 - Source checked:
@@ -98,6 +100,8 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
 - Completed parity:
   old read-only dashboard JSON getters are represented by compatibility routes for orders, order items, reservation orders, customer reservation orders, feedback, and customers. Each route has an old filename bridge plus a clean `/api/...` alias, uses the rewrite repositories for SQL ownership, and enforces the same broad role boundaries as the old handlers.
 - Completed parity:
+  old report chart/report JSON getters from `includes/handlers/reports/get_sales_chart_data.php` and `includes/handlers/reports/get_sales_report.php` are represented by admin-only compatibility routes plus clean `/api/reports/...` aliases, returning Chart.js-friendly sales/category payloads and date-range report summaries from repository-owned SQL.
+- Completed parity:
   customer profile-picture upload from `uploads/upload-profile-picture.php` is now represented by the customer profile dashboard upload form, backed by `users.profile_picture` and public uploaded image rendering in the dashboard sidebar/profile panel.
 - Completed parity:
   authenticated dashboard password change from `auth/change-password.php` is now implemented for customer profile dashboards; decide later whether staff/admin self-service password panels are required.
@@ -105,8 +109,6 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   old menu delete behavior from `menu/delete_menu_item.php` is intentionally represented as availability/archive-style management rather than hard delete, preserving historical order/audit references.
 - Remaining parity gaps:
   old customer hard-delete behavior from `customers/delete_customer.php` is not implemented. The rewrite currently supports account status changes through `is_active`.
-- Remaining parity gaps:
-  old report chart endpoints are still mostly replaced by server-rendered dashboard report data. Decide whether report chart compatibility endpoints are required for any legacy JavaScript consumers.
 - Remaining visual QA:
   browser-level dashboard comparison against old `grandego` is still needed after the functional parity decisions above are resolved.
 
@@ -251,6 +253,7 @@ Rewrite GrandeGo as a clean PHP + MySQL modular monolith for XAMPP with a fresh 
   employee dashboard should use queue metrics only, not business analytics.
 - Current status:
   admin reports render selectable date-range daily sales, order volume, reservation volume, top-selling menu item bars, selected-range summary cards, and order/reservation drilldown tables from repository-owned SQL.
+  legacy admin report chart/report JSON consumers can read `/includes/handlers/reports/get_sales_chart_data.php` and `/includes/handlers/reports/get_sales_report.php`, or the clean `/api/reports/sales-chart-data` and `/api/reports/sales-report` aliases.
 
 ## Test Plan
 - Auth:
