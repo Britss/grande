@@ -390,15 +390,15 @@ final class MenuRepository
     private function categoryDescription(string $category): string
     {
         return match (rtrim($category, '.')) {
-            'COFFEE' => 'Espresso-based and brewed coffee drinks from the imported GrandeGo catalog.',
-            'NON COFFEE' => 'Cafe favorites for guests who want creamy, chocolatey, or milk-based drinks.',
-            'TEA BASED' => 'Tea-led drinks from the current GrandeGo lineup.',
-            'QUENCHERS' => 'Cold refreshers and fruit-forward drinks for lighter orders.',
-            'PANDESAL' => 'GrandeGo bread staples built around fresh pandesal.',
-            'ENSAYMADA' => 'Sweet and savory ensaymada selections from the bakery line.',
-            'LOAF' => 'Shareable loaf items from the imported bakery catalog.',
-            'SANDWICHES' => 'Savory sandwich items that complete the cafe menu.',
-            default => 'Imported directly from the GrandeGo menu catalog.',
+            'COFFEE' => 'Coffee-based drinks for morning starts, merienda breaks, and late-night runs.',
+            'NON COFFEE' => 'Creamy, chocolatey, and milk-based favorites for a softer cafe order.',
+            'TEA BASED' => 'Tea-led drinks for lighter sips and familiar comfort.',
+            'QUENCHERS' => 'Cold refreshers and fruit-forward drinks for warmer days.',
+            'PANDESAL' => 'Everyday pandesal favorites for quick bread runs and takeout bundles.',
+            'ENSAYMADA' => 'Sweet and savory ensaymada selections for breakfast or merienda.',
+            'LOAF' => 'Shareable loaf breads for home, office, or family stops.',
+            'SANDWICHES' => 'Savory picks for a more filling bread-and-coffee order.',
+            default => 'Grande menu favorites for everyday comfort and convenience.',
         };
     }
 
@@ -410,6 +410,6 @@ final class MenuRepository
             return $description;
         }
 
-        return 'Available in the listed sizes from the current GrandeGo catalog.';
+        return 'Available in the listed sizes while supplies last.';
     }
 }

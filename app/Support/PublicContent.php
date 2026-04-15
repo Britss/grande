@@ -288,13 +288,13 @@ final class PublicContent
 
         return [
             'title' => 'Menu',
-            'description' => 'Browse our menu of freshly baked pan de sal, premium coffee, pastries, and more.',
+            'description' => 'Browse Grande. Pandesal + Coffee favorites: pandesal, pastries, loaf breads, coffee, tea, refreshers, and non-coffee drinks.',
             'hero' => [
-                'eyebrow' => 'Menu',
-                'title' => 'Our Menu',
-                'subtitle' => 'Discover our coffee, pastries, and bakery favorites.',
+                'eyebrow' => '',
+                'title' => 'Bread, Coffee, and Everyday Favorites',
+                'subtitle' => 'Browse pandesal, ensaymada, loaf breads, coffee, tea, refreshers, and non-coffee drinks for breakfast, merienda, and anytime cravings.',
             ],
-            'notice' => 'This phase uses a structured sample catalog in code. Database-backed menu management will replace this in a later implementation step.',
+            'notice' => 'Menu items and prices may vary by availability. Please confirm bulk orders and special requests with the store.',
             'categories' => self::normalizeMenuCategories($categories),
         ];
     }

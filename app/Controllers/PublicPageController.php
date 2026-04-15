@@ -22,7 +22,7 @@ final class PublicPageController extends Controller
     public function menu(): string
     {
         $page = PublicContent::menu();
-        $page['notice'] = 'Now reading from the rebuilt `grande` menu catalog imported from GrandeGo.';
+        $page['notice'] = 'Menu items and prices may vary by availability. Please confirm bulk orders and special requests with the store.';
         $page['categories'] = (new MenuRepository())->groupedCatalog();
         $user = Auth::user();
         $cartTotals = ['item_count' => 0, 'subtotal' => 0.0];

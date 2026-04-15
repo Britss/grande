@@ -1,6 +1,10 @@
 <?php $sharedSite = \App\Support\PublicContent::shared(); ?>
 
 <footer class="footer">
+    <a class="back-to-top" href="#top">
+        <img src="<?= e(url('public/icons/up-arrow.png')) ?>" alt="" aria-hidden="true">
+        <span>Back to top</span>
+    </a>
     <div class="container">
         <p>&copy; <?= date('Y') ?> Grande. Pan De Sal + Coffee. All rights reserved.</p>
         <p class="footer-address">

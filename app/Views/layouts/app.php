@@ -7,7 +7,7 @@
     <title><?= e(($pageTitle ?? 'Home') . ' | Grande. Pan De Sal + Coffee') ?></title>
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
 </head>
-<body class="<?= e($bodyClass ?? '') ?>">
+<body id="top" class="<?= e($bodyClass ?? '') ?>">
     <?php require __DIR__ . '/../partials/navigation.php'; ?>
 
     <main class="page-shell">

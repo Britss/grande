@@ -714,6 +714,30 @@ document.addEventListener("DOMContentLoaded", function () {
     applyMenuFilter();
 });
 
+document.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-quantity-step]");
+
+    if (!button) {
+        return;
+    }
+
+    var control = button.closest(".menu-qty-control");
+    var input = control ? control.querySelector('input[type="number"]') : null;
+
+    if (!input) {
+        return;
+    }
+
+    var step = Number(button.getAttribute("data-quantity-step")) || 0;
+    var min = Number(input.getAttribute("min")) || 1;
+    var max = Number(input.getAttribute("max")) || 20;
+    var current = Number(input.value) || min;
+    var next = Math.min(max, Math.max(min, current + step));
+
+    input.value = String(next);
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+});
+
 document.addEventListener("DOMContentLoaded", function () {
     var revealItems = document.querySelectorAll("[data-reveal]");
 

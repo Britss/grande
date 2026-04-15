@@ -10,8 +10,10 @@
         <div class="alert alert-error"><?= e((string) $error) ?></div>
     <?php endif; ?>
 
-    <div class="menu-status-card">
-        <?php if (!is_array($user ?? null)): ?>
+    <?php $isGuest = !is_array($user ?? null); ?>
+    <?php $isCustomer = is_array($user ?? null) && (($user['role'] ?? 'customer') === 'customer'); ?>
+    <div class="menu-status-card<?= ($isGuest || $isCustomer) ? ' menu-status-card--floating' : '' ?>">
+        <?php if ($isGuest): ?>
             <h2>Login Before Building Your Cart</h2>
             <p>Add your drinks and bakery picks after logging in so your cart stays tied to your account.</p>
             <div class="action-row">
@@ -24,7 +26,7 @@
             <h2>Your Cart</h2>
             <p><?= e((string) $cartTotals['item_count']) ?> item(s) selected • PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
             <div class="action-row">
-                <a class="button button-primary" href="<?= e(url('cart')) ?>">View Cart</a>
+                <a class="button button-primary" href="<?= e(url('cart')) ?>">View Cart & Checkout</a>
                 <a class="button button-secondary" href="<?= e(url('cart?from=reservation')) ?>">Reserve With Cart</a>
             </div>
         <?php endif; ?>
@@ -104,31 +106,36 @@
                             <div class="menu-item-card__body">
                                 <h3><?= e($item['name']) ?></h3>
                                 <p><?= e($item['description']) ?></p>
-                                <div class="price-list">
-                                <?php foreach ($item['sizes'] as $size): ?>
-                                    <span class="price-pill">
-                                        <?= e($size['label']) ?>: PHP <?= e(number_format((float) $size['price'], 2)) ?>
-                                    </span>
-                                <?php endforeach; ?>
-                                </div>
 
                                 <?php if (is_array($user ?? null) && (($user['role'] ?? 'customer') === 'customer')): ?>
                                     <form class="menu-order-form" method="post" action="<?= e(url('menu/cart')) ?>">
                                     <?= csrf_field() ?>
                                     <div class="menu-order-grid">
-                                        <div class="form-field">
-                                            <label for="size-<?= e((string) $item['id']) ?>">Size</label>
-                                            <select id="size-<?= e((string) $item['id']) ?>" name="size_id">
+                                        <div class="form-field menu-size-field">
+                                            <span class="menu-control-label">Size</span>
+                                            <div class="menu-size-options" role="radiogroup" aria-label="Choose size for <?= e($item['name']) ?>">
                                                 <?php foreach ($item['sizes'] as $size): ?>
-                                                    <option value="<?= e((string) $size['id']) ?>" <?= $size['is_default'] ? 'selected' : '' ?>>
+                                                    <label class="menu-size-option">
+                                                        <input
+                                                            type="radio"
+                                                            name="size_id"
+                                                            value="<?= e((string) $size['id']) ?>"
+                                                            <?= $size['is_default'] ? 'checked' : '' ?>
+                                                        >
+                                                        <span>
                                                         <?= e($size['label']) ?> • PHP <?= e(number_format((float) $size['price'], 2)) ?>
-                                                    </option>
+                                                        </span>
+                                                    </label>
                                                 <?php endforeach; ?>
-                                            </select>
+                                            </div>
                                         </div>
                                         <div class="form-field menu-order-qty">
                                             <label for="quantity-<?= e((string) $item['id']) ?>">Qty</label>
-                                            <input id="quantity-<?= e((string) $item['id']) ?>" type="number" name="quantity" min="1" max="20" value="1">
+                                            <div class="menu-qty-control">
+                                                <button type="button" data-quantity-step="-1" aria-label="Decrease quantity for <?= e($item['name']) ?>">-</button>
+                                                <input id="quantity-<?= e((string) $item['id']) ?>" type="number" name="quantity" min="1" max="20" value="1">
+                                                <button type="button" data-quantity-step="1" aria-label="Increase quantity for <?= e($item['name']) ?>">+</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <button class="button button-primary menu-order-button" type="submit">Add to Cart</button>
