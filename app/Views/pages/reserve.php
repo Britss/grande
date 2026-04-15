@@ -56,19 +56,17 @@
                                     class="form-control <?= $field['name'] === 'date' ? 'reservation-native-date' : '' ?> <?= $field['name'] === 'time' ? 'reservation-native-time' : '' ?> <?= has_error($field['name']) ? 'is-invalid' : '' ?>"
                                     <?php if ($field['name'] === 'date'): ?>data-reservation-date-input<?php endif; ?>
                                     <?php if ($field['name'] === 'time'): ?>data-reservation-time-input<?php endif; ?>
-                                    <?php if ($field['name'] === 'date'): ?>min="<?= e(date('Y-m-d')) ?>"<?php endif; ?>
-                                    <?php if (!empty($field['min'])): ?>min="<?= e($field['min']) ?>"<?php endif; ?>
-                                    <?php if (!empty($field['max'])): ?>max="<?= e($field['max']) ?>"<?php endif; ?>
-                                    value="<?= e($fieldValue) ?>"
-                                >
+                                    <?php if ($field['name'] === 'date'): ?>min="<?= e(date('Y-m-d')) ?>" <?php endif; ?>
+                                    <?php if (!empty($field['min'])): ?>min="<?= e($field['min']) ?>" <?php endif; ?>
+                                    <?php if (!empty($field['max'])): ?>max="<?= e($field['max']) ?>" <?php endif; ?>
+                                    value="<?= e($fieldValue) ?>">
                                 <?php if ($field['name'] === 'date'): ?>
                                     <div
                                         class="reservation-calendar"
                                         data-reservation-calendar
                                         data-selected-date="<?= e($fieldValue) ?>"
                                         data-min-date="<?= e(date('Y-m-d')) ?>"
-                                        hidden
-                                    >
+                                        hidden>
                                         <div class="reservation-calendar__head">
                                             <button type="button" class="reservation-calendar__nav" data-calendar-prev aria-label="Previous month">&lsaquo;</button>
                                             <div>
@@ -94,8 +92,7 @@
                                         class="reservation-time-picker"
                                         data-reservation-time-picker
                                         data-selected-time="<?= e($fieldValue) ?>"
-                                        hidden
-                                    >
+                                        hidden>
                                         <div class="reservation-time-picker__head">
                                             <strong>Choose your visit time</strong>
                                             <span>30-minute slots, open all day</span>
@@ -141,39 +138,29 @@
                     <span>Cart</span>
                     <div>
                         <h3>Cart Ready</h3>
-                    <?php if ($cartItems !== []): ?>
-                        <p><?= e((string) $cartTotals['item_count']) ?> item(s) selected &middot; PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
-                        <div class="cart-summary-list">
-                            <?php foreach (array_slice($cartItems, 0, 3) as $item): ?>
-                                <div class="cart-summary-item">
-                                    <div>
-                                        <strong><?= e($item['item_name']) ?></strong>
-                                        <p><?= e($item['size']) ?> &middot; Qty <?= e((string) $item['quantity']) ?></p>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="action-row reserve-sidebar-actions">
-                            <a class="button button-primary" href="<?= e(url('cart?from=reservation')) ?>">Review Cart</a>
-                            <a class="button button-secondary" href="<?= e(url('menu')) ?>">Add More Items</a>
-                        </div>
-                    <?php else: ?>
-                        <p>Your cart is empty. Build it from the menu before reserving.</p>
-                    <?php endif; ?>
+                        <?php if ($cartItems !== []): ?>
+                            <p><?= e((string) $cartTotals['item_count']) ?> item(s) selected &middot; PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
+                            <div class="action-row reserve-sidebar-actions">
+                                <a class="button button-primary" href="<?= e(url('cart?from=reservation')) ?>">Review Cart</a>
+                                <a class="button button-secondary" href="<?= e(url('menu')) ?>">Add More Items</a>
+                            </div>
+                        <?php else: ?>
+                            <p>Your cart is empty. Build it from the menu before reserving.</p>
+                        <?php endif; ?>
                     </div>
                 </article>
             <?php endif; ?>
 
             <div class="reservation-examples" aria-label="Reservation reminders">
-            <?php foreach ($page['sidebar_cards'] as $card): ?>
-                <article class="reservation-example">
-                    <span><?= e((string) ($card['label'] ?? $card['title'])) ?></span>
-                    <div>
-                        <h3><?= e($card['title']) ?></h3>
-                        <p><?= e($card['body']) ?></p>
-                    </div>
-                </article>
-            <?php endforeach; ?>
+                <?php foreach ($page['sidebar_cards'] as $card): ?>
+                    <article class="reservation-example">
+                        <span><?= e((string) ($card['label'] ?? $card['title'])) ?></span>
+                        <div>
+                            <h3><?= e($card['title']) ?></h3>
+                            <p><?= e($card['body']) ?></p>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
             </div>
         </aside>
     </div>
@@ -188,4 +175,3 @@
 
     </div>
 </section>
-

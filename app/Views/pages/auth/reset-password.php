@@ -4,12 +4,12 @@
             <p class="eyebrow">Account Recovery</p>
             <h1>Set a new password.</h1>
             <p class="lead">
-                Choose a password that keeps your account ready for orders, reservations, and dashboard access.
+                Create a new password to restore access to your Grande account.
             </p>
             <ul class="plain-list auth-points">
                 <li>Use at least 8 characters</li>
                 <li>Include uppercase, lowercase, and a number</li>
-                <li>The reset link is consumed after a successful change</li>
+                <li>Your reset link will no longer work after the password is updated</li>
             </ul>
         </aside>
 

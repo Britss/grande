@@ -4,19 +4,19 @@
             <p class="eyebrow">Account Recovery</p>
             <h1>Reset your password.</h1>
             <p class="lead">
-                Enter your account email and Grande will send a time-limited link for setting a new password.
+                Enter your account email address and we will send you a secure link to reset your password.
             </p>
             <ul class="plain-list auth-points">
                 <li>Links expire after 30 minutes</li>
                 <li>Only the latest reset link can be used</li>
-                <li>Inactive accounts can recover passwords, but login still follows account status</li>
+                <li>Account access still depends on your current account status</li>
             </ul>
         </aside>
 
         <div class="content-card auth-card">
             <p class="eyebrow">Authentication</p>
             <h2>Forgot Password</h2>
-            <p class="auth-copy">Use the email address attached to your Grande account.</p>
+            <p class="auth-copy">Use the email address associated with your Grande account.</p>
 
             <?php if ($status = flash('status')): ?>
                 <div class="alert alert-success"><?= e((string) $status) ?></div>

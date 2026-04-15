@@ -28,7 +28,7 @@ final class AuthController extends Controller
 
         return $this->render('pages.auth.login', [
             'pageTitle' => 'Login',
-            'metaDescription' => 'Login to the Grande rewrite experience.',
+            'metaDescription' => 'Log in to your Grande account to manage orders and reservations.',
             'bodyClass' => 'auth-page',
         ]);
     }
@@ -41,7 +41,7 @@ final class AuthController extends Controller
 
         return $this->render('pages.auth.signup', [
             'pageTitle' => 'Sign Up',
-            'metaDescription' => 'Create a customer account for the Grande rewrite.',
+            'metaDescription' => 'Create your Grande account for orders, reservations, and account access.',
             'bodyClass' => 'auth-page',
         ]);
     }
@@ -54,7 +54,7 @@ final class AuthController extends Controller
 
         return $this->render('pages.auth.forgot-password', [
             'pageTitle' => 'Forgot Password',
-            'metaDescription' => 'Request a Grande password reset link.',
+            'metaDescription' => 'Request a secure password reset link for your Grande account.',
             'bodyClass' => 'auth-page',
         ]);
     }
@@ -74,7 +74,7 @@ final class AuthController extends Controller
 
         return $this->render('pages.auth.reset-password', [
             'pageTitle' => 'Reset Password',
-            'metaDescription' => 'Set a new Grande account password.',
+            'metaDescription' => 'Set a new password for your Grande account.',
             'bodyClass' => 'auth-page',
             'token' => $token,
         ]);

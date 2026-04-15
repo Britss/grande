@@ -4,20 +4,19 @@
             <p class="eyebrow">New Customer</p>
             <h1>Create your account.</h1>
             <p class="lead">
-                This is the first database-backed customer flow in the rebuild. New signups are stored in `grande.users`
-                and sent to login after validation passes.
+                Sign up to place orders faster, manage reservations, and stay connected with Grande online.
             </p>
             <ul class="plain-list auth-points">
-                <li>Customer accounts only in this first pass</li>
-                <li>Email and phone duplicate checks</li>
-                <li>Passwords hashed before insert</li>
+                <li>Quick account setup for customers</li>
+                <li>Email and phone number verification safeguards</li>
+                <li>Secure password protection for your account</li>
             </ul>
         </aside>
 
         <div class="content-card auth-card">
             <p class="eyebrow">Authentication</p>
             <h2>Sign Up</h2>
-            <p class="auth-copy">Submit your details first, then verify your email before the account is created.</p>
+            <p class="auth-copy">Enter your details below, then verify your email to finish creating your account.</p>
 
             <?php if ($error = flash('error')): ?>
                 <div class="alert alert-error"><?= e((string) $error) ?></div>
@@ -190,11 +189,10 @@
 
     <div class="content-grid auth-legal-grid">
         <article id="terms-conditions" class="content-card auth-legal-card">
-            <p class="eyebrow">Inspired By GrandeGo</p>
+            <p class="eyebrow">Account Terms</p>
             <h2>Terms &amp; Conditions</h2>
             <p class="auth-copy">
-                This follows the same account, ordering, and reservation expectations used in the current GrandeGo
-                experience, condensed into a readable signup summary.
+                These terms explain the basic rules for using your Grande account and related online services.
             </p>
             <ol class="auth-legal-list">
                 <li>You must provide accurate, current, and complete account information.</li>
@@ -206,16 +204,16 @@
         </article>
 
         <article id="privacy-policy" class="content-card auth-legal-card">
-            <p class="eyebrow">Inspired By GrandeGo</p>
+            <p class="eyebrow">Privacy Notice</p>
             <h2>Privacy Policy</h2>
             <p class="auth-copy">
-                The signup flow stores the same basic customer details the old site relied on for accounts,
-                reservations, and service communication.
+                We collect the information needed to create your account, support reservations, and keep you updated
+                about your activity with Grande.
             </p>
             <ol class="auth-legal-list">
                 <li>We collect your name, email, phone number, and account credentials.</li>
                 <li>These details are used for authentication, reservations, support, and service updates.</li>
-                <li>We do not ask for unnecessary profile information in this first rebuild phase.</li>
+                <li>We only request the information needed to provide our account and customer services.</li>
                 <li>Your password is stored as a hash, not as plain text.</li>
                 <li>You can contact Grande using the details below for questions about account data.</li>
             </ol>

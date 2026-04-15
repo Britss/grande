@@ -4,20 +4,19 @@
             <p class="eyebrow">Grande Account</p>
             <h1>Welcome back.</h1>
             <p class="lead">
-                Sign in to continue to your dashboard, upcoming reservations, and the first customer tools being rebuilt
-                on top of the new codebase.
+                Sign in to manage your account, view your reservations, and continue with your orders at Grande.
             </p>
             <ul class="plain-list auth-points">
-                <li>Role-aware redirect after login</li>
-                <li>Session-backed access control</li>
-                <li>CSRF protection and server-side validation</li>
+                <li>Access your dashboard and account details</li>
+                <li>View your reservations and activity in one place</li>
+                <li>Protected sign-in with secure validation</li>
             </ul>
         </aside>
 
         <div class="content-card auth-card">
             <p class="eyebrow">Authentication</p>
             <h2>Login</h2>
-            <p class="auth-copy">Use the account stored in the new `grande` database.</p>
+            <p class="auth-copy">Enter the email address and password linked to your Grande account.</p>
 
             <?php if ($status = flash('status')): ?>
                 <div class="alert alert-success"><?= e((string) $status) ?></div>
