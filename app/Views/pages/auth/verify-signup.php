@@ -23,10 +23,6 @@
                 <div class="alert alert-success"><?= e((string) $status) ?></div>
             <?php endif; ?>
 
-            <?php if (!empty($localPreviewCode)): ?>
-                <p class="auth-dev-note">Preview code: <strong><?= e((string) $localPreviewCode) ?></strong></p>
-            <?php endif; ?>
-
             <?php if ($error = flash('error')): ?>
                 <div class="alert alert-error"><?= e((string) $error) ?></div>
             <?php endif; ?>

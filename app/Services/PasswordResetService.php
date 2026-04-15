@@ -52,7 +52,6 @@ final class PasswordResetService
 
         if (!(bool) Config::get('mail.smtp_enabled', false) && !(bool) Config::get('mail.use_php_mail', false)) {
             $delivery['channel'] = 'local_preview';
-            $delivery['preview_url'] = $resetUrl;
             $delivery['path'] = (string) Config::get('mail.log_path', '');
         }
 

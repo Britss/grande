@@ -54,7 +54,7 @@ $profilePictureUrl = $profilePicture !== '' ? url($profilePicture) : '';
                     <?php endif; ?>
                 </button>
                 <button class="dashboard-sidebar__link" type="button" data-dashboard-target="feedback">
-                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
+                    <img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
                     <span>Feedback</span>
                     <?php if (!empty($recentFeedback)): ?>
                         <span class="dashboard-sidebar__badge"><?= e((string) count($recentFeedback)) ?></span>
@@ -64,7 +64,7 @@ $profilePictureUrl = $profilePicture !== '' ? url($profilePicture) : '';
 
             <div class="dashboard-sidebar__footer">
                 <a href="<?= e(url('feedback')) ?>" class="dashboard-sidebar__support">
-                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
+                    <img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
                     <span>Send Feedback</span>
                 </a>
             </div>
@@ -80,7 +80,7 @@ $profilePictureUrl = $profilePicture !== '' ? url($profilePicture) : '';
             >
                 <div class="customer-order-notification-card">
                     <div class="customer-order-notification-icon">
-                        <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true">
+                        <img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true">
                     </div>
                     <div class="customer-order-notification-copy">
                         <h3 id="customerOrderNotificationTitle">Updates Available</h3>
@@ -145,7 +145,7 @@ $profilePictureUrl = $profilePicture !== '' ? url($profilePicture) : '';
                             </div>
                         </button>
                         <button class="stat-card stat-card--action" type="button" data-dashboard-target="feedback">
-                            <div class="stat-icon"><img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true"></div>
+                            <div class="stat-icon"><img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true"></div>
                             <div class="stat-info">
                                 <h3><?= e((string) count($recentFeedback ?? [])) ?></h3>
                                 <p>Feedback Sent</p>
@@ -231,7 +231,7 @@ $profilePictureUrl = $profilePicture !== '' ? url($profilePicture) : '';
                                     <span>Make Reservation</span>
                                 </a>
                                 <a href="<?= e(url('feedback')) ?>" class="quick-action-link">
-                                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--inline" aria-hidden="true">
+                                    <img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--inline" aria-hidden="true">
                                     <span>Send Feedback</span>
                                 </a>
                             </div>
@@ -810,7 +810,7 @@ $profilePictureUrl = $profilePicture !== '' ? url($profilePicture) : '';
                                             </div>
                                             <div class="reservation-details">
                                                 <div class="detail">
-                                                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--detail" aria-hidden="true">
+                                                    <img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--detail" aria-hidden="true">
                                                     <span><?= e(ucwords(str_replace('-', ' ', (string) ($feedbackItem['category'] ?? 'feedback')))) ?></span>
                                                 </div>
                                             </div>

@@ -61,7 +61,7 @@ $adminPriorityFeedback = array_slice(array_values(array_filter($manageableFeedba
                     <span>Users</span>
                 </button>
                 <button class="dashboard-sidebar__link" type="button" data-dashboard-target="feedback">
-                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
+                    <img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-sidebar__icon" aria-hidden="true">
                     <span>Feedback</span>
                     <?php if ((int) ($feedbackStats['new_feedback'] ?? 0) > 0): ?>
                         <span class="dashboard-sidebar__badge"><?= e((string) ($feedbackStats['new_feedback'] ?? 0)) ?></span>
@@ -127,7 +127,7 @@ $adminPriorityFeedback = array_slice(array_values(array_filter($manageableFeedba
                             </div>
                         </button>
                         <button class="stat-card stat-card--action" type="button" data-dashboard-target="feedback">
-                            <div class="stat-icon"><img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true"></div>
+                            <div class="stat-icon"><img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-icon-image" aria-hidden="true"></div>
                             <div class="stat-info">
                                 <h3><?= e((string) ($feedbackStats['new_feedback'] ?? 0)) ?></h3>
                                 <p>New Feedback</p>
@@ -156,7 +156,7 @@ $adminPriorityFeedback = array_slice(array_values(array_filter($manageableFeedba
                                     <span>Manage Users</span>
                                 </button>
                                 <button class="quick-action-link quick-action-link--button" type="button" data-dashboard-target="feedback">
-                                    <img src="<?= e(url('public/icons/chat-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--inline" aria-hidden="true">
+                                    <img src="<?= e(url('public/icons/message-bubble.png')) ?>" alt="" class="dashboard-icon-image dashboard-icon-image--inline" aria-hidden="true">
                                     <span>Review Feedback</span>
                                 </button>
                             </div>

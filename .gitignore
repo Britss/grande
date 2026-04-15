@@ -2,6 +2,8 @@
 /.env.*
 !/\.env.example
 
+/app/config.local.php
+
 /storage/logs/*
 !/storage/logs/.gitkeep
 

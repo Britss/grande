@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Support;
 
 use PDO;
+use PDOException;
+use RuntimeException;
 
 final class Database
 {
@@ -22,12 +24,29 @@ final class Database
         $username = (string) Config::get('database.username');
         $password = (string) Config::get('database.password');
 
+        $host = $host === 'localhost' ? '127.0.0.1' : $host;
         $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s', $host, $port, $databaseName, $charset);
 
-        self::$connection = new PDO($dsn, $username, $password, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
+        try {
+            self::$connection = new PDO($dsn, $username, $password, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]);
+        } catch (PDOException $exception) {
+            error_log(sprintf(
+                'Database connection failed for database "%s" as user "%s" on host "%s": %s',
+                $databaseName,
+                $username,
+                $host,
+                $exception->getMessage()
+            ));
+
+            if (Config::get('app.debug', false)) {
+                throw $exception;
+            }
+
+            throw new RuntimeException('Database connection failed.');
+        }
 
         return self::$connection;
     }

@@ -26,7 +26,7 @@ final class Mailer
         }
 
         $logPath = (string) Config::get('mail.log_path');
-        $this->logEmail($logPath, $to, $subject, $plainText, $htmlBody);
+        $this->logEmail($logPath, $to, $subject);
 
         return [
             'ok' => true,
@@ -165,7 +165,7 @@ final class Mailer
         return sprintf('"%s" <%s>', addcslashes($name, '"'), $email);
     }
 
-    private function logEmail(string $path, string $to, string $subject, string $plainText, string $htmlBody): void
+    private function logEmail(string $path, string $to, string $subject): void
     {
         $directory = dirname($path);
 
@@ -179,10 +179,7 @@ final class Mailer
             'TO: ' . $to,
             'SUBJECT: ' . $subject,
             '',
-            $plainText,
-            '',
-            'HTML:',
-            $htmlBody,
+            'Email body omitted from logs because it may contain private verification or reset credentials.',
             '',
         ]);
 

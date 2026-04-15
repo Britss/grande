@@ -7,7 +7,6 @@ use App\Services\AuthService;
 use App\Services\PasswordResetService;
 use App\Services\SignupVerificationService;
 use App\Support\Auth;
-use App\Support\Config;
 use App\Support\Csrf;
 use App\Support\Session;
 use App\Support\Validator;
@@ -88,15 +87,12 @@ final class AuthController extends Controller
         }
 
         $email = strtolower(trim((string) request_input('email', old('email'))));
-        $localPreviewCode = $email !== '' ? $this->signupVerification->previewCodeFor($email) : null;
 
         return $this->render('pages.auth.verify-signup', [
             'pageTitle' => 'Verify Email',
             'metaDescription' => 'Verify your email before creating your Grande account.',
             'bodyClass' => 'auth-page',
             'email' => $email,
-            'localPreviewCode' => $localPreviewCode,
-            'localMailPath' => (string) Config::get('mail.log_path', ''),
         ]);
     }
 
@@ -205,12 +201,8 @@ final class AuthController extends Controller
         $delivery = $this->signupVerification->begin($input);
         Session::flash('status', 'Verification code sent. Enter it below to finish creating your account.');
 
-        if (isset($delivery['preview_code'])) {
-            Session::flash('verification_preview_code', 'Local preview code: ' . $delivery['preview_code']);
-        }
-
         if (in_array(($delivery['channel'] ?? ''), ['log', 'local_preview'], true) && isset($delivery['path'])) {
-            Session::flash('info', 'Local mail delivery is not configured. Use the preview code below. Mail log path: ' . $delivery['path'] . '.');
+            Session::flash('info', 'Email delivery is not fully configured. Please check your mail settings and resend the code.');
         }
 
         $this->redirectToVerificationPage($input['email']);
@@ -244,12 +236,9 @@ final class AuthController extends Controller
         Session::flash('status', 'If that email is registered, a password reset link has been sent.');
 
         $delivery = $result['delivery'] ?? null;
-        if (is_array($delivery) && isset($delivery['preview_url'])) {
-            Session::flash('password_reset_preview_url', 'Local preview link: ' . $delivery['preview_url']);
-        }
 
         if (is_array($delivery) && in_array(($delivery['channel'] ?? ''), ['log', 'local_preview'], true) && isset($delivery['path'])) {
-            Session::flash('info', 'Local mail delivery is not configured. Use the preview link below. Mail log path: ' . $delivery['path'] . '.');
+            Session::flash('info', 'Email delivery is not fully configured. Please check your mail settings and request a new reset link.');
         }
 
         redirect('/password/forgot');
@@ -374,12 +363,8 @@ final class AuthController extends Controller
 
         Session::flash('status', 'A new verification code was sent.');
 
-        if (isset($delivery['preview_code'])) {
-            Session::flash('verification_preview_code', 'Local preview code: ' . $delivery['preview_code']);
-        }
-
         if (in_array(($delivery['channel'] ?? ''), ['log', 'local_preview'], true) && isset($delivery['path'])) {
-            Session::flash('info', 'Local mail delivery is not configured. Use the preview code below. Mail log path: ' . $delivery['path'] . '.');
+            Session::flash('info', 'Email delivery is not fully configured. Please check your mail settings and resend the code.');
         }
 
         $this->redirectToVerificationPage($email);

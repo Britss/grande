@@ -7,7 +7,6 @@ use App\Support\Session;
 
 date_default_timezone_set('Asia/Manila');
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -36,10 +35,11 @@ Session::bootstrap();
 $scriptDirectory = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
 $basePath = $scriptDirectory === '/' || $scriptDirectory === '.' ? '' : rtrim($scriptDirectory, '/');
 
-Config::set([
+$config = [
     'app' => [
         'name' => 'Grande.',
         'tagline' => 'Pandesal + Coffee',
+        'debug' => filter_var(getenv('APP_DEBUG') ?: 'false', FILTER_VALIDATE_BOOL),
         'timezone' => 'Asia/Manila',
         'base_path' => $basePath,
         'site_email' => 'grande.pandesalcoffee.main@gmail.com',
@@ -70,7 +70,22 @@ Config::set([
         'method' => $_SERVER['REQUEST_METHOD'] ?? 'GET',
         'path' => '/',
     ],
-]);
+];
+
+$localConfigPath = __DIR__ . '/config.local.php';
+
+if (is_file($localConfigPath)) {
+    $localConfig = require $localConfigPath;
+
+    if (is_array($localConfig)) {
+        $config = array_replace_recursive($config, $localConfig);
+    }
+}
+
+Config::set($config);
+
+ini_set('display_errors', Config::get('app.debug', false) ? '1' : '0');
+ini_set('log_errors', '1');
 
 return [
     'router' => new Router(),

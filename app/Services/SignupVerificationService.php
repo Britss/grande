@@ -46,7 +46,6 @@ final class SignupVerificationService
 
         if (!(bool) Config::get('mail.smtp_enabled', false) && !(bool) Config::get('mail.use_php_mail', false)) {
             $delivery['channel'] = 'local_preview';
-            $delivery['preview_code'] = $code;
             $delivery['path'] = (string) Config::get('mail.log_path', '');
         }
 
@@ -70,13 +69,6 @@ final class SignupVerificationService
             'password' => $pending['password'],
             'is_hashed_password' => true,
         ]);
-    }
-
-    public function previewCodeFor(string $email): ?string
-    {
-        $pending = $this->verifications->findByEmail($email);
-
-        return is_array($pending) ? (string) ($pending['verification_code'] ?? '') : null;
     }
 
     public function verify(string $email, string $code): array

@@ -26,10 +26,6 @@
                 <div class="alert alert-info"><?= e((string) $info) ?></div>
             <?php endif; ?>
 
-            <?php if ($previewUrl = flash('password_reset_preview_url')): ?>
-                <div class="alert alert-info"><?= e((string) $previewUrl) ?></div>
-            <?php endif; ?>
-
             <?php if ($error = flash('error')): ?>
                 <div class="alert alert-error"><?= e((string) $error) ?></div>
             <?php endif; ?>
