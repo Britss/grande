@@ -2126,8 +2126,8 @@ h2 {
     margin-left: auto;
 }
 
-.menu-category-block + .menu-category-block {
-    margin-top: 3rem;
+.menu-category-block {
+    padding-top: 3rem;
 }
 
 .menu-controls {
