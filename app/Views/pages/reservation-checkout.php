@@ -1,7 +1,6 @@
 <section class="page-section container">
-    <p class="eyebrow">Reservation Checkout</p>
     <h1>Complete Your Reservation Order</h1>
-    <p class="lead">Your reservation is saved. Upload your GCash receipt so your selected items can be linked to your visit.</p>
+    <p class="lead">Review your reservation details and upload your GCash receipt. Your reservation will be created when you place the linked order.</p>
 
     <?php if ($status = flash('status')): ?>
         <div class="alert alert-success"><?= e((string) $status) ?></div>
@@ -13,8 +12,12 @@
 
     <div class="split-layout">
         <div class="content-card checkout-panel">
-            <h2>Reservation Details</h2>
-            <p class="checkout-section-note">Staff will use these details to match your table request with your order.</p>
+            <div class="cart-card-heading checkout-card-heading">
+                <div>
+                    <h2>Reservation Details</h2>
+                    <p class="cart-card-subtitle checkout-section-note">Staff will use these details to match your table request with your order.</p>
+                </div>
+            </div>
             <div class="cart-summary-list">
                 <div class="cart-summary-item">
                     <div>
@@ -41,8 +44,12 @@
                 <input type="hidden" name="payment_method" value="gcash">
 
                 <div class="content-card checkout-payment-card">
-                    <h3>Payment Method</h3>
-                    <p class="checkout-section-note">GCash payments are reviewed by staff before the reservation order moves to preparation.</p>
+                    <div class="cart-card-heading checkout-card-heading">
+                        <div>
+                            <h3>Payment Method</h3>
+                            <p class="cart-card-subtitle checkout-section-note">GCash payments are reviewed by staff before the reservation order moves to preparation.</p>
+                        </div>
+                    </div>
                     <div class="checkout-type-grid">
                         <label class="checkout-type-card">
                             <input type="radio" checked disabled>
@@ -56,7 +63,8 @@
                             <div class="payment-qr-frame">
                                 <img src="<?= e(url('public/images/gcash-qr-code.png')) ?>" alt="GCash QR Code" class="payment-qr-image">
                             </div>
-                            <p class="payment-total-label">Total: <strong>PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></strong></p>
+                            <p class="payment-total-label">Reservation total</p>
+                            <p class="payment-total-amount">PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
                             <p class="field-note">Open GCash, scan the QR code, complete the payment, then upload the receipt below.</p>
                         </div>
 
@@ -81,13 +89,13 @@
                 </div>
 
                 <button type="submit" class="button button-primary checkout-submit-button">Place Reservation Order</button>
-                <a class="button button-secondary" href="<?= e(url('cart?from=reservation')) ?>">Back to Cart</a>
             </form>
         </div>
 
         <aside class="stack-sidebar">
             <article class="content-card checkout-summary-card">
                 <h3>Order Summary</h3>
+                <p class="cart-summary-meta"><?= e((string) $cartTotals['item_count']) ?> item(s) linked to this reservation</p>
                 <div class="cart-summary-list">
                     <?php foreach ($cartItems as $item): ?>
                         <div class="cart-summary-item">
@@ -99,7 +107,24 @@
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <p class="cart-summary-total">Total: PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
+                <div class="cart-summary-breakdown" aria-label="Reservation checkout summary breakdown">
+                    <div class="cart-summary-row">
+                        <span>Items</span>
+                        <strong><?= e((string) $cartTotals['item_count']) ?></strong>
+                    </div>
+                    <div class="cart-summary-row">
+                        <span>Reservation total</span>
+                        <strong>PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></strong>
+                    </div>
+                    <div class="cart-summary-row">
+                        <span>Visit schedule</span>
+                        <strong><?= e($reservation['date']) ?>, <?= e($reservation['time']) ?></strong>
+                    </div>
+                </div>
+                <p class="cart-summary-note">Upload a valid GCash receipt so staff can verify payment and attach your order to the reserved table schedule.</p>
+                <div class="action-row cart-sidebar-actions checkout-sidebar-actions">
+                    <a class="button button-secondary" href="<?= e(url('cart?from=reservation')) ?>">Back to Cart</a>
+                </div>
             </article>
         </aside>
     </div>

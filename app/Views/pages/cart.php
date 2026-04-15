@@ -1,6 +1,5 @@
 <section class="page-section container">
-    <p class="eyebrow">Cart</p>
-    <h1>Your Bread and Coffee Cart</h1>
+    <h1>Your Cart</h1>
     <p class="lead">Review your bakery picks and drinks before checkout.</p>
 
     <?php if ($status = flash('status')): ?>
@@ -25,32 +24,40 @@
             <div class="content-card cart-items-card">
                 <div class="cart-card-heading">
                     <div>
-                        <span class="cart-card-kicker">Selected items</span>
                         <h2>Cart Items</h2>
+                        <p class="cart-card-subtitle">Fresh picks for breakfast runs, merienda stops, and anytime coffee cravings.</p>
                     </div>
-                    <span class="cart-count-pill"><?= e((string) $cartTotals['item_count']) ?> item(s)</span>
                 </div>
                 <div class="cart-summary-list">
                     <?php foreach ($cartItems as $item): ?>
                         <div class="cart-summary-item">
-                            <div class="cart-summary-copy">
+                            <div class="cart-item-info">
                                 <strong><?= e($item['item_name']) ?></strong>
-                                <p><?= e($item['size']) ?> &middot; PHP <?= e(number_format((float) $item['item_price'], 2)) ?> each</p>
+                                <p class="cart-item-size-note">Size: <?= e($item['size']) ?></p>
+                                <p class="cart-item-price-note">PHP <?= e(number_format((float) $item['item_price'], 2)) ?> each</p>
                             </div>
-                            <div class="cart-summary-actions">
+                            <div class="cart-item-controls">
                                 <form method="post" action="<?= e(url('cart/update')) ?>">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="cart_item_id" value="<?= e((string) $item['id']) ?>">
                                     <input type="hidden" name="redirect_to" value="<?= e($fromReservation ? '/cart?from=reservation' : '/cart') ?>">
                                     <label class="sr-only" for="cart-quantity-<?= e((string) $item['id']) ?>">Quantity for <?= e($item['item_name']) ?></label>
-                                    <input id="cart-quantity-<?= e((string) $item['id']) ?>" type="number" name="quantity" min="0" max="20" value="<?= e((string) $item['quantity']) ?>">
-                                    <button type="submit" class="button button-secondary cart-action-button">Update</button>
+                                    <div class="cart-quantity-control">
+                                        <input id="cart-quantity-<?= e((string) $item['id']) ?>" type="number" name="quantity" min="0" max="20" value="<?= e((string) $item['quantity']) ?>">
+                                        <button type="submit" class="button button-secondary cart-action-button">Update</button>
+                                    </div>
                                 </form>
+                            </div>
+                            <div class="cart-item-subtotal" aria-label="Item pricing">
+                                <p class="cart-item-pricing-label">Subtotal</p>
+                                <p class="cart-item-total">PHP <?= e(number_format((float) $item['item_price'] * (int) $item['quantity'], 2)) ?></p>
+                            </div>
+                            <div class="cart-summary-actions">
                                 <form method="post" action="<?= e(url('cart/remove')) ?>">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="cart_item_id" value="<?= e((string) $item['id']) ?>">
                                     <input type="hidden" name="redirect_to" value="<?= e($fromReservation ? '/cart?from=reservation' : '/cart') ?>">
-                                    <button type="submit" class="button button-secondary cart-action-button">Remove</button>
+                                    <button type="submit" class="cart-remove-button">Remove</button>
                                 </form>
                             </div>
                         </div>
@@ -60,10 +67,19 @@
 
             <aside class="stack-sidebar">
                 <article class="content-card cart-total-card">
-                    <span class="cart-card-kicker">Next step</span>
                     <h3>Order Summary</h3>
                     <p class="cart-summary-meta"><?= e((string) $cartTotals['item_count']) ?> item(s) ready for <?= $fromReservation ? 'reservation' : 'checkout' ?></p>
-                    <p class="cart-summary-total">PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
+                    <p class="cart-summary-total"><strong>Total:</strong> <br><?= e(number_format((float) $cartTotals['subtotal'], 2)) ?> PHP</p>
+                    <div class="cart-summary-breakdown" aria-label="Order breakdown">
+                        <div class="cart-summary-row">
+                            <span>Items</span>
+                            <strong><?= e((string) $cartTotals['item_count']) ?></strong>
+                        </div>
+                        <div class="cart-summary-row">
+                            <span>Subtotal</span>
+                            <strong>PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></strong>
+                        </div>
+                    </div>
                     <p class="cart-summary-note">Freshly brewed drinks and everyday bread favorites are prepared for pickup after checkout confirmation.</p>
                     <div class="action-row cart-sidebar-actions">
                         <?php if ($fromReservation): ?>

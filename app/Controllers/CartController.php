@@ -39,6 +39,14 @@ final class CartController extends Controller
         $user = $this->requireCustomer();
 
         if (!Csrf::validate((string) request_input('_token'))) {
+            if ($this->isAjaxRequest()) {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Your session expired. Please try again.',
+                    'csrfToken' => Csrf::token(),
+                ], 419);
+            }
+
             Session::flash('error', 'Your session expired. Please try again.');
             redirect('/menu');
         }
@@ -55,6 +63,14 @@ final class CartController extends Controller
             ->regex('quantity', '/^\d+$/', 'Quantity must be a whole number.');
 
         if ($validator->fails()) {
+            if ($this->isAjaxRequest()) {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'Choose a menu size and quantity before adding to your cart.',
+                    'csrfToken' => Csrf::token(),
+                ], 422);
+            }
+
             Session::flash('error', 'Choose a menu size and quantity before adding to your cart.');
             redirect('/menu');
         }
@@ -63,12 +79,31 @@ final class CartController extends Controller
         $size = $this->menuRepository->findAvailableSizeById((int) $input['size_id']);
 
         if ($size === null) {
+            if ($this->isAjaxRequest()) {
+                $this->jsonResponse([
+                    'success' => false,
+                    'message' => 'That menu option is no longer available.',
+                    'csrfToken' => Csrf::token(),
+                ], 404);
+            }
+
             Session::flash('error', 'That menu option is no longer available.');
             redirect('/menu');
         }
 
         $this->cartRepository->addOrIncrement((int) $user['id'], $size, $quantity);
-        Session::flash('status', sprintf('%s (%s) added to your cart.', $size['item_name'], $size['size_label']));
+        $message = sprintf('%s (%s) added to your cart.', $size['item_name'], $size['size_label']);
+
+        if ($this->isAjaxRequest()) {
+            $this->jsonResponse([
+                'success' => true,
+                'message' => $message,
+                'cartTotals' => $this->cartRepository->totalsForUser((int) $user['id']),
+                'csrfToken' => Csrf::token(),
+            ]);
+        }
+
+        Session::flash('status', $message);
         redirect('/menu');
     }
 
@@ -156,5 +191,21 @@ final class CartController extends Controller
         }
 
         return $user;
+    }
+
+    private function isAjaxRequest(): bool
+    {
+        $requestedWith = strtolower((string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? ''));
+        $accept = strtolower((string) ($_SERVER['HTTP_ACCEPT'] ?? ''));
+
+        return $requestedWith === 'xmlhttprequest' || str_contains($accept, 'application/json');
+    }
+
+    private function jsonResponse(array $payload, int $status = 200): never
+    {
+        http_response_code($status);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($payload);
+        exit;
     }
 }

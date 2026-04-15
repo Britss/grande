@@ -25,6 +25,142 @@ document.addEventListener("click", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
+    var menuOrderForms = document.querySelectorAll(".menu-order-form");
+    var menuCartPopup = document.querySelector("[data-menu-cart-popup]");
+    var menuCartCount = document.querySelector("[data-menu-cart-count]");
+    var menuCartSubtotal = document.querySelector("[data-menu-cart-subtotal]");
+    var hideMenuCartPopup = function () {
+        if (menuCartPopup) {
+            menuCartPopup.remove();
+            menuCartPopup = null;
+        }
+    };
+    var bindMenuCartPopup = function () {
+        if (!menuCartPopup) {
+            return;
+        }
+
+        var closeButton = menuCartPopup.querySelector(".menu-cart-popup__close");
+
+        if (closeButton) {
+            closeButton.focus({ preventScroll: true });
+        }
+
+        menuCartPopup.addEventListener("click", function (event) {
+            if (event.target.closest("[data-menu-cart-popup-close]")) {
+                hideMenuCartPopup();
+            }
+        });
+    };
+    var showMenuCartPopup = function (message) {
+        hideMenuCartPopup();
+        document.body.insertAdjacentHTML("beforeend", [
+            '<div class="menu-cart-popup" data-menu-cart-popup>',
+            '    <div class="menu-cart-popup__backdrop" data-menu-cart-popup-close></div>',
+            '    <div class="menu-cart-popup__card" role="dialog" aria-modal="true" aria-labelledby="menu-cart-popup-title" aria-describedby="menu-cart-popup-message">',
+            '        <div class="menu-cart-popup__status" aria-hidden="true">',
+            '            <span class="menu-cart-popup__status-icon">+</span>',
+            '            <span class="menu-cart-popup__status-label">Cart updated</span>',
+            '        </div>',
+            '        <div class="menu-cart-popup__copy">',
+            '            <h2 id="menu-cart-popup-title">Added to Cart</h2>',
+            '            <p id="menu-cart-popup-message"></p>',
+            '        </div>',
+            '        <button type="button" class="menu-cart-popup__close" data-menu-cart-popup-close>Exit</button>',
+            '    </div>',
+            "</div>"
+        ].join(""));
+        menuCartPopup = document.querySelector("[data-menu-cart-popup]");
+
+        if (!menuCartPopup) {
+            return;
+        }
+
+        var popupMessage = menuCartPopup.querySelector("#menu-cart-popup-message");
+
+        if (popupMessage) {
+            popupMessage.textContent = message || "Cart updated.";
+        }
+
+        bindMenuCartPopup();
+    };
+    var updateMenuCartSummary = function (cartTotals) {
+        if (!cartTotals) {
+            return;
+        }
+
+        if (menuCartCount) {
+            menuCartCount.textContent = String(cartTotals.item_count || 0);
+        }
+
+        if (menuCartSubtotal) {
+            menuCartSubtotal.textContent = Number(cartTotals.subtotal || 0).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+    };
+
+    menuOrderForms.forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var submitButton = form.querySelector(".menu-order-button");
+            var formData = new window.FormData(form);
+
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            window.fetch(form.action, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                credentials: "same-origin"
+            })
+                .then(function (response) {
+                    return response.json().catch(function () {
+                        return null;
+                    }).then(function (payload) {
+                        return {
+                            ok: response.ok,
+                            payload: payload
+                        };
+                    });
+                })
+                .then(function (result) {
+                    var payload = result.payload || {};
+                    var csrfInput = form.querySelector('input[name="_token"]');
+
+                    if (csrfInput && payload.csrfToken) {
+                        csrfInput.value = payload.csrfToken;
+                    }
+
+                    if (!result.ok || !payload.success) {
+                        throw new Error(payload.message || "Unable to add this item to your cart right now.");
+                    }
+
+                    updateMenuCartSummary(payload.cartTotals || null);
+                    showMenuCartPopup(payload.message || "Cart updated.");
+                })
+                .catch(function (error) {
+                    window.alert(error.message || "Unable to add this item to your cart right now.");
+                })
+                .finally(function () {
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                    }
+                });
+        });
+    });
+
+    bindMenuCartPopup();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
     var notification = document.getElementById("customerOrderNotification");
 
     if (notification) {
@@ -1051,14 +1187,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
     var orderTypeInputs = document.querySelectorAll("[data-order-type-toggle]");
+    var readyTimeInput = document.getElementById("ready_time");
+    var guestCountInput = document.getElementById("guest_count");
 
     if (!orderTypeInputs.length) {
         return;
     }
 
+    var formatTimeValue = function (date) {
+        var hours = String(date.getHours()).padStart(2, "0");
+        var minutes = String(date.getMinutes()).padStart(2, "0");
+
+        return hours + ":" + minutes;
+    };
+
+    var buildDefaultReadyTime = function () {
+        var nextSlot = new Date();
+
+        nextSlot.setMinutes(nextSlot.getMinutes() + 30);
+        nextSlot.setSeconds(0, 0);
+
+        var roundedMinutes = Math.ceil(nextSlot.getMinutes() / 5) * 5;
+
+        if (roundedMinutes === 60) {
+            nextSlot.setHours(nextSlot.getHours() + 1, 0, 0, 0);
+        } else {
+            nextSlot.setMinutes(roundedMinutes, 0, 0);
+        }
+
+        return formatTimeValue(nextSlot);
+    };
+
+    var prefillActiveOrderType = function (activeValue) {
+        if (activeValue === "togo" && readyTimeInput && !readyTimeInput.value) {
+            readyTimeInput.value = buildDefaultReadyTime();
+        }
+
+        if (activeValue === "dinein" && guestCountInput && !guestCountInput.value) {
+            guestCountInput.value = "1";
+        }
+    };
+
     var syncOrderTypeSections = function () {
         var active = document.querySelector("[data-order-type-toggle]:checked");
         var activeValue = active ? active.value : "togo";
+
+        prefillActiveOrderType(activeValue);
 
         document.querySelectorAll("[data-order-type-section]").forEach(function (section) {
             var isActive = section.getAttribute("data-order-type-section") === activeValue;

@@ -759,6 +759,96 @@ final class OrderRepository
         }
     }
 
+    public function createReservationOrderFromCart(
+        int $userId,
+        array $reservation,
+        array $cartItems,
+        ?string $receiptFilename = null
+    ): array {
+        $connection = Database::connection();
+        $connection->beginTransaction();
+
+        try {
+            $reservationStatement = $connection->prepare(
+                'INSERT INTO reservations (user_id, first_name, last_name, email, phone, date, time, guests, status)
+                 VALUES (:user_id, :first_name, :last_name, :email, :phone, :date, :time, :guests, :status)'
+            );
+            $reservationStatement->execute([
+                'user_id' => $userId,
+                'first_name' => $reservation['first_name'],
+                'last_name' => $reservation['last_name'],
+                'email' => $reservation['email'],
+                'phone' => $reservation['phone'],
+                'date' => $reservation['date'],
+                'time' => $reservation['time'],
+                'guests' => (int) $reservation['guests'],
+                'status' => 'pending',
+            ]);
+
+            $reservationId = (int) $connection->lastInsertId();
+            $totalAmount = 0.0;
+
+            foreach ($cartItems as $item) {
+                $totalAmount += (float) $item['item_price'] * (int) $item['quantity'];
+            }
+
+            $orderNumber = $this->generateOrderNumber();
+            $orderStatement = $connection->prepare(
+                'INSERT INTO orders (user_id, reservation_id, order_number, total_amount, status, payment_status, receipt_image)
+                 VALUES (:user_id, :reservation_id, :order_number, :total_amount, :status, :payment_status, :receipt_image)'
+            );
+            $orderStatement->execute([
+                'user_id' => $userId,
+                'reservation_id' => $reservationId,
+                'order_number' => $orderNumber,
+                'total_amount' => $totalAmount,
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'receipt_image' => $receiptFilename,
+            ]);
+
+            $orderId = (int) $connection->lastInsertId();
+
+            $itemStatement = $connection->prepare(
+                'INSERT INTO order_items (order_id, menu_item_id, quantity, price, subtotal, size)
+                 VALUES (:order_id, :menu_item_id, :quantity, :price, :subtotal, :size)'
+            );
+
+            foreach ($cartItems as $item) {
+                $quantity = (int) $item['quantity'];
+                $price = (float) $item['item_price'];
+
+                $itemStatement->execute([
+                    'order_id' => $orderId,
+                    'menu_item_id' => $item['menu_item_id'],
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'subtotal' => $price * $quantity,
+                    'size' => $item['size'],
+                ]);
+            }
+
+            $clearCartStatement = $connection->prepare('DELETE FROM cart_items WHERE user_id = :user_id');
+            $clearCartStatement->execute(['user_id' => $userId]);
+
+            $connection->commit();
+
+            return [
+                'id' => $orderId,
+                'reservation_id' => $reservationId,
+                'order_number' => $orderNumber,
+                'total_amount' => $totalAmount,
+                'receipt_image' => $receiptFilename,
+            ];
+        } catch (\Throwable $exception) {
+            if ($connection->inTransaction()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        }
+    }
+
     private function fetchPaymentReviewOrders(string $whereClause, int $limit): array
     {
         $statement = Database::connection()->prepare(

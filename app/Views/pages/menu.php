@@ -3,7 +3,20 @@
 
 <section class="page-section container">
     <?php if ($status = flash('status')): ?>
-        <div class="alert alert-success"><?= e((string) $status) ?></div>
+        <div class="menu-cart-popup" data-menu-cart-popup>
+            <div class="menu-cart-popup__backdrop" data-menu-cart-popup-close></div>
+            <div class="menu-cart-popup__card" role="dialog" aria-modal="true" aria-labelledby="menu-cart-popup-title" aria-describedby="menu-cart-popup-message">
+                <div class="menu-cart-popup__status" aria-hidden="true">
+                    <span class="menu-cart-popup__status-icon">+</span>
+                    <span class="menu-cart-popup__status-label">Cart updated</span>
+                </div>
+                <div class="menu-cart-popup__copy">
+                    <h2 id="menu-cart-popup-title">Added to Cart</h2>
+                    <p id="menu-cart-popup-message"><?= e((string) $status) ?></p>
+                </div>
+                <button type="button" class="menu-cart-popup__close" data-menu-cart-popup-close>Exit</button>
+            </div>
+        </div>
     <?php endif; ?>
 
     <?php if ($error = flash('error')): ?>
@@ -12,7 +25,7 @@
 
     <?php $isGuest = !is_array($user ?? null); ?>
     <?php $isCustomer = is_array($user ?? null) && (($user['role'] ?? 'customer') === 'customer'); ?>
-    <div class="menu-status-card<?= ($isGuest || $isCustomer) ? ' menu-status-card--floating' : '' ?>">
+    <div class="menu-status-card<?= ($isGuest || $isCustomer) ? ' menu-status-card--floating' : '' ?>"<?= $isCustomer ? ' data-menu-cart-summary' : '' ?>>
         <?php if ($isGuest): ?>
             <h2>Login Before Building Your Cart</h2>
             <p>Add your drinks and bakery picks after logging in so your cart stays tied to your account.</p>
@@ -24,7 +37,7 @@
             <p>The current ordering flow is enabled for customer accounts only.</p>
         <?php else: ?>
             <h2>Your Cart</h2>
-            <p><?= e((string) $cartTotals['item_count']) ?> item(s) selected • PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
+            <p><span data-menu-cart-count><?= e((string) $cartTotals['item_count']) ?></span> item(s) selected &middot; PHP <span data-menu-cart-subtotal><?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></span></p>
             <div class="action-row">
                 <a class="button button-primary" href="<?= e(url('cart')) ?>">View Cart & Checkout</a>
                 <a class="button button-secondary" href="<?= e(url('cart?from=reservation')) ?>">Reserve With Cart</a>
@@ -123,7 +136,7 @@
                                                             <?= $size['is_default'] ? 'checked' : '' ?>
                                                         >
                                                         <span>
-                                                        <?= e($size['label']) ?> • PHP <?= e(number_format((float) $size['price'], 2)) ?>
+                                                        <?= e($size['label']) ?> &middot; PHP <?= e(number_format((float) $size['price'], 2)) ?>
                                                         </span>
                                                     </label>
                                                 <?php endforeach; ?>

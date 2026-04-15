@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Repositories\CartRepository;
-use App\Repositories\ReservationRepository;
 use App\Support\Auth;
 use App\Support\Csrf;
 use App\Support\PublicContent;
@@ -15,7 +14,6 @@ final class ReservationController extends Controller
 {
     public function __construct(
         private readonly CartRepository $cartRepository = new CartRepository(),
-        private readonly ReservationRepository $reservationRepository = new ReservationRepository(),
     ) {
     }
 
@@ -109,29 +107,20 @@ final class ReservationController extends Controller
             redirect('/reserve');
         }
 
-        $reservation = $this->reservationRepository->create((int) $user['id'], [
+        $reservation = [
             'first_name' => $input['first_name'],
             'last_name' => $input['last_name'],
+            'name' => trim($input['first_name'] . ' ' . $input['last_name']),
             'email' => $input['email'],
             'phone' => $input['phone'],
             'date' => $input['date'],
             'time' => $input['time'],
             'guests' => $guests,
-        ], $cartItems);
+        ];
 
-        Session::put('reservation.pending_checkout', [
-            'id' => $reservation['id'],
-            'first_name' => $reservation['first_name'],
-            'last_name' => $reservation['last_name'],
-            'name' => trim($reservation['first_name'] . ' ' . $reservation['last_name']),
-            'email' => $reservation['email'],
-            'phone' => $reservation['phone'],
-            'date' => $reservation['date'],
-            'time' => $reservation['time'],
-            'guests' => $reservation['guests'],
-        ]);
+        Session::put('reservation.pending_checkout', $reservation);
 
-        Session::flash('status', 'Reservation created. Continue to reservation checkout to place the linked order.');
+        Session::flash('status', 'Continue to reservation checkout to place your reservation order.');
         redirect('/reservation-checkout');
     }
 

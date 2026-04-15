@@ -171,7 +171,12 @@ final class CheckoutController extends Controller
 
         try {
             $receiptFilename = ReceiptUploader::validateAndStore($_FILES['receipt_image'] ?? null);
-            $order = $this->orderRepository->createFromCart((int) $user['id'], $cartItems, (int) $reservation['id'], $receiptFilename);
+            $order = $this->orderRepository->createReservationOrderFromCart(
+                (int) $user['id'],
+                $reservation,
+                $cartItems,
+                $receiptFilename
+            );
         } catch (\Throwable $exception) {
             ReceiptUploader::deleteIfExists($receiptFilename);
             Session::flash('error', $exception->getMessage());

@@ -1,5 +1,4 @@
 <section class="page-section container">
-    <p class="eyebrow">Checkout</p>
     <h1>Complete Your Order</h1>
     <p class="lead">Confirm your details, choose how you want your bread and drinks prepared, then upload your GCash receipt.</p>
 
@@ -9,8 +8,12 @@
 
     <div class="split-layout">
         <div class="content-card checkout-panel">
-            <h2>Order Details</h2>
-            <p class="checkout-section-note">We use these details for order updates and pickup confirmation.</p>
+            <div class="cart-card-heading checkout-card-heading">
+                <div>
+                    <h2>Order Details</h2>
+                    <p class="cart-card-subtitle checkout-section-note">We use these details for order updates, pickup confirmation, and smooth handoff at the counter.</p>
+                </div>
+            </div>
             <form id="checkout-form" class="stack-form" method="post" action="<?= e(url('checkout')) ?>" enctype="multipart/form-data">
                 <?= csrf_field() ?>
                 <div class="form-grid">
@@ -62,8 +65,12 @@
                 </div>
 
                 <div class="content-card checkout-payment-card">
-                    <h3>Payment Method</h3>
-                    <p class="checkout-section-note">GCash payments are reviewed by staff before the order moves to preparation.</p>
+                    <div class="cart-card-heading checkout-card-heading">
+                        <div>
+                            <h3>Payment Method</h3>
+                            <p class="cart-card-subtitle checkout-section-note">GCash payments are reviewed by staff before your bread and drinks move to preparation.</p>
+                        </div>
+                    </div>
                     <div class="checkout-type-grid">
                         <label class="checkout-type-card">
                             <input type="radio" name="payment_method" value="gcash" <?= old('payment_method', 'gcash') === 'gcash' ? 'checked' : '' ?>>
@@ -78,7 +85,8 @@
                             <div class="payment-qr-frame">
                                 <img src="<?= e(url('public/images/gcash-qr-code.png')) ?>" alt="GCash QR Code" class="payment-qr-image">
                             </div>
-                            <p class="payment-total-label">Total: <strong>PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></strong></p>
+                            <p class="payment-total-label">Order total</p>
+                            <p class="payment-total-amount">PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
                             <p class="field-note">Open GCash, scan the QR code, complete the payment, then upload the receipt below.</p>
                         </div>
 
@@ -109,6 +117,7 @@
         <aside class="stack-sidebar">
             <article class="content-card checkout-summary-card">
                 <h3>Order Summary</h3>
+                <p class="cart-summary-meta"><?= e((string) $cartTotals['item_count']) ?> item(s) ready for checkout</p>
                 <div class="cart-summary-list">
                     <?php foreach ($cartItems as $item): ?>
                         <div class="cart-summary-item">
@@ -120,8 +129,20 @@
                         </div>
                     <?php endforeach; ?>
                 </div>
-                <p class="cart-summary-total">Total: PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></p>
-                <a class="button button-secondary" href="<?= e(url('cart')) ?>">Back to Cart</a>
+                <div class="cart-summary-breakdown" aria-label="Checkout summary breakdown">
+                    <div class="cart-summary-row">
+                        <span>Items</span>
+                        <strong><?= e((string) $cartTotals['item_count']) ?></strong>
+                    </div>
+                    <div class="cart-summary-row">
+                        <span>Subtotal</span>
+                        <strong>PHP <?= e(number_format((float) $cartTotals['subtotal'], 2)) ?></strong>
+                    </div>
+                </div>
+                <p class="cart-summary-note">Upload a valid GCash receipt so staff can verify payment and start preparing your order.</p>
+                <div class="action-row cart-sidebar-actions checkout-sidebar-actions">
+                    <a class="button button-secondary" href="<?= e(url('cart')) ?>">Back to Cart</a>
+                </div>
             </article>
         </aside>
     </div>
