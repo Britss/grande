@@ -32,6 +32,7 @@ final class CheckoutController extends Controller
         return $this->render('pages.checkout', [
             'pageTitle' => 'Checkout',
             'metaDescription' => 'Complete your order at Grande. Pandesal + Coffee.',
+            'bodyClass' => 'checkout-page',
             'user' => $user,
             'cartItems' => $cartItems,
             'cartTotals' => $this->cartRepository->totalsForUser((int) $user['id']),
@@ -135,6 +136,7 @@ final class CheckoutController extends Controller
         return $this->render('pages.reservation-checkout', [
             'pageTitle' => 'Reservation Checkout',
             'metaDescription' => 'Complete your reservation order at Grande. Pandesal + Coffee.',
+            'bodyClass' => 'checkout-page reservation-checkout-page',
             'user' => $user,
             'reservation' => $reservation,
             'cartItems' => $cartItems,

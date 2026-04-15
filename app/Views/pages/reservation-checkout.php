@@ -1,7 +1,7 @@
 <section class="page-section container">
     <p class="eyebrow">Reservation Checkout</p>
     <h1>Complete Your Reservation Order</h1>
-    <p class="lead">Your reservation is saved. This checkout will attach the order to that reservation.</p>
+    <p class="lead">Your reservation is saved. Upload your GCash receipt so your selected items can be linked to your visit.</p>
 
     <?php if ($status = flash('status')): ?>
         <div class="alert alert-success"><?= e((string) $status) ?></div>
@@ -12,8 +12,9 @@
     <?php endif; ?>
 
     <div class="split-layout">
-        <div class="content-card">
+        <div class="content-card checkout-panel">
             <h2>Reservation Details</h2>
+            <p class="checkout-section-note">Staff will use these details to match your table request with your order.</p>
             <div class="cart-summary-list">
                 <div class="cart-summary-item">
                     <div>
@@ -41,6 +42,7 @@
 
                 <div class="content-card checkout-payment-card">
                     <h3>Payment Method</h3>
+                    <p class="checkout-section-note">GCash payments are reviewed by staff before the reservation order moves to preparation.</p>
                     <div class="checkout-type-grid">
                         <label class="checkout-type-card">
                             <input type="radio" checked disabled>
@@ -78,13 +80,13 @@
                     </div>
                 </div>
 
-                <button type="submit" class="button button-primary">Place Reservation Order</button>
+                <button type="submit" class="button button-primary checkout-submit-button">Place Reservation Order</button>
                 <a class="button button-secondary" href="<?= e(url('cart?from=reservation')) ?>">Back to Cart</a>
             </form>
         </div>
 
         <aside class="stack-sidebar">
-            <article class="content-card">
+            <article class="content-card checkout-summary-card">
                 <h3>Order Summary</h3>
                 <div class="cart-summary-list">
                     <?php foreach ($cartItems as $item): ?>

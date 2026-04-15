@@ -1,15 +1,16 @@
 <section class="page-section container">
     <p class="eyebrow">Checkout</p>
     <h1>Complete Your Order</h1>
-    <p class="lead">Finish a normal order from your cart for to-go or dine-in.</p>
+    <p class="lead">Confirm your details, choose how you want your bread and drinks prepared, then upload your GCash receipt.</p>
 
     <?php if ($error = flash('error')): ?>
         <div class="alert alert-error"><?= e((string) $error) ?></div>
     <?php endif; ?>
 
     <div class="split-layout">
-        <div class="content-card">
+        <div class="content-card checkout-panel">
             <h2>Order Details</h2>
+            <p class="checkout-section-note">We use these details for order updates and pickup confirmation.</p>
             <form id="checkout-form" class="stack-form" method="post" action="<?= e(url('checkout')) ?>" enctype="multipart/form-data">
                 <?= csrf_field() ?>
                 <div class="form-grid">
@@ -62,6 +63,7 @@
 
                 <div class="content-card checkout-payment-card">
                     <h3>Payment Method</h3>
+                    <p class="checkout-section-note">GCash payments are reviewed by staff before the order moves to preparation.</p>
                     <div class="checkout-type-grid">
                         <label class="checkout-type-card">
                             <input type="radio" name="payment_method" value="gcash" <?= old('payment_method', 'gcash') === 'gcash' ? 'checked' : '' ?>>
@@ -100,12 +102,12 @@
                     </div>
                 </div>
 
-                <button type="submit" class="button button-primary">Place Order</button>
+                <button type="submit" class="button button-primary checkout-submit-button">Place Order</button>
             </form>
         </div>
 
         <aside class="stack-sidebar">
-            <article class="content-card">
+            <article class="content-card checkout-summary-card">
                 <h3>Order Summary</h3>
                 <div class="cart-summary-list">
                     <?php foreach ($cartItems as $item): ?>

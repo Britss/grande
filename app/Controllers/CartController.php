@@ -26,6 +26,7 @@ final class CartController extends Controller
         return $this->render('pages.cart', [
             'pageTitle' => 'Your Cart',
             'metaDescription' => 'Review your selected items before checkout.',
+            'bodyClass' => 'cart-page',
             'user' => $user,
             'fromReservation' => $fromReservation,
             'cartItems' => $this->cartRepository->itemsForUser((int) $user['id']),
